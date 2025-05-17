@@ -10,9 +10,13 @@ import { map, Observable } from 'rxjs';
 export class DataResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((data) => ({
-        data,
-      })),
+      map((data) => {
+        if (data && data.paginated) {
+          const { paginated, ...rest } = data;
+          return rest;
+        }
+        return { data };
+      }),
     );
   }
 }

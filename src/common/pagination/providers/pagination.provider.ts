@@ -1,11 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { PaginationQueryDto } from '../dtos/pagination.dto';
 import { PaginatiedPageMetaData } from '../interfaces/pagination.interface';
 
-@Injectable()
-export class PaginationProvider {
+@Injectable({ scope: Scope.REQUEST })export class PaginationProvider {
   constructor(
     /**
      * inject request

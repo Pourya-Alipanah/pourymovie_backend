@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { PaginationQueryDto } from './dtos/pagination.dto';
-import { Paginated } from './interfaces/pagination.interface';
+import { PaginatedResponse } from './interfaces/pagination.interface';
 import { PaginationProvider } from './providers/pagination.provider';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class PaginationService {
   public async paginated<T extends ObjectLiteral>(
     { page = 1, size = 10 }: PaginationQueryDto,
     queryBuilder: SelectQueryBuilder<T>,
-  ): Promise<Paginated<T>> {
+  ): Promise<PaginatedResponse<T>> {
     /**
      * build the query
      * and get the total count
@@ -35,6 +35,6 @@ export class PaginationService {
       total,
     });
 
-    return { data, ...metaData };
+    return { data, paginated: true, ...metaData };
   }
 }

@@ -6,7 +6,7 @@ import databaseConfig from './config/database.config';
 import envValidation from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaginationModule } from './common/pagination/pagination.module';
-import { Pagination } from './common/providers/pagination';
+import { PaginationService } from './common/pagination/pagination.service';
 
 
 // Get the current NODE_ENV
@@ -37,6 +37,6 @@ const ENV = process.env.NODE_ENV;
     UsersModule,
     PaginationModule,
   ],
-  providers: [Pagination],
+  providers: [PaginationService],
 })
 export class AppModule {}

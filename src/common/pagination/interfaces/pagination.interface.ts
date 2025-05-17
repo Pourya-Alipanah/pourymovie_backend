@@ -17,3 +17,7 @@ export interface PaginatiedPageMetaData {
 export interface Paginated<T> extends PaginatiedPageMetaData {
   data: T[];
 }
+
+export interface PaginatedResponse<T> extends Paginated<T> {
+  paginated: true;
+}
