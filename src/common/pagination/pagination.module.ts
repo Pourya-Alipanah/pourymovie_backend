@@ -4,6 +4,6 @@ import { PaginationService } from './pagination.service';
 
 @Module({
   providers: [PaginationProvider, PaginationService],
-  exports: [PaginationService],
+  exports: [PaginationService ,PaginationProvider],
 })
 export class PaginationModule {}

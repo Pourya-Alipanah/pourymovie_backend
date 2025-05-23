@@ -4,18 +4,24 @@ import { Request } from 'express';
 import { PaginationQueryDto } from '../dtos/pagination.dto';
 import { PaginatiedPageMetaData } from '../interfaces/pagination.interface';
 
+
+/**
+ * Provider for building pagination metadata and navigation links for paginated API responses.
+ * Designed to be used per HTTP request.
+ */
 @Injectable({ scope: Scope.REQUEST })export class PaginationProvider {
+  /**
+   * Injects the current HTTP request object.
+   * @param request The current Express request instance.
+   */
   constructor(
-    /**
-     * inject request
-     */
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   /**
    * build meta link
-   * @param page number
-   * @param size number
+   * @param params.page number
+   * @param params.size number
    * @returns string of meta link
    */
   private metaLinkBuilder({
@@ -39,11 +45,11 @@ import { PaginatiedPageMetaData } from '../interfaces/pagination.interface';
   }
 
   /**
-   * build meta data
-   * @param page number
-   * @param size number
-   * @param total number
-   * @returns object of meta data for pagination
+   * Constructs pagination metadata and navigation links for a paginated response.
+   * @param params.page The current page number.
+   * @param params.size The number of items per page.
+   * @param params.total The total number of items.
+   * @returns An object containing pagination metadata and navigation links.
    */
   public metaDataBuilder({
     page,

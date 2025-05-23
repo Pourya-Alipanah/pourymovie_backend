@@ -9,7 +9,9 @@ import { PaginationModule } from './common/pagination/pagination.module';
 import { PaginationService } from './common/pagination/pagination.service';
 
 
-// Get the current NODE_ENV
+/**
+ * Get the current NODE_ENV
+ */ 
 const ENV = process.env.NODE_ENV;
 
 @Module({
