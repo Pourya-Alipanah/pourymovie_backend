@@ -95,7 +95,7 @@
 
 <ol class="breadcrumb">
   <li class="breadcrumb-item">Classes</li>
-  <li class="breadcrumb-item" >PaginationQueryDto</li>
+  <li class="breadcrumb-item" >GetUsersResponseDto</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -119,7 +119,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/common/pagination/dtos/pagination.dto.ts</code>
+            <code>src/user/dtos/response/get-users.dto.ts</code>
         </p>
 
 
@@ -127,10 +127,16 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>It provides a way to validate and transform the query parameters.</p>
+                <p>DTO for paginated response of user data.</p>
 
             </p>
 
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/PaginationResponseDto.html" target="_self" >PaginationResponseDto</a></code>
+            </p>
 
 
 
@@ -148,19 +154,18 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier">Optional</span>
-                                <a href="#page" >page</a>
+                                <a href="#data" >data</a>
                             </li>
                             <li>
                                     <span class="modifier"></span>
+                                <a href="#links" >links</a>
+                            </li>
+                            <li>
                                     <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier">Optional</span>
-                                <a href="#size" >size</a>
+                                <a href="#meta" >meta</a>
+                            </li>
+                            <li>
+                                <a href="#paginated" >paginated</a>
                             </li>
                         </ul>
                     </td>
@@ -185,21 +190,17 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="page"></a>
+                    <a name="data"></a>
                     <span class="name">
                             <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier">Optional</span>
-                        <span ><b>page</b></span>
-                        <a href="#page"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>data</b></span>
+                        <a href="#data"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                        <i>Type : </i>    <code>T[]</code>
 
                     </td>
                 </tr>
@@ -208,19 +209,26 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @IsOptional()<br />@IsPositive()<br />@Type(undefined)<br />@ApiPropertyOptional({default: 1, description: &#x27;The position of the page number that you want the API to return&#x27;, type: &#x27;number&#x27;, example: 1})<br />
+                            @ApiProperty({description: &#x27;The data property contains the paginated data&#x27;, type: &#x27;array&#x27;, items: undefined})<br />
                         </code>
                     </td>
                 </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/PaginationResponseDto.html" target="_self" >PaginationResponseDto</a></code>
+</div>
+                            </td>
+                        </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/common/pagination/dtos/pagination.dto.ts:27</a></div>
+                                <div class="io-line">Defined in         <code><a href="../classes/PaginationResponseDto.html#source" target="_self" >PaginationResponseDto:69</a></code>
+</div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>The position of the page number that you want the API to return</p>
+                    <div class="io-description"><p>The data property contains the paginated data.</p>
 </div>
                 </td>
             </tr>
@@ -231,21 +239,17 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="size"></a>
+                    <a name="links"></a>
                     <span class="name">
                             <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier">Optional</span>
-                        <span ><b>size</b></span>
-                        <a href="#size"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>links</b></span>
+                        <a href="#links"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                        <i>Type : </i>    <code>literal type</code>
 
                     </td>
                 </tr>
@@ -254,19 +258,109 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @IsOptional()<br />@IsPositive()<br />@Type(undefined)<br />@ApiPropertyOptional({default: 10, description: &#x27;The number of entries returned per query&#x27;, type: &#x27;number&#x27;, example: 10})<br />
+                            @ApiProperty({description: &#x27;The links property contains information about the pagination links&#x27;, type: &#x27;object&#x27;, properties: undefined})<br />
                         </code>
                     </td>
                 </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/PaginationResponseDto.html" target="_self" >PaginationResponseDto</a></code>
+</div>
+                            </td>
+                        </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/common/pagination/dtos/pagination.dto.ts:42</a></div>
+                                <div class="io-line">Defined in         <code><a href="../classes/PaginationResponseDto.html#source" target="_self" >PaginationResponseDto:110</a></code>
+</div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>The number of entries returned per query</p>
+                    <div class="io-description"><p>The links property contains information about the pagination links.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="meta"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>meta</b></span>
+                        <a href="#meta"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ApiProperty({description: &#x27;The meta property contains information about the pagination&#x27;, type: &#x27;object&#x27;, properties: undefined})<br />
+                        </code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/PaginationResponseDto.html" target="_self" >PaginationResponseDto</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/PaginationResponseDto.html#source" target="_self" >PaginationResponseDto:86</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The meta property contains information about the pagination.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="paginated"></a>
+                    <span class="name">
+                        <span ><b>paginated</b></span>
+                        <a href="#paginated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/PaginationResponseDto.html" target="_self" >PaginationResponseDto</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/PaginationResponseDto.html#source" target="_self" >PaginationResponseDto:57</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The paginated property indicates whether the data is paginated or not.
+this is not a part of the response</p>
 </div>
                 </td>
             </tr>
@@ -285,123 +379,101 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ApiProperty, ApiPropertyOptional } from &#x27;@nestjs/swagger&#x27;;
-import { Type } from &#x27;class-transformer&#x27;;
-import { IsOptional, IsPositive } from &#x27;class-validator&#x27;;
-import { PaginatedResponse } from &#x27;../interfaces/pagination.interface&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ApiProperty } from &#x27;@nestjs/swagger&#x27;;
+import { PaginationResponseDto } from &#x27;src/common/pagination/dtos/pagination.dto&#x27;;
 
 /**
- * @class PaginationQueryDto
- * @description This class is responsible for handling pagination query parameters.
- * It provides a way to validate and transform the query parameters.
+ * DTO for returning user data.
+ * @class GetUsersResponseDto
+ * @description Data Transfer Object for user information returned in API responses.
+ * @property {number} id - Unique identifier for the user.
+ * @property {string} firstName - First name of the user.
+ * @property {string} lastName - Last name of the user.
+ * @property {string} email - Email address of the user.
+ * @property {Date} createdAt - Timestamp when the user was created.
+ * @property {Date} updateAt - Timestamp when the user was last updated.
+ * @property {Date} deletedAt - Timestamp when the user was deleted.
+ * @property {boolean} hasSubscription - Indicates if the user has an active subscription.
  */
-
-export class PaginationQueryDto {
+export class GetUsersDto {
   /**
-   * @description
-   * The position of the page number that you want the API to return
+   * Unique identifier for the user
+   * @type {number}
    */
-  @IsOptional()
-  @IsPositive()
-  @Type(() &#x3D;&gt; Number)
-  @ApiPropertyOptional({
-    default: 1,
-    description:
-      &#x27;The position of the page number that you want the API to return&#x27;,
-    type: &#x27;number&#x27;,
-    example: 1,
-  })
-  page?: number;
+  @ApiProperty({ description: &#x27;Unique identifier for the user&#x27; })
+  id: number;
 
   /**
-   * @description
-   * The number of entries returned per query
+   * First name of the user
+   * @type {string}
    */
-  @IsOptional()
-  @IsPositive()
-  @Type(() &#x3D;&gt; Number)
-  @ApiPropertyOptional({
-    default: 10,
-    description: &#x27;The number of entries returned per query&#x27;,
-    type: &#x27;number&#x27;,
-    example: 10,
-  })
-  size?: number;
-}
+  @ApiProperty({ description: &#x27;First name of the user&#x27; })
+  firstName: string;
 
-/**
- * @class PaginationResponseDto
- * @description This class is responsible for handling pagination response.
- * It provides a way to validate and transform the response data.
- */
-export class PaginationResponseDto&lt;T&gt; implements PaginatedResponse&lt;T&gt; {
   /**
-   * @description
-   * The paginated property indicates whether the data is paginated or not.
-   * this is not a part of the response
+   * Last name of the user
+   * @type {string}
+   */
+  @ApiProperty({ description: &#x27;Last name of the user&#x27; })
+  lastName: string;
+
+  /**
+   * Email address of the user
+   * @type {string}
+   */
+  @ApiProperty({ description: &#x27;Email address of the user&#x27; })
+  email: string;
+
+  /**
+   * Timestamp when the user was created
+   * @type {Date}
+   */
+  @ApiProperty({
+    description: &#x27;Timestamp when the user was created&#x27;,
+    type: Date,
+  })
+  createdAt: Date;
+
+  /**
+   * Timestamp when the user was last updated
+   * @type {Date | null}
+   */
+  @ApiProperty({
+    description: &#x27;Timestamp when the user was last updated&#x27;,
+    type: Date,
+    nullable: true,
+  })
+  updateAt: Date | null;
+
+  /**
+   * Timestamp when the user was deleted
+   * @type {Date | null}
+   */
+  @ApiProperty({
+    description: &#x27;Timestamp when the user was deleted&#x27;,
+    type: Date,
+    nullable: true,
+  })
+  deletedAt: Date | null;
+
+  /**
+   * Indicates if the user has an active subscription
    * @type {boolean}
    */
-  paginated: true;
-
-  /**
-   * @description
-   * The data property contains the paginated data.
-   * @type {T[]}
-   */
   @ApiProperty({
-    description: &#x27;The data property contains the paginated data&#x27;,
-    type: &#x27;array&#x27;,
-    items: { type: &#x27;object&#x27; },
+    description: &#x27;Indicates if the user has an active subscription&#x27;,
   })
-  data: T[];
-
-  /**
-   * @description
-   * The meta property contains information about the pagination.
-   * @type {object}
-   */
-  @ApiProperty({
-    description: &#x27;The meta property contains information about the pagination&#x27;,
-    type: &#x27;object&#x27;,
-    properties: {
-      itemsPerPage: { type: &#x27;number&#x27; },
-      totalItems: { type: &#x27;number&#x27; },
-      currentPage: { type: &#x27;number&#x27; },
-      totalPages: { type: &#x27;number&#x27; },
-    },
-  })
-  meta: {
-    itemsPerPage: number;
-    totalItems: number;
-    currentPage: number;
-    totalPages: number;
-  };
-
-  /**
-   * @description
-   * The links property contains information about the pagination links.
-   * @type {object}
-   */
-  @ApiProperty({
-    description:
-      &#x27;The links property contains information about the pagination links&#x27;,
-    type: &#x27;object&#x27;,
-    properties: {
-      first: { type: &#x27;string&#x27; },
-      previous: { type: &#x27;string&#x27; },
-      current: { type: &#x27;string&#x27; },
-      next: { type: &#x27;string&#x27; },
-      last: { type: &#x27;string&#x27; },
-    },
-  })
-  links: {
-    first: string;
-    previous: string | null;
-    current: string | null;
-    next: string | null;
-    last: string;
-  };
+  hasSubscription: boolean;
 }
+
+
+/**
+ * DTO for paginated response of user data.
+ * @class GetUsersResponseDto
+ * @description Data Transfer Object for paginated user information returned in API responses.
+ * @extends PaginationResponseDto&lt;GetUsersDto&gt;
+ */
+export class GetUsersResponseDto extends PaginationResponseDto&lt;GetUsersDto&gt; {}
 </code></pre>
     </div>
 </div>
@@ -440,7 +512,7 @@ export class PaginationResponseDto&lt;T&gt; implements PaginatedResponse&lt;T&gt
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
-            var COMPODOC_CURRENT_PAGE_URL = 'PaginationQueryDto.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'GetUsersResponseDto.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

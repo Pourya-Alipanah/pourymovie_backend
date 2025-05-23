@@ -126,6 +126,14 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>This interface represents the paginated data.
+It extends the PaginatiedPageMetaData interface.</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -194,6 +202,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>The data property contains the paginated data.</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -202,12 +216,20 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface PaginatiedPageMetaData {
+  /**
+   * @description
+   * The meta property contains information about the pagination.
+   */
   meta: {
     itemsPerPage: number;
     totalItems: number;
     currentPage: number;
     totalPages: number;
   };
+  /**
+   * @description
+   * The links property contains information about the pagination links.
+   */
   links: {
     first: string;
     previous: string | null;
@@ -217,11 +239,30 @@
   };
 }
 
+/**
+ * @description
+ * This interface represents the paginated data.
+ * It extends the PaginatiedPageMetaData interface.
+ */
 export interface Paginated&lt;T&gt; extends PaginatiedPageMetaData {
+  /**
+   * @description
+   * The data property contains the paginated data.
+   */
   data: T[];
 }
 
+
+/**
+ * @description
+ * This interface represents the paginated response.
+ * It extends the Paginated interface.
+ */
 export interface PaginatedResponse&lt;T&gt; extends Paginated&lt;T&gt; {
+  /**
+   * @description
+   * The paginated property indicates whether the data is paginated or not.
+   */
   paginated: true;
 }
 </code></pre>

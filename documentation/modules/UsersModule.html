@@ -115,17 +115,17 @@
 <text text-anchor="start" x="429.73" y="-15.4" font-family="Times-12" font-size="14.00"> &#160;Exports</text>
 <g id="clust1" class="cluster">
 <title>cluster_UsersModule</title>
-<polygon fill="none" stroke="black" stroke-dasharray="1,5" points="174,-70 174,-195 322,-195 322,-70 174,-70"/>
+<polygon fill="none" stroke="black" stroke-dasharray="1,5" points="170,-70 170,-195 326,-195 326,-70 170,-70"/>
 </g>
 <g id="clust6" class="cluster">
 <title>cluster_UsersModule_providers</title>
-<polygon fill="none" stroke="black" points="182,-78 182,-130 314,-130 314,-78 182,-78"/>
+<polygon fill="none" stroke="black" points="178,-78 178,-130 318,-130 318,-78 178,-78"/>
 </g>
-<!-- UserService -->
+<!-- UsersService -->
 <g id="node1" class="node">
-<title>UserService</title>
-<ellipse fill="#fdb462" stroke="black" cx="248" cy="-104" rx="58.44" ry="18"/>
-<text text-anchor="middle" x="248" y="-99.8" font-family="Times,serif" font-size="14.00">UserService</text>
+<title>UsersService</title>
+<ellipse fill="#fdb462" stroke="black" cx="248" cy="-104" rx="61.95" ry="18"/>
+<text text-anchor="middle" x="248" y="-99.8" font-family="Times,serif" font-size="14.00">UsersService</text>
 </g>
 <!-- UsersModule -->
 <g id="node2" class="node">
@@ -133,9 +133,9 @@
 <polygon fill="#8dd3c7" stroke="black" points="293.92,-187 290.92,-191 269.92,-191 266.92,-187 202.08,-187 202.08,-151 293.92,-151 293.92,-187"/>
 <text text-anchor="middle" x="248" y="-164.8" font-family="Times,serif" font-size="14.00">UsersModule</text>
 </g>
-<!-- UserService&#45;&gt;UsersModule -->
+<!-- UsersService&#45;&gt;UsersModule -->
 <g id="edge1" class="edge">
-<title>UserService&#45;&gt;UsersModule</title>
+<title>UsersService&#45;&gt;UsersModule</title>
 <path fill="none" stroke="black" d="M248,-122.11C248,-122.11 248,-140.99 248,-140.99"/>
 <polygon fill="black" stroke="black" points="244.5,-140.99 248,-150.99 251.5,-140.99 244.5,-140.99"/>
 </g>
@@ -189,7 +189,7 @@
                             title="Official documentation about module providers"><span class="icon ion-ios-information-circle-outline"></a></h3>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <a href="../injectables/UserService.html">UserService</a>
+                            <a href="../injectables/UsersService.html">UsersService</a>
                         </li>
                     </ul>
                 </div>
@@ -213,11 +213,14 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Module } from &#x27;@nestjs/common&#x27;;
 import { UsersController } from &#x27;./users.controller&#x27;;
-import { UserService } from &#x27;./providers/user.service&#x27;;
+import { UsersService } from &#x27;./providers/users.service&#x27;;
+import { User } from &#x27;./user.entity&#x27;;
+import { TypeOrmModule } from &#x27;@nestjs/typeorm&#x27;;
 
 @Module({
   controllers: [UsersController],
-  providers: [UserService],
+  providers: [UsersService],
+  imports: [TypeOrmModule.forFeature([User])],
 })
 export class UsersModule {}
 </code></pre>

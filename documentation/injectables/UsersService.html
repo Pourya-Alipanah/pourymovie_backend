@@ -79,16 +79,19 @@
                    <compodoc-menu mode="normal"></compodoc-menu>
                </div>
                <!-- START CONTENT -->
-               <div class="content controller">
+               <div class="content injectable">
                    <div class="content-data">
 
 
 
 
 
+
+
+
 <ol class="breadcrumb">
-  <li class="breadcrumb-item">Controllers</li>
-  <li class="breadcrumb-item" >UsersController</li>
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >UsersService</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -112,19 +115,17 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/user/users.controller.ts</code>
+            <code>src/user/providers/users.service.ts</code>
         </p>
-
 
 
             <p class="comment">
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Controller for managing users</p>
+                <p>UserService</p>
 
             </p>
-
 
 
 
@@ -142,12 +143,8 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                    <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier">Public</span>
-                                <a href="#getUsers" >getUsers</a>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAllUsers" >findAllUsers</a>
                             </li>
                         </ul>
                     </td>
@@ -161,6 +158,82 @@
     </table>
 </section>
 
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(paginationService: <a href="../injectables/PaginationService.html" target="_self">PaginationService</a>, usersRepository: <a href="../entitys/User.html" target="_self">Repository&lt;User&gt;</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/user/providers/users.service.ts:17</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor for UsersService</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>paginationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PaginationService.html" target="_self" >PaginationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Service for handling pagination</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>usersRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../entitys/User.html" target="_self" >Repository&lt;User&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Repository for user entity</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
             <section data-compodoc="block-methods">
     
     <h3 id="methods">
@@ -170,44 +243,33 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getUsers"></a>
+                    <a name="findAllUsers"></a>
                     <span class="name">
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier"></span>
-                            <span class="modifier">Public</span>
-                        <span ><b>getUsers</b></span>
-                        <a href="#getUsers"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Async</span>
+                        <span ><b>findAllUsers</b></span>
+                        <a href="#findAllUsers"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getUsers(usersQuery?: <a href="../classes/PaginationQueryDto.html" target="_self">PaginationQueryDto</a>)</code>
+                    <code>findAllUsers(params?: <a href="../classes/PaginationQueryDto.html" target="_self">PaginationQueryDto</a>)</code>
                 </td>
             </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <b>Decorators : </b>
-                    <br />
-                    <code>@Get()<br />@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiOkResponse({description: &#x27;Users fetched successfully based on the query&#x27;, type: GetUsersResponseDto})<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br /></code>
-                </td>
-            </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">src/user/users.controller.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/user/providers/users.service.ts:37</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Fetches a list of registered users on the application</p>
+                        <div class="io-description"><p>Fetches all users with pagination</p>
 </div>
 
                             <div class="io-description">
@@ -219,11 +281,12 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>usersQuery</td>
+                                                <td>params</td>
                                             <td>
                                                             <code><a href="../classes/PaginationQueryDto.html" target="_self" >PaginationQueryDto</a></code>
                                             </td>
@@ -233,6 +296,12 @@
                                             </td>
 
 
+                                            <td>
+                                                    <ul>
+<li>Pagination parameters</li>
+</ul>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -243,7 +312,7 @@
                         </div>
                             <div class="io-description">
                                 <ul>
-<li>Returns an object containing user details</li>
+<li>Paginated list of users</li>
 </ul>
 
                             </div>
@@ -251,54 +320,64 @@
             </tr>
         </tbody>
     </table>
-</section>    </div>
+</section>
+
+    </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Query } from &#x27;@nestjs/common&#x27;;
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from &#x27;@nestjs/swagger&#x27;;
-import { GetUsersResponseDto } from &#x27;./dtos/response/get-users.dto&#x27;;
-import { UsersService } from &#x27;./providers/users.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@nestjs/common&#x27;;
+import {
+  GetUsersDto,
+  GetUsersResponseDto,
+} from &#x27;../dtos/response/get-users.dto&#x27;;
+import { PaginationService } from &#x27;src/common/pagination/pagination.service&#x27;;
+import { Repository } from &#x27;typeorm&#x27;;
+import { User } from &#x27;../user.entity&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
 import { PaginationQueryDto } from &#x27;src/common/pagination/dtos/pagination.dto&#x27;;
 
 /**
- * Controller for managing users
- * @class UsersController
- * @version 1
- * @description This controller handles user-related operations such as fetching user details.
+ * UserService
+ * @description This service is responsible for handling user-related logic.
  */
-@Controller({ path: &#x27;users&#x27;, version: &#x27;1&#x27; })
-@ApiTags(&#x27;Users&#x27;)
-export class UsersController {
-  constructor(
-    // inject user service
-    private readonly userService: UsersService,
-  ) {}
+@Injectable()
+export class UsersService {
   /**
-   * Fetches a list of registered users on the application
-   * @returns {object} - Returns an object containing user details
+   * Constructor for UsersService
+   * @param {PaginationService} paginationService - Service for handling pagination
+   * @param {Repository&lt;User&gt;} usersRepository - Repository for user entity
    */
-  @Get()
-  @ApiOperation({
-    summary: &#x27;Fetches a list of registered users on the application&#x27;,
-  })
-  @ApiOkResponse({
-    description: &#x27;Users fetched successfully based on the query&#x27;,
-    type: GetUsersResponseDto,
-  })
-  @ApiBearerAuth(&#x27;access-token&#x27;)
-  public getUsers(
-    @Query() usersQuery?: PaginationQueryDto,
-  ): Promise&lt;GetUsersResponseDto&gt; {
-    return this.userService.findAllUsers(usersQuery);
+  constructor(
+    // inject pagination service
+    private readonly paginationService: PaginationService,
+
+    //inject users repository
+    @InjectRepository(User)
+    private readonly usersRepository: Repository&lt;User&gt;,
+  ) {}
+
+  /**
+   * Fetches all users with pagination
+   * @param {PaginationQueryDto} params - Pagination parameters
+   * @returns {Promise&lt;GetUsersResponseDto&gt;} - Paginated list of users
+   */
+  async findAllUsers(params?: PaginationQueryDto): Promise&lt;GetUsersResponseDto&gt; {
+    const queryBuilder &#x3D; this.usersRepository
+      .createQueryBuilder(&#x27;user&#x27;)
+      .select();
+
+    const result &#x3D; await this.paginationService.paginated&lt;GetUsersDto&gt;(
+      queryBuilder,
+      params,
+    );
+    return result;
   }
 }
 </code></pre>
     </div>
+
 </div>
-
-
-
 
 
 
@@ -337,8 +416,8 @@ export class UsersController {
 
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
-            var COMPODOC_CURRENT_PAGE_CONTEXT = 'controller';
-            var COMPODOC_CURRENT_PAGE_URL = 'UsersController.html';
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'UsersService.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

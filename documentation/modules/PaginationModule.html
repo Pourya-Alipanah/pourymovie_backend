@@ -220,6 +220,14 @@
 
 
 
+        <p class="comment">
+            <h3>Description</h3>
+        </p>
+        <p class="comment">
+            <p>PaginationModule
+It provides a service and a provider to handle pagination.</p>
+
+        </p>
 
 
         <div class="container-fluid module">
@@ -257,10 +265,17 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Module } from &#x27;@nestjs/common&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Global, Module } from &#x27;@nestjs/common&#x27;;
 import { PaginationProvider } from &#x27;./providers/pagination.provider&#x27;;
 import { PaginationService } from &#x27;./pagination.service&#x27;;
 
+
+/**
+ * PaginationModule
+ * @description This module is responsible for handling pagination logic.
+ * It provides a service and a provider to handle pagination.
+ */
+@Global()
 @Module({
   providers: [PaginationProvider, PaginationService],
   exports: [PaginationService ,PaginationProvider],

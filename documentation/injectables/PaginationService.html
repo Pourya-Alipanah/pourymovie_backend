@@ -119,6 +119,14 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>PaginationService
+It provides a method to paginate data using TypeORM&#39;s SelectQueryBuilder.</p>
+
+            </p>
 
 
 
@@ -163,12 +171,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/common/pagination/pagination.service.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/common/pagination/pagination.service.ts:14</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>constructor</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -222,15 +232,15 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>paginated(undefined: <a href="../classes/PaginationQueryDto.html" target="_self">PaginationQueryDto</a>, queryBuilder: SelectQueryBuilder<T>)</code>
+                    <code>paginated(queryBuilder: SelectQueryBuilder<T>, paginationQuery?: <a href="../classes/PaginationQueryDto.html" target="_self">PaginationQueryDto</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="16"
-                                    class="link-to-prism">src/common/pagination/pagination.service.ts:16</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="30"
+                                    class="link-to-prism">src/common/pagination/pagination.service.ts:30</a></div>
                         </td>
                     </tr>
 
@@ -245,6 +255,8 @@
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>paginated</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -259,8 +271,9 @@
                                     </thead>
                                     <tbody>
                                         <tr>
+                                                <td>queryBuilder</td>
                                             <td>
-                                                            <code><a href="../classes/PaginationQueryDto.html" target="_self" >PaginationQueryDto</a></code>
+                                                        <code>SelectQueryBuilder&lt;T&gt;</code>
                                             </td>
 
                                             <td>
@@ -270,13 +283,13 @@
 
                                         </tr>
                                         <tr>
-                                                <td>queryBuilder</td>
+                                                <td>paginationQuery</td>
                                             <td>
-                                                        <code>SelectQueryBuilder&lt;T&gt;</code>
+                                                            <code><a href="../classes/PaginationQueryDto.html" target="_self" >PaginationQueryDto</a></code>
                                             </td>
 
                                             <td>
-                                                    No
+                                                    Yes
                                             </td>
 
 
@@ -307,19 +320,34 @@ import { PaginationQueryDto } from &#x27;./dtos/pagination.dto&#x27;;
 import { PaginatedResponse } from &#x27;./interfaces/pagination.interface&#x27;;
 import { PaginationProvider } from &#x27;./providers/pagination.provider&#x27;;
 
+
+/**
+ * PaginationService
+ * @description This service is responsible for handling pagination logic.
+ * It provides a method to paginate data using TypeORM&#x27;s SelectQueryBuilder.
+ */
 @Injectable()
 export class PaginationService {
+
+  /**
+   * constructor
+   * @param paginationProvider
+   */
   constructor(
-    /**
-     * inject pagination provider
-     */
     private readonly paginationProvider: PaginationProvider,
   ) {}
 
+  /**
+   * paginated
+   * @param page
+   * @param size
+   * @param queryBuilder
+   */
   public async paginated&lt;T extends ObjectLiteral&gt;(
-    { page &#x3D; 1, size &#x3D; 10 }: PaginationQueryDto,
     queryBuilder: SelectQueryBuilder&lt;T&gt;,
+    paginationQuery?: PaginationQueryDto,
   ): Promise&lt;PaginatedResponse&lt;T&gt;&gt; {
+    const { page &#x3D; 1, size &#x3D; 10 } &#x3D; paginationQuery || {};
     /**
      * build the query
      * and get the total count

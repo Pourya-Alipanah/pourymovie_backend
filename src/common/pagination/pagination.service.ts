@@ -4,19 +4,34 @@ import { PaginationQueryDto } from './dtos/pagination.dto';
 import { PaginatedResponse } from './interfaces/pagination.interface';
 import { PaginationProvider } from './providers/pagination.provider';
 
+
+/**
+ * PaginationService
+ * @description This service is responsible for handling pagination logic.
+ * It provides a method to paginate data using TypeORM's SelectQueryBuilder.
+ */
 @Injectable()
 export class PaginationService {
+
+  /**
+   * constructor
+   * @param paginationProvider
+   */
   constructor(
-    /**
-     * inject pagination provider
-     */
     private readonly paginationProvider: PaginationProvider,
   ) {}
 
+  /**
+   * paginated
+   * @param page
+   * @param size
+   * @param queryBuilder
+   */
   public async paginated<T extends ObjectLiteral>(
-    { page = 1, size = 10 }: PaginationQueryDto,
     queryBuilder: SelectQueryBuilder<T>,
+    paginationQuery?: PaginationQueryDto,
   ): Promise<PaginatedResponse<T>> {
+    const { page = 1, size = 10 } = paginationQuery || {};
     /**
      * build the query
      * and get the total count
