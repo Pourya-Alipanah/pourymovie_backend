@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   GetUsersDto,
   GetUsersResponseDto,
@@ -34,7 +34,9 @@ export class UsersService {
    * @param {PaginationQueryDto} params - Pagination parameters
    * @returns {Promise<GetUsersResponseDto>} - Paginated list of users
    */
-  async findAllUsers(params?: PaginationQueryDto): Promise<GetUsersResponseDto> {
+  public async findAllUsers(
+    params?: PaginationQueryDto,
+  ): Promise<GetUsersResponseDto> {
     const queryBuilder = this.usersRepository
       .createQueryBuilder('user')
       .select();
@@ -44,5 +46,19 @@ export class UsersService {
       params,
     );
     return result;
+  }
+
+  public async findUserById(id: number) {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException({
+        message: 'User not found',
+      });
+    }
+    return user;
+  }
+
+  public async createUser(){
+    
   }
 }

@@ -1,8 +1,16 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GetUsersResponseDto } from './dtos/response/get-users.dto';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  GetUsersDto,
+  GetUsersResponseDto,
+} from './dtos/response/get-users.dto';
 import { UsersService } from './providers/users.service';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
+import { ApiPaginatedResponse } from 'src/common/decorators/paginated-response.decorator';
+import { SingleResponseDto } from 'src/common/interceptors/data-response/dtos/single-response.dto';
+import { ApiSingleResponse } from 'src/common/decorators/single-response.decorator';
+import { GetSingleUserDto } from './dtos/request/get-single-user.dto';
+import { User } from './user.entity';
 
 /**
  * Controller for managing users
@@ -13,10 +21,19 @@ import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 @Controller({ path: 'users', version: '1' })
 @ApiTags('Users')
 export class UsersController {
+  /**
+   * UsersController
+   * @description This controller is responsible for handling user-related operations.
+   * It provides endpoints to fetch a list of users and a single user by ID.
+   * @param {UsersService} userService - Service for handling user-related logic
+   * @returns {UsersController} - Returns an instance of UsersController
+   */
   constructor(
     // inject user service
     private readonly userService: UsersService,
   ) {}
+
+
   /**
    * Fetches a list of registered users on the application
    * @returns {object} - Returns an object containing user details
@@ -25,14 +42,38 @@ export class UsersController {
   @ApiOperation({
     summary: 'Fetches a list of registered users on the application',
   })
-  @ApiOkResponse({
-    description: 'Users fetched successfully based on the query',
-    type: GetUsersResponseDto,
-  })
-  @ApiBearerAuth('access-token')
+  @ApiPaginatedResponse(GetUsersDto)
+  // @ApiBearerAuth('access-token')
   public getUsers(
     @Query() usersQuery?: PaginationQueryDto,
   ): Promise<GetUsersResponseDto> {
     return this.userService.findAllUsers(usersQuery);
+  }
+
+
+  /**
+   * Fetches a user by their ID
+   * @param {GetSingleUserDto} getUserDto - DTO containing the user ID
+   * @returns {Promise<User>} - Returns a promise that resolves to the user object
+   */
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Fetches a user by their ID',
+  })
+  @ApiSingleResponse(GetUsersDto)
+  // @ApiBearerAuth('access-token')
+  public getUserById(
+    @Param() getUserDto: GetSingleUserDto,
+  ): Promise<User> {
+    return this.userService.findUserById(getUserDto.id);
+  }
+
+
+  @Post()
+  @ApiOperation({
+    summary: 'Create a new user',
+  })
+  public createUser() {
+    return this.userService.createUser();
   }
 }

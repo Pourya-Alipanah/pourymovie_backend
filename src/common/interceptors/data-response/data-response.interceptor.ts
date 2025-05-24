@@ -23,7 +23,6 @@ export class DataResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        console.log('Response data before check:', data);
         if (data && data.paginated) {
           const { paginated, ...rest } = data;
           return rest;
