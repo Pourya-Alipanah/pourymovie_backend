@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   GetUsersDto,
   GetUsersResponseDto,
@@ -11,6 +11,8 @@ import { SingleResponseDto } from 'src/common/interceptors/data-response/dtos/si
 import { ApiSingleResponse } from 'src/common/decorators/single-response.decorator';
 import { GetSingleUserDto } from './dtos/request/get-single-user.dto';
 import { User } from './user.entity';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 /**
  * Controller for managing users
@@ -20,6 +22,7 @@ import { User } from './user.entity';
  */
 @Controller({ path: 'users', version: '1' })
 @ApiTags('Users')
+@Auth(AuthType.Bearer)
 export class UsersController {
   /**
    * UsersController
@@ -43,7 +46,8 @@ export class UsersController {
     summary: 'Fetches a list of registered users on the application',
   })
   @ApiPaginatedResponse(GetUsersDto)
-  // @ApiBearerAuth('access-token')
+  @ApiBearerAuth('access-token')
+  @Auth(AuthType.Bearer)
   public getUsers(
     @Query() usersQuery?: PaginationQueryDto,
   ): Promise<GetUsersResponseDto> {
@@ -61,7 +65,8 @@ export class UsersController {
     summary: 'Fetches a user by their ID',
   })
   @ApiSingleResponse(GetUsersDto)
-  // @ApiBearerAuth('access-token')
+  @ApiBearerAuth('access-token')
+  @Auth(AuthType.Bearer)
   public getUserById(
     @Param() getUserDto: GetSingleUserDto,
   ): Promise<User> {
@@ -73,6 +78,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Create a new user',
   })
+  @Auth(AuthType.None)
   public createUser() {
     return this.userService.createUser();
   }

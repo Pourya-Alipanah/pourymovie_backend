@@ -6,9 +6,11 @@ import databaseConfig from './config/database.config';
 import envValidation from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaginationModule } from './common/pagination/pagination.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { DataResponseInterceptor } from './common/interceptors/data-response/data-response.interceptor';
 import { AuthModule } from './auth/auth.module';
+import { AuthenticationGuard } from './auth/guards/authentication.guard';
+import { AccessTokenGuard } from './auth/guards/access-token.guard';
 
 /**
  * Get the current NODE_ENV
@@ -42,11 +44,15 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
   ],
   providers: [
-    
     {
       provide: APP_INTERCEPTOR,
       useClass: DataResponseInterceptor,
     },
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+    AccessTokenGuard
   ],
 })
 export class AppModule {}
