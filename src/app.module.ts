@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaginationModule } from './common/pagination/pagination.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataResponseInterceptor } from './common/interceptors/data-response/data-response.interceptor';
+import { AuthModule } from './auth/auth.module';
 
 /**
  * Get the current NODE_ENV
@@ -38,6 +39,7 @@ const ENV = process.env.NODE_ENV;
     }),
     UsersModule,
     PaginationModule,
+    AuthModule,
   ],
   providers: [
     

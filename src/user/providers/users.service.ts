@@ -58,7 +58,15 @@ export class UsersService {
     return user;
   }
 
-  public async createUser(){
-    
+  public async findByEmail(email: string) {
+    const user = await this.usersRepository.findOneBy({ email });
+    if (!user) {
+      throw new NotFoundException({
+        message: 'User not found',
+      });
+    }
+    return user;
   }
+
+  public async createUser() {}
 }
