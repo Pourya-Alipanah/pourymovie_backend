@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SignInProvider } from './sign-in.provider';
 import { RefreshTokenGeneratorProvider } from './refresh-token-generator.provider';
 import { SignInDto } from '../dtos/sign-in.dto';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,9 @@ export class AuthService {
     return this.signInProvider.signIn(signInDto);
   }
 
-  public async refreshToken(userId: number, refreshToken: string) {
-    throw new Error('Method not implemented.');
+  public async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    return await this.refreshTokenGeneratorProvider.refreshTokens(
+      refreshTokenDto,
+    );
   }
 }
