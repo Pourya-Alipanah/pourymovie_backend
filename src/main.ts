@@ -4,6 +4,13 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+
+/**
+ * bootstrap
+ * @description This function is responsible for bootstrapping the application.
+ * It creates the application and sets up the global configuration.
+ * It also sets up the Swagger documentation and enables CORS.
+ */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -29,11 +36,19 @@ async function bootstrap() {
     .setDescription('Use the base API URL as http://localhost:1406/api/v1')
     .setVersion('1.0')
     .addServer('http://localhost:1406/api/v1')
+    .addBearerAuth(
+    {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    },
+    'access-token',
+  )
     .build();
 
   // Instantiate Document
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('apiDocs', app, document);
+  SwaggerModule.setup('api/v1/apiDocs', app, document);
 
   /**
    * Enable CORS for all routes

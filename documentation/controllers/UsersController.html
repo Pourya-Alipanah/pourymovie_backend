@@ -117,6 +117,13 @@
 
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Controller for managing users</p>
+
+            </p>
 
 
 
@@ -135,6 +142,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
@@ -167,6 +175,7 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
+                            <span class="modifier"></span>
                             <span class="modifier">Public</span>
                         <span ><b>getUsers</b></span>
                         <a href="#getUsers"><span class="icon ion-ios-link"></span></a>
@@ -176,7 +185,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getUsers()</code>
+                    <code>getUsers(usersQuery?: <a href="../classes/PaginationQueryDto.html" target="_self">PaginationQueryDto</a>)</code>
                 </td>
             </tr>
 
@@ -184,25 +193,60 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Get()<br />@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiResponse({status: 200, description: &#x27;Users fetched successfully based on the query&#x27;})<br /></code>
+                    <code>@Get()<br />@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiOkResponse({description: &#x27;Users fetched successfully based on the query&#x27;, type: GetUsersResponseDto})<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="16"
-                                    class="link-to-prism">src/user/users.controller.ts:16</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/user/users.controller.ts:33</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Fetches a list of registered users on the application</p>
+</div>
 
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>usersQuery</td>
+                                            <td>
+                                                            <code><a href="../classes/PaginationQueryDto.html" target="_self" >PaginationQueryDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>{ name: string; age: number; email: string; }</code>
+                            <b>Returns : </b>        <code><a href="../classes/GetUsersResponseDto.html" target="_self" >Promise&lt;GetUsersResponseDto&gt;</a></code>
 
                         </div>
+                            <div class="io-description">
+                                <ul>
+<li>Returns an object containing user details</li>
+</ul>
+
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -211,27 +255,42 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get } from &#x27;@nestjs/common&#x27;;
-import { ApiOperation, ApiResponse, ApiTags } from &#x27;@nestjs/swagger&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Query } from &#x27;@nestjs/common&#x27;;
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from &#x27;@nestjs/swagger&#x27;;
+import { GetUsersResponseDto } from &#x27;./dtos/response/get-users.dto&#x27;;
+import { UsersService } from &#x27;./providers/users.service&#x27;;
+import { PaginationQueryDto } from &#x27;src/common/pagination/dtos/pagination.dto&#x27;;
 
+/**
+ * Controller for managing users
+ * @class UsersController
+ * @version 1
+ * @description This controller handles user-related operations such as fetching user details.
+ */
 @Controller({ path: &#x27;users&#x27;, version: &#x27;1&#x27; })
 @ApiTags(&#x27;Users&#x27;)
 export class UsersController {
+  constructor(
+    // inject user service
+    private readonly userService: UsersService,
+  ) {}
+  /**
+   * Fetches a list of registered users on the application
+   * @returns {object} - Returns an object containing user details
+   */
   @Get()
   @ApiOperation({
     summary: &#x27;Fetches a list of registered users on the application&#x27;,
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: &#x27;Users fetched successfully based on the query&#x27;,
+    type: GetUsersResponseDto,
   })
-
-  public getUsers() {
-    return {
-      name: &#x27;John Doe&#x27;,
-      age: 30,
-      email: &#x27;&#x27;,
-    };
+  @ApiBearerAuth(&#x27;access-token&#x27;)
+  public getUsers(
+    @Query() usersQuery?: PaginationQueryDto,
+  ): Promise&lt;GetUsersResponseDto&gt; {
+    return this.userService.findAllUsers(usersQuery);
   }
 }
 </code></pre>

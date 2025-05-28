@@ -123,6 +123,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>It provides a way to validate and transform the query parameters.</p>
+
+            </p>
 
 
 
@@ -207,10 +214,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/common/pagination/dtos/pagination.dto.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/common/pagination/dtos/pagination.dto.ts:27</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The position of the page number that you want the API to return</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -247,10 +260,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/common/pagination/dtos/pagination.dto.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/common/pagination/dtos/pagination.dto.ts:42</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The number of entries returned per query</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -266,11 +285,22 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ApiPropertyOptional } from &#x27;@nestjs/swagger&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ApiProperty, ApiPropertyOptional } from &#x27;@nestjs/swagger&#x27;;
 import { Type } from &#x27;class-transformer&#x27;;
 import { IsOptional, IsPositive } from &#x27;class-validator&#x27;;
+import { PaginatedResponse } from &#x27;../interfaces/pagination.interface&#x27;;
+
+/**
+ * @class PaginationQueryDto
+ * @description This class is responsible for handling pagination query parameters.
+ * It provides a way to validate and transform the query parameters.
+ */
 
 export class PaginationQueryDto {
+  /**
+   * @description
+   * The position of the page number that you want the API to return
+   */
   @IsOptional()
   @IsPositive()
   @Type(() &#x3D;&gt; Number)
@@ -283,6 +313,10 @@ export class PaginationQueryDto {
   })
   page?: number;
 
+  /**
+   * @description
+   * The number of entries returned per query
+   */
   @IsOptional()
   @IsPositive()
   @Type(() &#x3D;&gt; Number)
@@ -293,6 +327,80 @@ export class PaginationQueryDto {
     example: 10,
   })
   size?: number;
+}
+
+/**
+ * @class PaginationResponseDto
+ * @description This class is responsible for handling pagination response.
+ * It provides a way to validate and transform the response data.
+ */
+export class PaginationResponseDto&lt;T&gt; implements PaginatedResponse&lt;T&gt; {
+  /**
+   * @description
+   * The paginated property indicates whether the data is paginated or not.
+   * this is not a part of the response
+   * @type {boolean}
+   */
+  paginated: true;
+
+  /**
+   * @description
+   * The data property contains the paginated data.
+   * @type {T[]}
+   */
+  @ApiProperty({
+    description: &#x27;The data property contains the paginated data&#x27;,
+    type: &#x27;array&#x27;,
+    items: { type: &#x27;object&#x27; },
+  })
+  data: T[];
+
+  /**
+   * @description
+   * The meta property contains information about the pagination.
+   * @type {object}
+   */
+  @ApiProperty({
+    description: &#x27;The meta property contains information about the pagination&#x27;,
+    type: &#x27;object&#x27;,
+    properties: {
+      itemsPerPage: { type: &#x27;number&#x27; },
+      totalItems: { type: &#x27;number&#x27; },
+      currentPage: { type: &#x27;number&#x27; },
+      totalPages: { type: &#x27;number&#x27; },
+    },
+  })
+  meta: {
+    itemsPerPage: number;
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+  };
+
+  /**
+   * @description
+   * The links property contains information about the pagination links.
+   * @type {object}
+   */
+  @ApiProperty({
+    description:
+      &#x27;The links property contains information about the pagination links&#x27;,
+    type: &#x27;object&#x27;,
+    properties: {
+      first: { type: &#x27;string&#x27; },
+      previous: { type: &#x27;string&#x27; },
+      current: { type: &#x27;string&#x27; },
+      next: { type: &#x27;string&#x27; },
+      last: { type: &#x27;string&#x27; },
+    },
+  })
+  links: {
+    first: string;
+    previous: string | null;
+    current: string | null;
+    next: string | null;
+    last: string;
+  };
 }
 </code></pre>
     </div>

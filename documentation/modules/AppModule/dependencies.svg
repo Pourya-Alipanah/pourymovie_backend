@@ -22,57 +22,41 @@
 <text text-anchor="start" x="429.73" y="-15.4" font-family="Times-12" font-size="14.00"> &#160;Exports</text>
 <g id="clust1" class="cluster">
 <title>cluster_AppModule</title>
-<polygon fill="none" stroke="black" stroke-dasharray="1,5" points="24.5,-70 24.5,-195 471.5,-195 471.5,-70 24.5,-70"/>
+<polygon fill="none" stroke="black" stroke-dasharray="1,5" points="117.5,-70 117.5,-195 378.5,-195 378.5,-70 117.5,-70"/>
 </g>
 <g id="clust3" class="cluster">
 <title>cluster_AppModule_imports</title>
-<polygon fill="none" stroke="black" points="218.5,-78 218.5,-130 463.5,-130 463.5,-78 218.5,-78"/>
-</g>
-<g id="clust6" class="cluster">
-<title>cluster_AppModule_providers</title>
-<polygon fill="none" stroke="black" points="32.5,-78 32.5,-130 210.5,-130 210.5,-78 32.5,-78"/>
+<polygon fill="none" stroke="black" points="125.5,-78 125.5,-130 370.5,-130 370.5,-78 125.5,-78"/>
 </g>
 <!-- PaginationModule -->
 <g id="node1" class="node">
 <title>PaginationModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="455.43,-122 452.43,-126 431.43,-126 428.43,-122 335.57,-122 335.57,-86 455.43,-86 455.43,-122"/>
-<text text-anchor="middle" x="395.5" y="-99.8" font-family="Times,serif" font-size="14.00">PaginationModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="362.43,-122 359.43,-126 338.43,-126 335.43,-122 242.57,-122 242.57,-86 362.43,-86 362.43,-122"/>
+<text text-anchor="middle" x="302.5" y="-99.8" font-family="Times,serif" font-size="14.00">PaginationModule</text>
 </g>
 <!-- AppModule -->
 <g id="node3" class="node">
 <title>AppModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="314.16,-187 311.16,-191 290.16,-191 287.16,-187 230.84,-187 230.84,-151 314.16,-151 314.16,-187"/>
-<text text-anchor="middle" x="272.5" y="-164.8" font-family="Times,serif" font-size="14.00">AppModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="282.16,-187 279.16,-191 258.16,-191 255.16,-187 198.84,-187 198.84,-151 282.16,-151 282.16,-187"/>
+<text text-anchor="middle" x="240.5" y="-164.8" font-family="Times,serif" font-size="14.00">AppModule</text>
 </g>
 <!-- PaginationModule&#45;&gt;AppModule -->
 <g id="edge1" class="edge">
 <title>PaginationModule&#45;&gt;AppModule</title>
-<path fill="none" stroke="black" d="M395.5,-122.11C395.5,-141.34 395.5,-169 395.5,-169 395.5,-169 324.49,-169 324.49,-169"/>
-<polygon fill="black" stroke="black" points="324.49,-165.5 314.49,-169 324.49,-172.5 324.49,-165.5"/>
+<path fill="none" stroke="black" d="M262.56,-122.11C262.56,-122.11 262.56,-140.99 262.56,-140.99"/>
+<polygon fill="black" stroke="black" points="259.06,-140.99 262.56,-150.99 266.06,-140.99 259.06,-140.99"/>
 </g>
 <!-- UsersModule -->
 <g id="node2" class="node">
 <title>UsersModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="318.42,-122 315.42,-126 294.42,-126 291.42,-122 226.58,-122 226.58,-86 318.42,-86 318.42,-122"/>
-<text text-anchor="middle" x="272.5" y="-99.8" font-family="Times,serif" font-size="14.00">UsersModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="225.42,-122 222.42,-126 201.42,-126 198.42,-122 133.58,-122 133.58,-86 225.42,-86 225.42,-122"/>
+<text text-anchor="middle" x="179.5" y="-99.8" font-family="Times,serif" font-size="14.00">UsersModule</text>
 </g>
 <!-- UsersModule&#45;&gt;AppModule -->
 <g id="edge2" class="edge">
 <title>UsersModule&#45;&gt;AppModule</title>
-<path fill="none" stroke="black" d="M272.5,-122.11C272.5,-122.11 272.5,-140.99 272.5,-140.99"/>
-<polygon fill="black" stroke="black" points="269,-140.99 272.5,-150.99 276,-140.99 269,-140.99"/>
-</g>
-<!-- PaginationService -->
-<g id="node4" class="node">
-<title>PaginationService</title>
-<ellipse fill="#fdb462" stroke="black" cx="121.5" cy="-104" rx="81.1" ry="18"/>
-<text text-anchor="middle" x="121.5" y="-99.8" font-family="Times,serif" font-size="14.00">PaginationService</text>
-</g>
-<!-- PaginationService&#45;&gt;AppModule -->
-<g id="edge3" class="edge">
-<title>PaginationService&#45;&gt;AppModule</title>
-<path fill="none" stroke="black" d="M121.5,-122.11C121.5,-141.34 121.5,-169 121.5,-169 121.5,-169 220.84,-169 220.84,-169"/>
-<polygon fill="black" stroke="black" points="220.84,-172.5 230.84,-169 220.84,-165.5 220.84,-172.5"/>
+<path fill="none" stroke="black" d="M211.94,-122.11C211.94,-122.11 211.94,-140.99 211.94,-140.99"/>
+<polygon fill="black" stroke="black" points="208.44,-140.99 211.94,-150.99 215.44,-140.99 208.44,-140.99"/>
 </g>
 </g>
 </svg>
