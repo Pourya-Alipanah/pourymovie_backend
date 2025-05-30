@@ -1,8 +1,26 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './providers/auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { UsersService } from 'src/user/providers/users.service';
+import { CreateUserDto } from 'src/user/dtos/request/create-user.dto';
+import { Auth } from './decorators/auth.decorator';
+import { AuthType } from './enums/auth-type.enum';
+import { ApiSingleResponse } from 'src/common/decorators/single-response.decorator';
+import { AuthResponseDto } from './dtos/auth-response.dto';
+import { Request, Response } from 'express';
+import { SetCookieProvider } from './providers/set-cookie.provider';
+import { REFRESH_TOKEN_COOKIE_NAME } from './constants/auth.constants';
 
 /**
  * Controller for handling authentication-related operations
@@ -14,28 +32,79 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
   /**
-   * AuthController
-   * @description This controller is responsible for handling authentication-related operations.
-   * It provides endpoints for signing in and managing tokens.
+   * @constructor
    * @param {AuthService} authService - Service for handling authentication logic
+   * @param {UsersService} usersService - Service for handling user-related logic
+   * @param {SetCookieProvider} setCookieProvider - Provider for setting cookies in HTTP responses
+   * @description Initializes the AuthController with necessary services.
    * @returns {AuthController} - Returns an instance of AuthController
    */
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+    private readonly setCookieProvider: SetCookieProvider,
+  ) {}
 
   /**
    * Endpoint for user sign-in
    * @param {SignInDto} signInDto - Data transfer object containing user email and password
    * @returns {Promise<object>} - Returns a promise that resolves to an object containing access and refresh tokens
    */
-  @Post('sign-in')
+  @ApiSingleResponse(AuthResponseDto)
+  @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
-  public async signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto);
+  @Post('sign-in')
+  public async signIn(
+    @Res({ passthrough: true }) res: Response,
+    @Body() signInDto: SignInDto,
+  ) {
+    const { accessToken, refreshToken } =
+      await this.authService.signIn(signInDto);
+
+    this.setCookieProvider.setRefreshToken(refreshToken, res);
+    return { accessToken };
   }
 
+  /**
+   * Endpoint for user sign-up
+   * @param {CreateUserDto} createUserDto - Data transfer object containing user details for registration
+   * @returns {Promise<object>} - Returns a promise that resolves to the created user object
+   * @description This endpoint allows users to register by providing their details.
+   */
+  @ApiSingleResponse(AuthResponseDto)
+  @Auth(AuthType.None)
+  @Post('sign-up')
+  public async signUp(
+    @Res({ passthrough: true }) res: Response,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    const { accessToken, refreshToken } =
+      await this.usersService.createUser(createUserDto);
+
+    this.setCookieProvider.setRefreshToken(refreshToken, res);
+    return { accessToken };
+  }
+
+  /**
+   * Endpoint for refresh tokens
+   * @returns {Promise<object>} - Returns a promise that resolves to an object containing new access and refresh tokens
+   * @description This endpoint allows users to refresh their access tokens using a valid refresh token.
+   */
+  @ApiSingleResponse(AuthResponseDto)
   @HttpCode(HttpStatus.OK)
-  @Post('refresh-tokens')
-  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshTokens(refreshTokenDto);
+  @Auth(AuthType.None)
+  @Get('refresh-tokens')
+  public async refreshTokens(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+    
+    const { accessToken, refreshToken:refreshTokenResponse } =
+      await this.authService.refreshTokens({refreshToken});
+
+    this.setCookieProvider.setRefreshToken(refreshTokenResponse, res);
+
+    return { accessToken };
   }
 }

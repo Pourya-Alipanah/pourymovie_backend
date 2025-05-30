@@ -72,6 +72,7 @@ export class User {
   @UpdateDateColumn()
   updateAt: Date | null;
 
+  @Exclude()
   @DeleteDateColumn()
   deletedAt: Date | null;
 

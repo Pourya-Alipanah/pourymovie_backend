@@ -146,6 +146,34 @@
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Public</span>
+                                <a href="#deleteUser" >deleteUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Public</span>
+                                <a href="#getCurrentUser" >getCurrentUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Public</span>
+                                <a href="#getUserById" >getUserById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                     <span class="modifier">Public</span>
                                 <a href="#getUsers" >getUsers</a>
                             </li>
@@ -170,8 +198,278 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="deleteUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Public</span>
+                        <span ><b>deleteUser</b></span>
+                        <a href="#deleteUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteUser(activeUser: <a href="../entitys/User.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiOperation({summary: &#x27;Deletes current user account&#x27;, description: &#x27;This endpoint allows the current user to delete their account. it soft remove the user from the database.&#x27;})<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@HttpCode(HttpStatus.NO_CONTENT)<br />@Delete()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/user/users.controller.ts:117</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Deletes the current user account</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activeUser</td>
+                                            <td>
+                                                            <code><a href="../entitys/User.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCurrentUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Public</span>
+                        <span ><b>getCurrentUser</b></span>
+                        <a href="#getCurrentUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getCurrentUser(activeUser: <a href="../entitys/User.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiOperation({summary: &#x27;Fetches current user details&#x27;})<br />@ApiSingleResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@Get(&#x27;/current&#x27;)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/user/users.controller.ts:78</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches the current authenticated user</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activeUser</td>
+                                            <td>
+                                                            <code><a href="../entitys/User.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>Decorator to get the active user from the request</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/User.html" target="_self" >Promise&lt;User&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <ul>
+<li>Returns the current authenticated user</li>
+</ul>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserById"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Public</span>
+                        <span ><b>getUserById</b></span>
+                        <a href="#getUserById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserById(getUserDto: <a href="../classes/GetSingleUserDto.html" target="_self">GetSingleUserDto</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiOperation({summary: &#x27;Fetches a user by their ID&#x27;})<br />@ApiSingleResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@Get(&#x27;:id&#x27;)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="98"
+                                    class="link-to-prism">src/user/users.controller.ts:98</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches a user by their ID</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>getUserDto</td>
+                                            <td>
+                                                            <code><a href="../classes/GetSingleUserDto.html" target="_self" >GetSingleUserDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>DTO containing the user ID</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/User.html" target="_self" >Promise&lt;User&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <ul>
+<li>Returns a promise that resolves to the user object</li>
+</ul>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getUsers"></a>
                     <span class="name">
+                            <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
@@ -193,14 +491,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Get()<br />@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiOkResponse({description: &#x27;Users fetched successfully based on the query&#x27;, type: GetUsersResponseDto})<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br /></code>
+                    <code>@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiPaginatedResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@Get()<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">src/user/users.controller.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/user/users.controller.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -255,11 +553,31 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Query } from &#x27;@nestjs/common&#x27;;
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from &#x27;@nestjs/swagger&#x27;;
-import { GetUsersResponseDto } from &#x27;./dtos/response/get-users.dto&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+} from &#x27;@nestjs/common&#x27;;
+import { ApiBearerAuth, ApiOperation, ApiTags } from &#x27;@nestjs/swagger&#x27;;
+import {
+  GetUsersDto,
+  GetUsersResponseDto,
+} from &#x27;./dtos/response/get-users.dto&#x27;;
 import { UsersService } from &#x27;./providers/users.service&#x27;;
 import { PaginationQueryDto } from &#x27;src/common/pagination/dtos/pagination.dto&#x27;;
+import { ApiPaginatedResponse } from &#x27;src/common/decorators/paginated-response.decorator&#x27;;
+import { SingleResponseDto } from &#x27;src/common/interceptors/data-response/dtos/single-response.dto&#x27;;
+import { ApiSingleResponse } from &#x27;src/common/decorators/single-response.decorator&#x27;;
+import { GetSingleUserDto } from &#x27;./dtos/request/get-single-user.dto&#x27;;
+import { User } from &#x27;./user.entity&#x27;;
+import { Auth } from &#x27;src/auth/decorators/auth.decorator&#x27;;
+import { AuthType } from &#x27;src/auth/enums/auth-type.enum&#x27;;
+import { ActiveUser } from &#x27;src/auth/decorators/active-user.decorator&#x27;;
 
 /**
  * Controller for managing users
@@ -269,28 +587,90 @@ import { PaginationQueryDto } from &#x27;src/common/pagination/dtos/pagination.d
  */
 @Controller({ path: &#x27;users&#x27;, version: &#x27;1&#x27; })
 @ApiTags(&#x27;Users&#x27;)
+@Auth(AuthType.Bearer)
 export class UsersController {
+  /**
+   * UsersController
+   * @description This controller is responsible for handling user-related operations.
+   * It provides endpoints to fetch a list of users and a single user by ID.
+   * @param {UsersService} userService - Service for handling user-related logic
+   * @returns {UsersController} - Returns an instance of UsersController
+   */
   constructor(
     // inject user service
     private readonly userService: UsersService,
   ) {}
+
   /**
    * Fetches a list of registered users on the application
    * @returns {object} - Returns an object containing user details
    */
-  @Get()
   @ApiOperation({
     summary: &#x27;Fetches a list of registered users on the application&#x27;,
   })
-  @ApiOkResponse({
-    description: &#x27;Users fetched successfully based on the query&#x27;,
-    type: GetUsersResponseDto,
-  })
+  @ApiPaginatedResponse(GetUsersDto)
   @ApiBearerAuth(&#x27;access-token&#x27;)
+  @Auth(AuthType.Bearer)
+  @Get()
   public getUsers(
     @Query() usersQuery?: PaginationQueryDto,
   ): Promise&lt;GetUsersResponseDto&gt; {
     return this.userService.findAllUsers(usersQuery);
+  }
+  
+  /**
+   * Fetches the current authenticated user
+   * @param {ActiveUser} activeUser - Decorator to get the active user from the request
+   * @returns {Promise&lt;User&gt;} - Returns the current authenticated user
+   */
+  @ApiOperation({
+    summary: &#x27;Fetches current user details&#x27;,
+  })
+  @ApiSingleResponse(GetUsersDto)
+  @ApiBearerAuth(&#x27;access-token&#x27;)
+  @Auth(AuthType.Bearer)
+  @Get(&#x27;/current&#x27;)
+  public getCurrentUser(
+    @ActiveUser() activeUser: ActiveUserData,
+  ): Promise&lt;User&gt; {
+    console.log(activeUser.sub);
+    
+    return this.userService.findUserById(activeUser.sub);
+  }
+
+  /**
+   * Fetches a user by their ID
+   * @param {GetSingleUserDto} getUserDto - DTO containing the user ID
+   * @returns {Promise&lt;User&gt;} - Returns a promise that resolves to the user object
+   */
+  @ApiOperation({
+    summary: &#x27;Fetches a user by their ID&#x27;,
+  })
+  @ApiSingleResponse(GetUsersDto)
+  @ApiBearerAuth(&#x27;access-token&#x27;)
+  @Auth(AuthType.Bearer)
+  @Get(&#x27;:id&#x27;)
+  public getUserById(@Param() getUserDto: GetSingleUserDto): Promise&lt;User&gt; {
+    return this.userService.findUserById(getUserDto.id);
+  }
+
+
+  /**
+   * Deletes the current user account
+   * @description This endpoint allows the current user to delete their account. It soft removes the user from the database.
+   * @returns {void}
+   */
+  @ApiOperation({
+    summary: &#x27;Deletes current user account&#x27;,
+    description:
+      &#x27;This endpoint allows the current user to delete their account. it soft remove the user from the database.&#x27;,
+  })
+  @ApiBearerAuth(&#x27;access-token&#x27;)
+  @Auth(AuthType.Bearer)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete()
+  public deleteUser(@ActiveUser() activeUser: ActiveUserData) {
+    return this.userService.deleteUser(activeUser.sub);
   }
 }
 </code></pre>

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './user/users.module';
 import appConfig from './config/app.config';
@@ -6,11 +6,13 @@ import databaseConfig from './config/database.config';
 import envValidation from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaginationModule } from './common/pagination/pagination.module';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { DataResponseInterceptor } from './common/interceptors/data-response/data-response.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import jwtConfig from './auth/config/jwt.config';
+import { JwtModule } from '@nestjs/jwt';
 
 /**
  * Get the current NODE_ENV
@@ -39,6 +41,8 @@ const ENV = process.env.NODE_ENV;
         database: configService.get('database.name'),
       }),
     }),
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
     UsersModule,
     PaginationModule,
     AuthModule,
@@ -52,6 +56,13 @@ const ENV = process.env.NODE_ENV;
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
     },
+    {
+    provide: APP_INTERCEPTOR,
+    useFactory: (reflector: Reflector) => {
+      return new ClassSerializerInterceptor(reflector);
+    },
+    inject: [Reflector],
+  },
     AccessTokenGuard
   ],
 })

@@ -144,6 +144,7 @@
                             </li>
                             <li>
                                     <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                 <a href="#deletedAt" >deletedAt</a>
                             </li>
                             <li>
@@ -246,6 +247,7 @@
                     <a name="deletedAt"></a>
                     <span class="name">
                             <span class="modifier"></span>
+                            <span class="modifier"></span>
                         <span ><b>deletedAt</b></span>
                         <a href="#deletedAt"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -262,13 +264,13 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @DeleteDateColumn()<br />
+                            @Exclude()<br />@DeleteDateColumn()<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/user/user.entity.ts:76</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/user/user.entity.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -376,7 +378,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/user/user.entity.ts:90</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/user/user.entity.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -522,7 +524,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/user/user.entity.ts:80</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/user/user.entity.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -559,7 +561,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/user/user.entity.ts:84</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/user/user.entity.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -681,6 +683,7 @@ export class User {
   @UpdateDateColumn()
   updateAt: Date | null;
 
+  @Exclude()
   @DeleteDateColumn()
   deletedAt: Date | null;
 
