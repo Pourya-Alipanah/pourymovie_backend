@@ -10,6 +10,7 @@ import { UsersModule } from 'src/user/users.module';
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { SetCookieProvider } from './providers/set-cookie.provider';
 
 @Module({
   controllers: [AuthController],
@@ -22,12 +23,13 @@ import { JwtModule } from '@nestjs/jwt';
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
+    SetCookieProvider,
   ],
   imports: [
     forwardRef(() => UsersModule),
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
-  exports: [AuthService, HashingProvider],
+  exports: [AuthService, HashingProvider, TokenGeneratorProvider],
 })
 export class AuthModule {}

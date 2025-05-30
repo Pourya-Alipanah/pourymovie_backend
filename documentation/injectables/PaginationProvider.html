@@ -246,8 +246,8 @@ Designed to be used per HTTP request.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="54"
-                                    class="link-to-prism">src/common/pagination/providers/pagination.provider.ts:54</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/common/pagination/providers/pagination.provider.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -319,8 +319,8 @@ Designed to be used per HTTP request.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="27"
-                                    class="link-to-prism">src/common/pagination/providers/pagination.provider.ts:27</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="25"
+                                    class="link-to-prism">src/common/pagination/providers/pagination.provider.ts:25</a></div>
                         </td>
                     </tr>
 
@@ -386,19 +386,17 @@ import { Request } from &#x27;express&#x27;;
 import { PaginationQueryDto } from &#x27;../dtos/pagination.dto&#x27;;
 import { PaginatiedPageMetaData } from &#x27;../interfaces/pagination.interface&#x27;;
 
-
 /**
  * Provider for building pagination metadata and navigation links for paginated API responses.
  * Designed to be used per HTTP request.
  */
-@Injectable({ scope: Scope.REQUEST })export class PaginationProvider {
+@Injectable({ scope: Scope.REQUEST })
+export class PaginationProvider {
   /**
    * Injects the current HTTP request object.
    * @param request The current Express request instance.
    */
-  constructor(
-    @Inject(REQUEST) private readonly request: Request,
-  ) {}
+  constructor(@Inject(REQUEST) private readonly request: Request) {}
 
   /**
    * build meta link

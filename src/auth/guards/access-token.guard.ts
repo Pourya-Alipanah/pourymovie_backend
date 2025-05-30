@@ -19,6 +19,12 @@ import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
  */
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
+  /**
+   * @constructor
+   * Initializes the AccessTokenGuard with JwtService and JWT configuration
+   * @param {JwtService} jwtService - Service to handle JWT operations
+   * @param {ConfigType<typeof jwtConfig>} jwtConfiguration - Configuration for JWT, injected from the jwtConfig module
+   */
   constructor(
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)

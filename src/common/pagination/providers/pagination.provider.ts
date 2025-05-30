@@ -4,19 +4,17 @@ import { Request } from 'express';
 import { PaginationQueryDto } from '../dtos/pagination.dto';
 import { PaginatiedPageMetaData } from '../interfaces/pagination.interface';
 
-
 /**
  * Provider for building pagination metadata and navigation links for paginated API responses.
  * Designed to be used per HTTP request.
  */
-@Injectable({ scope: Scope.REQUEST })export class PaginationProvider {
+@Injectable({ scope: Scope.REQUEST })
+export class PaginationProvider {
   /**
    * Injects the current HTTP request object.
    * @param request The current Express request instance.
    */
-  constructor(
-    @Inject(REQUEST) private readonly request: Request,
-  ) {}
+  constructor(@Inject(REQUEST) private readonly request: Request) {}
 
   /**
    * build meta link
