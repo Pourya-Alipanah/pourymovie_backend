@@ -13,6 +13,10 @@ import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import jwtConfig from './auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { TitlesModule } from './titles/titles.module';
+import { LanguagesModule } from './languages/languages.module';
+import { CountriesModule } from './countries/countries.module';
+import { PeopleModule } from './people/people.module';
 
 /**
  * Get the current NODE_ENV
@@ -46,6 +50,10 @@ const ENV = process.env.NODE_ENV;
     UsersModule,
     PaginationModule,
     AuthModule,
+    TitlesModule,
+    PeopleModule,
+    CountriesModule,
+    LanguagesModule,
   ],
   providers: [
     {
@@ -57,13 +65,13 @@ const ENV = process.env.NODE_ENV;
       useClass: AuthenticationGuard,
     },
     {
-    provide: APP_INTERCEPTOR,
-    useFactory: (reflector: Reflector) => {
-      return new ClassSerializerInterceptor(reflector);
+      provide: APP_INTERCEPTOR,
+      useFactory: (reflector: Reflector) => {
+        return new ClassSerializerInterceptor(reflector);
+      },
+      inject: [Reflector],
     },
-    inject: [Reflector],
-  },
-    AccessTokenGuard
+    AccessTokenGuard,
   ],
 })
 export class AppModule {}
