@@ -27,10 +27,10 @@ export class PaginationService {
    * @param size
    * @param queryBuilder
    */
-  public async paginated<T extends ObjectLiteral>(
+  public async paginated<T extends ObjectLiteral , I>(
     queryBuilder: SelectQueryBuilder<T>,
     paginationQuery?: PaginationQueryDto,
-  ): Promise<PaginatedResponse<T>> {
+  ): Promise<PaginatedResponse<I>> {
     const { page = 1, size = 10 } = paginationQuery || {};
     /**
      * build the query
@@ -50,6 +50,6 @@ export class PaginationService {
       total,
     });
 
-    return { data, paginated: true, ...metaData };
+    return { data: data as unknown as I[], paginated: true, ...metaData };
   }
 }

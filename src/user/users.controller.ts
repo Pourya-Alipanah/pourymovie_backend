@@ -16,7 +16,6 @@ import {
 import { UsersService } from './providers/users.service';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { ApiPaginatedResponse } from 'src/common/decorators/paginated-response.decorator';
-import { SingleResponseDto } from 'src/common/interceptors/data-response/dtos/single-response.dto';
 import { ApiSingleResponse } from 'src/common/decorators/single-response.decorator';
 import { GetSingleUserDto } from './dtos/request/get-single-user.dto';
 import { User } from './user.entity';
@@ -55,7 +54,6 @@ export class UsersController {
   })
   @ApiPaginatedResponse(GetUsersDto)
   @ApiBearerAuth('access-token')
-  @Auth(AuthType.Bearer)
   @Get()
   public getUsers(
     @Query() usersQuery?: PaginationQueryDto,
@@ -73,7 +71,6 @@ export class UsersController {
   })
   @ApiSingleResponse(GetUsersDto)
   @ApiBearerAuth('access-token')
-  @Auth(AuthType.Bearer)
   @Get('/current')
   public getCurrentUser(
     @ActiveUser() activeUser: ActiveUserData,
@@ -93,7 +90,6 @@ export class UsersController {
   })
   @ApiSingleResponse(GetUsersDto)
   @ApiBearerAuth('access-token')
-  @Auth(AuthType.Bearer)
   @Get(':id')
   public getUserById(@Param() getUserDto: GetSingleUserDto): Promise<User> {
     return this.userService.findUserById(getUserDto.id);
@@ -111,7 +107,6 @@ export class UsersController {
       'This endpoint allows the current user to delete their account. it soft remove the user from the database.',
   })
   @ApiBearerAuth('access-token')
-  @Auth(AuthType.Bearer)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   public deleteUser(@ActiveUser() activeUser: ActiveUserData) {

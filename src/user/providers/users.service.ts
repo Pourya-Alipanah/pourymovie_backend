@@ -66,7 +66,7 @@ export class UsersService {
       .createQueryBuilder('user')
       .select();
 
-    const result = await this.paginationService.paginated<GetUsersDto>(
+    const result = await this.paginationService.paginated<User, GetUsersDto>(
       queryBuilder,
       params,
     );

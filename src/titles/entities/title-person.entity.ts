@@ -21,7 +21,7 @@ export class TitlePerson {
   })
   role: PersonRole
 
-  @ManyToOne(() => Title, (title) => title.titlePersons, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Title, (title) => title.people, { onDelete: 'CASCADE' })
   title: Title;
 
   @ManyToOne(() => Person, (person) => person.titlePersons, { onDelete: 'CASCADE' })

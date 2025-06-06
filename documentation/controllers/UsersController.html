@@ -146,12 +146,10 @@
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
-                                    <span class="modifier"></span>
                                     <span class="modifier">Public</span>
                                 <a href="#deleteUser" >deleteUser</a>
                             </li>
                             <li>
-                                    <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
@@ -164,12 +162,10 @@
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
-                                    <span class="modifier"></span>
                                     <span class="modifier">Public</span>
                                 <a href="#getUserById" >getUserById</a>
                             </li>
                             <li>
-                                    <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
@@ -204,7 +200,6 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
-                            <span class="modifier"></span>
                             <span class="modifier">Public</span>
                         <span ><b>deleteUser</b></span>
                         <a href="#deleteUser"><span class="icon ion-ios-link"></span></a>
@@ -222,14 +217,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@ApiOperation({summary: &#x27;Deletes current user account&#x27;, description: &#x27;This endpoint allows the current user to delete their account. it soft remove the user from the database.&#x27;})<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@HttpCode(HttpStatus.NO_CONTENT)<br />@Delete()<br /></code>
+                    <code>@ApiOperation({summary: &#x27;Deletes current user account&#x27;, description: &#x27;This endpoint allows the current user to delete their account. it soft remove the user from the database.&#x27;})<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@HttpCode(HttpStatus.NO_CONTENT)<br />@Delete()<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="117"
-                                    class="link-to-prism">src/user/users.controller.ts:117</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/user/users.controller.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -287,7 +282,6 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
-                            <span class="modifier"></span>
                             <span class="modifier">Public</span>
                         <span ><b>getCurrentUser</b></span>
                         <a href="#getCurrentUser"><span class="icon ion-ios-link"></span></a>
@@ -305,14 +299,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@ApiOperation({summary: &#x27;Fetches current user details&#x27;})<br />@ApiSingleResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@Get(&#x27;/current&#x27;)<br /></code>
+                    <code>@ApiOperation({summary: &#x27;Fetches current user details&#x27;})<br />@ApiSingleResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Get(&#x27;/current&#x27;)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="78"
-                                    class="link-to-prism">src/user/users.controller.ts:78</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/user/users.controller.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -380,7 +374,6 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
-                            <span class="modifier"></span>
                             <span class="modifier">Public</span>
                         <span ><b>getUserById</b></span>
                         <a href="#getUserById"><span class="icon ion-ios-link"></span></a>
@@ -398,14 +391,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@ApiOperation({summary: &#x27;Fetches a user by their ID&#x27;})<br />@ApiSingleResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@Get(&#x27;:id&#x27;)<br /></code>
+                    <code>@ApiOperation({summary: &#x27;Fetches a user by their ID&#x27;})<br />@ApiSingleResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Get(&#x27;:id&#x27;)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="98"
-                                    class="link-to-prism">src/user/users.controller.ts:98</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/user/users.controller.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -473,7 +466,6 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
-                            <span class="modifier"></span>
                             <span class="modifier">Public</span>
                         <span ><b>getUsers</b></span>
                         <a href="#getUsers"><span class="icon ion-ios-link"></span></a>
@@ -491,14 +483,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiPaginatedResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Auth(AuthType.Bearer)<br />@Get()<br /></code>
+                    <code>@ApiOperation({summary: &#x27;Fetches a list of registered users on the application&#x27;})<br />@ApiPaginatedResponse(GetUsersDto)<br />@ApiBearerAuth(&#x27;access-token&#x27;)<br />@Get()<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="60"
-                                    class="link-to-prism">src/user/users.controller.ts:60</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">src/user/users.controller.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -571,7 +563,6 @@ import {
 import { UsersService } from &#x27;./providers/users.service&#x27;;
 import { PaginationQueryDto } from &#x27;src/common/pagination/dtos/pagination.dto&#x27;;
 import { ApiPaginatedResponse } from &#x27;src/common/decorators/paginated-response.decorator&#x27;;
-import { SingleResponseDto } from &#x27;src/common/interceptors/data-response/dtos/single-response.dto&#x27;;
 import { ApiSingleResponse } from &#x27;src/common/decorators/single-response.decorator&#x27;;
 import { GetSingleUserDto } from &#x27;./dtos/request/get-single-user.dto&#x27;;
 import { User } from &#x27;./user.entity&#x27;;
@@ -610,7 +601,6 @@ export class UsersController {
   })
   @ApiPaginatedResponse(GetUsersDto)
   @ApiBearerAuth(&#x27;access-token&#x27;)
-  @Auth(AuthType.Bearer)
   @Get()
   public getUsers(
     @Query() usersQuery?: PaginationQueryDto,
@@ -628,7 +618,6 @@ export class UsersController {
   })
   @ApiSingleResponse(GetUsersDto)
   @ApiBearerAuth(&#x27;access-token&#x27;)
-  @Auth(AuthType.Bearer)
   @Get(&#x27;/current&#x27;)
   public getCurrentUser(
     @ActiveUser() activeUser: ActiveUserData,
@@ -648,7 +637,6 @@ export class UsersController {
   })
   @ApiSingleResponse(GetUsersDto)
   @ApiBearerAuth(&#x27;access-token&#x27;)
-  @Auth(AuthType.Bearer)
   @Get(&#x27;:id&#x27;)
   public getUserById(@Param() getUserDto: GetSingleUserDto): Promise&lt;User&gt; {
     return this.userService.findUserById(getUserDto.id);
@@ -666,7 +654,6 @@ export class UsersController {
       &#x27;This endpoint allows the current user to delete their account. it soft remove the user from the database.&#x27;,
   })
   @ApiBearerAuth(&#x27;access-token&#x27;)
-  @Auth(AuthType.Bearer)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   public deleteUser(@ActiveUser() activeUser: ActiveUserData) {

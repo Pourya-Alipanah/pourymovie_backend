@@ -17,6 +17,7 @@ import { TitlePerson } from './title-person.entity';
 import { PersonRole } from 'src/people/enums/person-role.enum';
 import { Language } from 'src/titles/entities/language.entity';
 import { Comment } from 'src/comment/comment.entity';
+import { Exclude, Expose } from 'class-transformer';
 
 /**
  * @Entity
@@ -53,7 +54,7 @@ export class Title {
   @Column({ type: 'int' })
   durationMinutes: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'float', nullable: true })
   imdbRating: number | null;
 
   @Column({ type: 'int', nullable: true })
@@ -91,9 +92,10 @@ export class Title {
    * Returns an array of actors associated with the title.
    * @returns {Person[]}
    */
+  @Expose()
   get actors() {
     return (
-      this.titlePersons
+      this.people
         ?.filter((tp) => tp.role === PersonRole.Actor)
         .map((tp) => tp.person) || []
     );
@@ -103,9 +105,10 @@ export class Title {
    * Returns an array of directors associated with the title.
    * @return {Person[]}
    */
+  @Expose()
   get directors() {
     return (
-      this.titlePersons
+      this.people
         ?.filter((tp) => tp.role === PersonRole.Director)
         .map((tp) => tp.person) || []
     );
@@ -115,9 +118,10 @@ export class Title {
    * Returns an array of writers associated with the title.
    * @return {Person[]}
    */
+  @Expose()
   get writers() {
     return (
-      this.titlePersons
+      this.people
         ?.filter((tp) => tp.role === PersonRole.Writer)
         .map((tp) => tp.person) || []
     );
@@ -136,10 +140,11 @@ export class Title {
   })
   videoLinks: VideoLink[];
 
+  @Exclude()
   @OneToMany(() => TitlePerson, (titlePerson) => titlePerson.title, {
     cascade: true,
   })
-  titlePersons: TitlePerson[];
+  people: TitlePerson[];
 
   @OneToMany(() => Comment, (comment) => comment.title)
   comments: Comment[];

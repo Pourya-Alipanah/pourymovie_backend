@@ -8,7 +8,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './providers/auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
@@ -30,6 +30,7 @@ import { REFRESH_TOKEN_COOKIE_NAME } from './constants/auth.constants';
  */
 @ApiTags('auth')
 @Controller({ path: 'auth', version: '1' })
+@Auth(AuthType.None)
 export class AuthController {
   /**
    * @constructor
@@ -51,7 +52,6 @@ export class AuthController {
    * @returns {Promise<object>} - Returns a promise that resolves to an object containing access and refresh tokens
    */
   @ApiSingleResponse(AuthResponseDto)
-  @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   public async signIn(
@@ -72,7 +72,6 @@ export class AuthController {
    * @description This endpoint allows users to register by providing their details.
    */
   @ApiSingleResponse(AuthResponseDto)
-  @Auth(AuthType.None)
   @Post('sign-up')
   public async signUp(
     @Res({ passthrough: true }) res: Response,
@@ -92,7 +91,8 @@ export class AuthController {
    */
   @ApiSingleResponse(AuthResponseDto)
   @HttpCode(HttpStatus.OK)
-  @Auth(AuthType.None)
+  @Auth(AuthType.Bearer)
+  @ApiBearerAuth('access-token')
   @Get('refresh-tokens')
   public async refreshTokens(
     @Req() req: Request,
