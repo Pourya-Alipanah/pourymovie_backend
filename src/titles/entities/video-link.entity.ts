@@ -7,18 +7,18 @@ export class VideoLink {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 500 })
   url: string;
 
   @ManyToOne(() => Episode, (episode) => episode.videoLinks, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  episode?: Episode;
+  episode: Episode | null;
 
   @ManyToOne(() => Title, (title) => title.videoLinks, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  title?: Title;
+  title: Title | null;
 }

@@ -8,12 +8,20 @@ import {
 import { Episode } from './episode.entity';
 import { Title } from './title.entity';
 
+/**
+ * @Entity
+ * Represents a season of a title.
+ * This entity contains properties such as season number,
+ * a list of episodes in the season,
+ * a reference to the title it belongs to,
+ */
+
 @Entity()
 export class Season {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'int' })
   seasonNumber: number;
 
   @OneToMany(() => Episode, (episode) => episode.season)
@@ -29,4 +37,7 @@ export class Season {
     default: false,
   })
   specialSeason: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  specialSeasonName: string | null;
 }

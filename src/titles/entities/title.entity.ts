@@ -9,13 +9,22 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Genre } from './genre.entity';
-import { Country } from 'src/countries/country.entity';
+import { Country } from 'src/titles/entities/country.entity';
 import { Season } from './season.entity';
 import { VideoLink } from './video-link.entity';
 import { TitleType } from '../enums/title-type.enum';
 import { TitlePerson } from './title-person.entity';
 import { PersonRole } from 'src/people/enums/person-role.enum';
-import { Language } from 'src/languages/language.entity';
+import { Language } from 'src/titles/entities/language.entity';
+import { Comment } from 'src/comment/comment.entity';
+
+/**
+ * @Entity
+ * Represents a title in the system, which can be a movie, series, or documentary.
+ * This entity contains various properties such as title, release year, duration,
+ * IMDB ratings, and relationships with genres, countries, seasons, video links,
+ * and title persons (actors, directors, writers).
+ */
 
 @Entity()
 export class Title {
@@ -28,41 +37,49 @@ export class Title {
   })
   type: TitleType;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   titleFa: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   @Index()
   titleEn: string;
 
-  @Column()
-  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 120, unique: true })
   slug: string;
 
-  @Column()
+  @Column({ type: 'int' })
   releaseYear: number;
 
-  @Column()
+  @Column({ type: 'int' })
   durationMinutes: number;
 
-  @Column({ type: 'number', nullable: true })
-  imdbRating: number;
+  @Column({ type: 'int', nullable: true })
+  imdbRating: number | null;
 
-  @Column({ nullable: true })
-  imdbVotes: number;
+  @Column({ type: 'int', nullable: true })
+  imdbVotes: number | null;
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   isTop250: boolean;
 
-  @Column({ nullable: true })
-  top250Rank: number;
+  @Column({ type: 'int', nullable: true })
+  top250Rank: number | null;
 
-  @Column({ type: 'text', nullable: true })
-  summary: string;
+  @Column({ type: 'varchar', nullable: true, length: 500 })
+  summary: string | null;
+
+  @Column({ type: 'varchar', length: 10 })
+  ageRating: string;
+
+  @Column({ type: 'boolean', default: false })
+  hasSubtitle: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  awards: string | null;
 
   @ManyToOne(() => Language, (language) => language.titles, {
     onDelete: 'SET NULL',
-    nullable: true,
+    eager: true,
   })
   language: Language;
 
@@ -70,6 +87,10 @@ export class Title {
   @JoinTable()
   genres: Genre[];
 
+  /**
+   * Returns an array of actors associated with the title.
+   * @returns {Person[]}
+   */
   get actors() {
     return (
       this.titlePersons
@@ -78,6 +99,10 @@ export class Title {
     );
   }
 
+  /**
+   * Returns an array of directors associated with the title.
+   * @return {Person[]}
+   */
   get directors() {
     return (
       this.titlePersons
@@ -86,6 +111,10 @@ export class Title {
     );
   }
 
+  /**
+   * Returns an array of writers associated with the title.
+   * @return {Person[]}
+   */
   get writers() {
     return (
       this.titlePersons
@@ -94,26 +123,15 @@ export class Title {
     );
   }
 
-  @ManyToOne(() => Country)
+  @ManyToOne(() => Country, { eager: true })
   country: Country;
 
-  @Column()
-  ageRating: string;
-
-  @Column({ default: false })
-  hasSubtitle: boolean;
-
-  @Column({ nullable: true })
-  awards: string;
-
   @OneToMany(() => Season, (season) => season.title, {
-    nullable: true,
     cascade: true,
   })
   seasons: Season[];
 
   @OneToMany(() => VideoLink, (videoLink) => videoLink.title, {
-    nullable: true,
     cascade: true,
   })
   videoLinks: VideoLink[];
@@ -122,4 +140,7 @@ export class Title {
     cascade: true,
   })
   titlePersons: TitlePerson[];
+
+  @OneToMany(() => Comment, (comment) => comment.title)
+  comments: Comment[];
 }

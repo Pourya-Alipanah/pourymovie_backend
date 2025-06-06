@@ -1,31 +1,38 @@
 import { TitlePerson } from 'src/titles/entities/title-person.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+/**
+ * @Entity
+ * Represents a person in the system, such as an actor, director, or writer.
+ * This entity contains properties such as name in Persian and English,
+ * a unique slug, birth and death dates, birth place, image URL,
+ */
+
 @Entity()
 export class Person {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   nameFa: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   nameEn: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 120, unique: true })
   slug: string;
 
-  @Column({ nullable: true })
-  birthDate: Date;
+  @Column({ type: 'date', nullable: true })
+  birthDate: Date | null;
 
-  @Column({ nullable: true })
-  deathDate: Date;
+  @Column({ type: 'date', nullable: true })
+  deathDate: Date | null;
 
-  @Column({ nullable: true })
-  birthPlace: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  birthPlace: string | null;
 
-  @Column({ nullable: true, length: 500 })
-  imageUrl: string;
+  @Column({ type: 'varchar', nullable: true, length: 500 })
+  imageUrl: string | null;
 
   @OneToMany(() => TitlePerson, (titlePerson) => titlePerson.person)
   titlePersons: TitlePerson[];

@@ -14,9 +14,8 @@ import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import jwtConfig from './auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { TitlesModule } from './titles/titles.module';
-import { LanguagesModule } from './languages/languages.module';
-import { CountriesModule } from './countries/countries.module';
 import { PeopleModule } from './people/people.module';
+import { CommentModule } from './comment/comment.module';
 
 /**
  * Get the current NODE_ENV
@@ -52,8 +51,7 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
     TitlesModule,
     PeopleModule,
-    CountriesModule,
-    LanguagesModule,
+    CommentModule,
   ],
   providers: [
     {

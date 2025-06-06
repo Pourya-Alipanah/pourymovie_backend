@@ -1,10 +1,10 @@
 import { Exclude } from 'class-transformer';
+import { Comment } from 'src/comment/comment.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -89,6 +89,9 @@ export class User {
     default: false,
   })
   hasSubscription: boolean;
+
+  @OneToMany(()=> Comment , comment => comment.user)
+  comments: Comment[];
 
   /* @OneToOne(() => Subscription, { eager: true, nullable: true })
     @JoinColumn()
