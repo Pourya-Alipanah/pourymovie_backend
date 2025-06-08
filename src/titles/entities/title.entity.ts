@@ -91,11 +91,11 @@ export class Title {
     onDelete: 'SET NULL',
     eager: true,
   })
-  language: Language;
+  language: Language | null;
 
   @ManyToMany(() => Genre)
   @JoinTable()
-  genres: Genre[];
+  genres: Genre[] | null;
 
   /**
    * Returns an array of actors associated with the title.
@@ -137,23 +137,23 @@ export class Title {
   }
 
   @ManyToOne(() => Country, { eager: true })
-  country: Country;
+  country: Country | null;
 
   @OneToMany(() => Season, (season) => season.title, {
     cascade: true,
   })
-  seasons: Season[];
+  seasons: Season[] | null;
 
   @OneToMany(() => VideoLink, (videoLink) => videoLink.title, {
     cascade: true,
   })
-  videoLinks: VideoLink[];
+  videoLinks: VideoLink[] | null;
 
   @Exclude()
   @OneToMany(() => TitlePerson, (titlePerson) => titlePerson.title, {
     cascade: true,
   })
-  people: TitlePerson[];
+  people: TitlePerson[] | null;
 
   @OneToMany(() => Comment, (comment) => comment.title)
   comments: Comment[];

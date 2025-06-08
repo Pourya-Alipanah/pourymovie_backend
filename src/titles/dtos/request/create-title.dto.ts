@@ -57,9 +57,9 @@ export class CreateTitleDto {
     description: 'release date',
     required: true,
   })
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  releaseYear: string;
+  releaseYear: number;
 
   @ApiProperty({
     example: 'https://example.com/trailer.mp4',

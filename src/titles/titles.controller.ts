@@ -85,9 +85,10 @@ export class TitlesController {
   }
 
   @Post()
-  @ApiBearerAuth('access-token')
+  // @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'ایجاد عنوان جدید' })
   @ApiSingleResponse(GetTitleDetailsResponseDto)
+  @Auth(AuthType.None)
   createTitle(@Body() dto: CreateTitleDto) {
     return this.titlesServise.createTitle(dto);
   }

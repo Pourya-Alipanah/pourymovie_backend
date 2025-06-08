@@ -189,7 +189,6 @@ export class TitlesService {
       top250Rank: dto.top250Rank,
       type: dto.type,
     });
-
     return this.titleRepository.save(title);
   }
 }
