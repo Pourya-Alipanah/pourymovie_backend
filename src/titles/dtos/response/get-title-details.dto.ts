@@ -172,6 +172,41 @@ export class GetTitleDetailsResponseDto {
   })
   awards: string;
   /**
+   * trailer video URL
+   * @type {string | null}
+   */
+  @ApiProperty({
+    description: 'Trailer video URL',
+    name: 'trailerUrl',
+    nullable: true,
+    type: String,
+  })
+  trailerUrl: string | null;
+
+  /**
+   * Cover image URL
+   * @type {string | null}
+   */
+  @ApiProperty({
+    description: 'Cover image URL',
+    name: 'coverUrl',
+    nullable: true,
+    type: String,
+  })
+  coverUrl: string | null;
+
+  /**
+   * Thumbnail image URL
+   * @type {string | null}
+   */
+  @ApiProperty({
+    description: 'Thumbnail image URL',
+    name: 'thumbnailUrl',
+    nullable: true,
+    type: String,
+  })
+  thumbnailUrl: string | null;
+  /**
    * Language of the title
    * @type {Language}
    */

@@ -1,10 +1,12 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   Query,
 } from '@nestjs/common';
 import { Auth } from 'src/auth/decorators/auth.decorator';
@@ -16,6 +18,7 @@ import { GetTitleDetailsResponseDto } from './dtos/response/get-title-details.dt
 import { ApiPaginatedResponse } from 'src/common/decorators/paginated-response.decorator';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { TitleIdParamDto } from './dtos/request/title-id-param.dto';
+import { CreateTitleDto } from './dtos/request/create-title.dto';
 
 /**
  * Controller for handling title-related endpoints.
@@ -64,6 +67,11 @@ export class TitlesController {
     return this.titlesServise.findAllTitles(titlesQuery);
   }
 
+  /**
+   * Deletes a title by its ID.
+   * @param {TitleIdParamDto} id - DTO containing the title ID
+   * @returns {Promise<void>} Confirmation of deletion
+   */
   @ApiOperation({
     summary: 'Deletes a title by its ID',
     description:
@@ -74,5 +82,13 @@ export class TitlesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTitle(@Param() { id }: TitleIdParamDto) {
     return this.titlesServise.deleteTitleById(id);
+  }
+
+  @Post()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'ایجاد عنوان جدید' })
+  @ApiSingleResponse(GetTitleDetailsResponseDto)
+  createTitle(@Body() dto: CreateTitleDto) {
+    return this.titlesServise.createTitle(dto);
   }
 }

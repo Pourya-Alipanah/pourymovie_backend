@@ -78,6 +78,15 @@ export class Title {
   @Column({ type: 'varchar', nullable: true })
   awards: string | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  trailerUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  coverUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  thumbnailUrl: string | null;
+
   @ManyToOne(() => Language, (language) => language.titles, {
     onDelete: 'SET NULL',
     eager: true,

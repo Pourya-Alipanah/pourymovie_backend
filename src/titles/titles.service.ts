@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Title } from './entities/title.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { TITLE_NOT_FOUND_ERROR } from './constants/titles.errors.constants';
 import {
@@ -9,6 +9,13 @@ import {
   GetTitlesResponseDto,
 } from './dtos/response/get-titles.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
+import { CreateTitleDto } from './dtos/request/create-title.dto';
+import { Country } from './entities/country.entity';
+import { Language } from './entities/language.entity';
+import { Genre } from './entities/genre.entity';
+import { TitlePerson } from './entities/title-person.entity';
+import { VideoLink } from './entities/video-link.entity';
+import { Season } from './entities/season.entity';
 
 /**
  * Service for handling operations related to titles.
@@ -22,6 +29,18 @@ export class TitlesService {
   constructor(
     @InjectRepository(Title)
     private readonly titleRepository: Repository<Title>,
+    @InjectRepository(Country)
+    private readonly countryRepository: Repository<Country>,
+    @InjectRepository(Language)
+    private readonly languageRepository: Repository<Language>,
+    @InjectRepository(Genre)
+    private readonly genreRepository: Repository<Genre>,
+    @InjectRepository(TitlePerson)
+    private readonly titlePersonRepository: Repository<TitlePerson>,
+    @InjectRepository(VideoLink)
+    private readonly videoLinkRepository: Repository<VideoLink>,
+    @InjectRepository(Season)
+    private readonly seasSeasonRepository: Repository<Season>,
 
     private readonly paginationService: PaginationService,
   ) {}
@@ -93,5 +112,84 @@ export class TitlesService {
   public async deleteTitleById(id: number): Promise<void> {
     const { affected } = await this.titleRepository.delete(id);
     if (!affected) throw new NotFoundException(TITLE_NOT_FOUND_ERROR);
+  }
+
+  /**
+   * Creates a new title in the database.
+   * @param {Title} title - The title entity to be created
+   * @returns {Promise<Title>} The created title entity
+   * @description This method saves a new title to the database.
+   */
+  public async createTitle(dto: CreateTitleDto): Promise<Title> {
+    let genres: Genre[] = [];
+    let country: Country | null = null;
+    let language: Language | null = null;
+    let people: TitlePerson[] = [];
+    let videoLinks: VideoLink[] = [];
+    let seasons: Season[] = [];
+
+    if (dto.genreIds && dto.genreIds.length > 0) {
+      genres = await this.genreRepository.findBy({
+        id: In(dto.genreIds),
+      });
+    }
+
+    if (dto.countryId) {
+      country = await this.countryRepository.findOneBy({
+        id: dto.countryId,
+      });
+    }
+
+    if (dto.languageId) {
+      language = await this.languageRepository.findOneBy({
+        id: dto.languageId,
+      });
+    }
+
+    if (dto.titlePersonIds && dto.titlePersonIds.length > 0) {
+      people = await this.titlePersonRepository.findBy({
+        id: In(dto.titlePersonIds),
+      });
+    }
+
+    if (dto.videoLinkIds && dto.videoLinkIds.length > 0) {
+      videoLinks = await this.videoLinkRepository.findBy({
+        id: In(dto.videoLinkIds),
+      });
+    }
+
+    if (dto.seasonIds && dto.seasonIds.length > 0) {
+      seasons = await this.seasSeasonRepository.findBy({
+        id: In(dto.seasonIds),
+      });
+    }
+
+    const title = this.titleRepository.create({
+      genres,
+      country,
+      language,
+      people,
+      seasons,
+      videoLinks,
+      ageRating: dto.ageRating,
+      titleFa: dto.titleFa,
+      titleEn: dto.titleEn,
+      slug: dto.slug,
+      imdbRating: dto.imdbRating,
+      awards: dto.awards,
+      coverUrl: dto.coverUrl,
+      releaseYear: dto.releaseYear,
+      durationMinutes: dto.durationMinutes,
+      hasSubtitle: dto.hasSubtitle,
+      summary: dto.summary,
+      trailerUrl: dto.trailerUrl,
+      thumbnailUrl: dto.thumbnailUrl,
+      imdbVotes: dto.imdbVotes,
+      isTop250: dto.isTop250,
+      top250Rank: dto.top250Rank,
+      type: dto.type,
+    });
+
+    return this.titleRepository.save(title);
   }
 }
