@@ -9,7 +9,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from 'src/auth/config/jwt.config';
 import { Request } from 'express';
-import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
+import { ACCESS_TOKEN_COOKIE_NAME, REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 
 /**
  * Guard to protect routes that require a valid access token
@@ -39,8 +39,8 @@ export class AccessTokenGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Extract the request from the execution context
     const request = context.switchToHttp().getRequest();
-    // Extract the token from the header
-    const token = this.extractTokenFromHeader(request);
+    // Extract the token from the cookies
+    const token = this.extractTokenFromCookie(request);
 
     if (!token) {
       throw new UnauthorizedException();
@@ -58,12 +58,11 @@ export class AccessTokenGuard implements CanActivate {
   }
 
   /**
-   * Extracts the token from the Authorization header
-   * @param {Request} request - The HTTP request object
-   * @returns {string | undefined} - The extracted token or undefined if not found
+   * Extracts the token from the cookies
+   * @param {Request} request
+   * @returns {string | undefined}
    */
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [_, token] = request.headers.authorization?.split(' ') ?? [];
-    return token;
+  private extractTokenFromCookie(request: Request): string | undefined {
+    return request.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
   }
 }
