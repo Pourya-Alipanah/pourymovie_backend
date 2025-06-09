@@ -12,3 +12,8 @@ export const AUTH_TYPE_KEY = 'authType';
  * Name of the cookie used to store the refresh token.
  */
 export const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
+
+/**
+ * Name of the cookie used to store the access token.
+ */
+export const ACCESS_TOKEN_COOKIE_NAME = 'accessToken';
