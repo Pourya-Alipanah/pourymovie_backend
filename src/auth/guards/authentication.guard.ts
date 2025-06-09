@@ -18,6 +18,10 @@ import { AUTH_TYPE_KEY } from '../constants/auth.constants';
  */
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
+  /**
+   * Map of authentication types to their corresponding guards
+   * @type {Record<AuthType, CanActivate | CanActivate[]>}
+   */
   private readonly authTypeGuardMap: Record<
     AuthType,
     CanActivate | CanActivate[]
