@@ -119,7 +119,7 @@ export class UsersService {
   public async createUser<T extends boolean = true>(
     createUserDto: CreateUserDto,
     role: UserRole = UserRole.USER,
-    tokenResponse?: T,
+    tokenResponse: T = true as T,
   ): Promise<IntersectionUserToken<T>> {
     try {
       await this.findByEmail(createUserDto.email);

@@ -30,6 +30,7 @@ import { CreateUserDto } from './dtos/request/create-user.dto';
 import { GeneralDoneOperationResponseDto } from 'src/common/dto/response/general-done-operation.dto';
 import { UserRole } from './enums/user-role.enum';
 import { ADMIN_USER_CREATED_MESSAGE } from './constants/user.message.constants';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 /**
  * Controller for managing users
