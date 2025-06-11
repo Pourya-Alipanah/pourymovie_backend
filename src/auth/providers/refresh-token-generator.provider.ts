@@ -12,6 +12,7 @@ import { UsersService } from 'src/user/providers/users.service';
 import { TokenGeneratorProvider } from './token-generator.provider';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { User } from 'src/user/user.entity';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { USER_NOT_FOUND_ERROR } from 'src/user/constants/users.errors.constants';
 
 /**

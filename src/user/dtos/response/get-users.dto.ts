@@ -27,14 +27,14 @@ export class GetUsersDto {
    * @type {string}
    */
   @ApiProperty({ description: 'First name of the user' })
-  firstName: string;
+  firstName: string | null;
 
   /**
    * Last name of the user
    * @type {string}
    */
   @ApiProperty({ description: 'Last name of the user' })
-  lastName: string;
+  lastName: string | null;
 
   /**
    * Email address of the user
@@ -42,6 +42,17 @@ export class GetUsersDto {
    */
   @ApiProperty({ description: 'Email address of the user' })
   email: string;
+
+  /**
+   * Avatar URL of the user
+   * @type {string | null}
+   */
+  @ApiProperty({
+    description: 'Avatar URL of the user',
+    type: String,
+    nullable: true,
+  })
+  avatarUrl: string | null;
 
   /**
    * Timestamp when the user was created
@@ -84,7 +95,6 @@ export class GetUsersDto {
   })
   hasSubscription: boolean;
 }
-
 
 /**
  * DTO for paginated response of user data.

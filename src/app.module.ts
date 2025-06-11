@@ -13,6 +13,8 @@ import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import jwtConfig from './auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthorizationGuard } from './auth/guards/authorization.guard';
+import { CheckRoleGuard } from './auth/guards/check-role.guard';
 import { TitlesModule } from './titles/titles.module';
 import { PeopleModule } from './people/people.module';
 import { CommentModule } from './comment/comment.module';
@@ -63,6 +65,10 @@ const ENV = process.env.NODE_ENV;
       useClass: AuthenticationGuard,
     },
     {
+      provide: APP_GUARD,
+      useClass: AuthorizationGuard,
+    },
+    {
       provide: APP_INTERCEPTOR,
       useFactory: (reflector: Reflector) => {
         return new ClassSerializerInterceptor(reflector);
@@ -70,6 +76,7 @@ const ENV = process.env.NODE_ENV;
       inject: [Reflector],
     },
     AccessTokenGuard,
+    CheckRoleGuard,
   ],
 })
 export class AppModule {}
