@@ -2,13 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
   MinLength,
+  Validate,
 } from 'class-validator';
 import { PASSWORD_REGEX } from 'src/user/constants/users.constants';
 import { PASSWORD_REGEX_ERROR_MESSAGE } from 'src/user/constants/users.errors.constants';
+import { MatchPasswordConstraint } from '../helper/password-confirm-validator';
 
 /**
  * Data Transfer Object for creating a new user.
@@ -24,9 +27,10 @@ export class CreateUserDto {
     example: 'John',
     minLength: 3,
     maxLength: 96,
+    required: false,
+    nullable: true,
   })
   @IsString()
-  @IsNotEmpty()
   @MinLength(3)
   @MaxLength(96)
   firstName: string;
@@ -39,9 +43,10 @@ export class CreateUserDto {
     example: 'Doe',
     minLength: 3,
     maxLength: 96,
+    required: false,
+    nullable: true,
   })
   @IsString()
-  @IsNotEmpty()
   @MinLength(3)
   @MaxLength(96)
   lastName: string;
@@ -76,4 +81,31 @@ export class CreateUserDto {
     message: PASSWORD_REGEX_ERROR_MESSAGE,
   })
   password: string;
+
+  /**
+   * Password confirmation for the user.
+   * Must be a string, not empty, at least 8 characters long, and must match the password field.
+   */
+  @ApiProperty({
+    description: 'Password confirmation. Must match the password field.',
+    example: 'P@ssw0rd123',
+    minLength: 8,
+    maxLength: 96,
+  })
+  @Validate(MatchPasswordConstraint)
+  confirmPassword: string;
+
+  /**
+   * Avatar URL for the user.
+   * Optional field, can be null or a string.
+   */
+  @ApiProperty({
+    description: 'Avatar URL for the user',
+    example: 'https://example.com/avatar.jpg',
+    required: false,
+    nullable: true,
+  })
+  @IsString()
+  @IsOptional()
+  avatarUrl: string | null;
 }
