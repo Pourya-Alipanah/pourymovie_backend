@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { Response } from 'express';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
-import { REFRESH_TOKEN_COOKIE_NAME } from '../constants/auth.constants';
+import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '../constants/auth.constants';
 
 /**
  * Provider for setting cookies in HTTP responses.
@@ -30,8 +30,22 @@ export class SetCookieProvider {
     res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
       httpOnly: true,
       secure: false /* process.env.NODE_ENV === 'production' */,
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/api/v1/auth/refresh-tokens',
+      maxAge: this.jwtConfiguration.refreshTokenTtl * 1000, // Convert seconds to milliseconds
+    });
+  }
+
+  /**
+   * Sets the access token as a cookie in the HTTP response.
+   * @param accessToken The access token to be set as a cookie.
+   * @param res The HTTP response object.
+   */
+  public setAccessToken(accessToken: string, res: Response) {
+    res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+      httpOnly: true,
+      secure: false /* process.env.NODE_ENV === 'production' */,
+      sameSite: 'lax',
       maxAge: this.jwtConfiguration.refreshTokenTtl * 1000, // Convert seconds to milliseconds
     });
   }
