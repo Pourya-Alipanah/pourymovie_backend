@@ -19,6 +19,7 @@ describe('UserController', () => {
         updateAt: null,
         deletedAt: null,
         hasSubscription: false,
+        avatarUrl: 'https://example.com/avatar.jpg',
       },
     ],
     meta: {

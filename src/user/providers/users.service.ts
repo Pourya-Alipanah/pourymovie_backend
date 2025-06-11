@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   forwardRef,
   Inject,
@@ -15,14 +16,16 @@ import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import {
+  PASSWORD_CANNOT_CHANGED,
   USER_ALREADY_EXISTS_ERROR,
   USER_NOT_FOUND_ERROR,
 } from '../constants/users.errors.constants';
 import { CreateUserDto } from '../dtos/request/create-user.dto';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
-import { AuthService } from 'src/auth/providers/auth.service';
-import { RefreshTokenGeneratorProvider } from 'src/auth/providers/refresh-token-generator.provider';
 import { TokenGeneratorProvider } from 'src/auth/providers/token-generator.provider';
+import { UpdateUserDto } from '../dtos/request/update-user.dto';
+import { UserRole } from '../enums/user-role.enum';
+import { IntersectionUserToken } from '../types/intersection-user-token.type';
 
 /**
  * UserService
@@ -108,10 +111,16 @@ export class UsersService {
   /**
    * Creates a new user
    * @param {CreateUserDto} createUserDto - Data transfer object for creating a user
+   * @param {UserRole} role - Role of the user (default is UserRole.USER)
+   * @param {boolean} tokenResponse - Whether to return access and refresh tokens (default is true)
    * @returns {Promise<User>} - Created user entity
    * @throws {ConflictException} - If user with the same email already exists
    */
-  public async createUser(createUserDto: CreateUserDto) {
+  public async createUser<T extends boolean = true>(
+    createUserDto: CreateUserDto,
+    role: UserRole = UserRole.USER,
+    tokenResponse?: T,
+  ): Promise<IntersectionUserToken<T>> {
     try {
       await this.findByEmail(createUserDto.email);
       throw new ConflictException({
@@ -124,12 +133,17 @@ export class UsersService {
       const user = this.usersRepository.create({
         ...createUserDto,
         password: await this.hashingProvider.hash(createUserDto.password),
+        role: role,
       });
       const createdUser = await this.usersRepository.save(user);
 
-      return await this.tokenGeneratorProvider.generateAccessAndRefreshTokens(
+      if (!tokenResponse) {
+        return createdUser as IntersectionUserToken<T>;
+      }
+
+      return (await this.tokenGeneratorProvider.generateAccessAndRefreshTokens(
         createdUser,
-      );
+      )) as IntersectionUserToken<T>;
     }
   }
 
@@ -142,5 +156,29 @@ export class UsersService {
   public async deleteUser(id: number) {
     await this.findUserById(id);
     await this.usersRepository.softDelete(id);
+  }
+
+  /**
+   * Updates a user by their ID
+   * @param {number} id - User ID
+   * @param {Partial<CreateUserDto>} updateUserDto - Data transfer object for updating a user
+   * @returns {Promise<User>} - Updated user entity
+   * @throws {NotFoundException} - If user is not found
+   * @throws {BadRequestException} - If password is included in the update
+   * @description This method updates a user's information, excluding the password.
+   */
+  public async updateUser(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    if (updateUserDto.password || updateUserDto.confirmPassword) {
+      throw new BadRequestException({
+        message: PASSWORD_CANNOT_CHANGED,
+      });
+    }
+    const user = await this.findUserById(id);
+    const updatedUser = Object.assign(user, updateUserDto);
+
+    return await this.usersRepository.save(updatedUser);
   }
 }
