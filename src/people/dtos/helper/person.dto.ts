@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
  * Represents a person without a specific role in a title.
  * This interface is used to define the basic properties of a person.
  */
-export class Person {
+export class PersonDto {
   /**
    * Unique identifier for the person
    * @type {number}

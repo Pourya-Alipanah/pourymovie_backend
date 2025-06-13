@@ -16,6 +16,7 @@ import { Genre } from './entities/genre.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
 import { Season } from './entities/season.entity';
+import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 
 /**
  * Service for handling operations related to titles.
@@ -53,7 +54,7 @@ export class TitlesService {
    * @throws {NotFoundException} If the title with the given ID does not exist
    * @description This method retrieves a title by its ID, including related entities such as genres, country,
    */
-  public async findById(id: number): Promise<Title | null> {
+  public async findById(id: number): Promise<Title> {
     const result = this.titleRepository.findOne({
       where: { id },
       relations: [
@@ -75,7 +76,7 @@ export class TitlesService {
       throw new NotFoundException(TITLE_NOT_FOUND_ERROR);
     }
 
-    return result;
+    return result as Promise<Title>;
   }
 
   /**
@@ -165,30 +166,29 @@ export class TitlesService {
     }
 
     const title = this.titleRepository.create({
+      ...dto,
       genres,
       country,
       language,
       people,
       seasons,
       videoLinks,
-      ageRating: dto.ageRating,
-      titleFa: dto.titleFa,
-      titleEn: dto.titleEn,
-      slug: dto.slug,
-      imdbRating: dto.imdbRating,
-      awards: dto.awards,
-      coverUrl: dto.coverUrl,
-      releaseYear: dto.releaseYear,
-      durationMinutes: dto.durationMinutes,
-      hasSubtitle: dto.hasSubtitle,
-      summary: dto.summary,
-      trailerUrl: dto.trailerUrl,
-      thumbnailUrl: dto.thumbnailUrl,
-      imdbVotes: dto.imdbVotes,
-      isTop250: dto.isTop250,
-      top250Rank: dto.top250Rank,
-      type: dto.type,
     });
     return this.titleRepository.save(title);
+  }
+
+  /**
+   * Updates an existing title by its ID.
+   * @param {number} id - The unique identifier of the title to be updated
+   * @param {UpdateTitleRequestDto} dto - The data transfer object containing the updated title details
+   * @returns {Promise<Title>} The updated title entity
+   * @throws {NotFoundException} If the title with the given ID does not exist
+   * @description This method updates a title's details in the database.
+   */
+  public async updateTitle(id: number, dto: UpdateTitleRequestDto) {
+    const title = await this.findById(id);
+    const updatedTitle = Object.assign(title, dto);
+
+    return await this.titleRepository.save(updatedTitle);
   }
 }

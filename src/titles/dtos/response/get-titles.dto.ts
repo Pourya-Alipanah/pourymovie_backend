@@ -1,6 +1,6 @@
 import { Genre } from 'src/titles/dtos/helper/genre.dto';
 import { Language } from 'src/titles/dtos/helper/language.dto';
-import { Person } from 'src/people/dtos/helper/person.dto';
+import { PersonDto } from 'src/people/dtos/helper/person.dto';
 import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
 import { Season } from 'src/titles/dtos/helper/season.dto';
 import { ApiProperty } from '@nestjs/swagger';
@@ -32,7 +32,7 @@ import { PaginationResponseDto } from 'src/common/pagination/dtos/pagination.dto
  * @property {Country} country - Country of origin for the title
  * @property {Season[]} seasons - Seasons of the title, if applicable
  * @property {VideoLink[]} videoLinks - Video links for the title
- * @property {Person[]} people - People associated with the title (e.g., actors, directors)
+ * @property {PersonDto[]} people - People associated with the title (e.g., actors, directors)
  * @property {Comment[]} comments - Comments on the title
  */
 export class GetTitlesResponseDto {
@@ -216,39 +216,39 @@ export class GetTitlesResponseDto {
 
   /**
    * actors of the title
-   * @type {Person[]}
+   * @type {PersonDto[]}
    */
   @ApiProperty({
     description: 'actors of the title',
     name: 'actors',
     isArray: true,
-    type: Person,
+    type: PersonDto,
   })
-  actors: Person[];
+  actors: PersonDto[];
 
   /**
    * directors of the title
-   * @type {Person[]}
+   * @type {PersonDto[]}
    */
   @ApiProperty({
     description: 'directors of the title',
     name: 'directors',
     isArray: true,
-    type: Person,
+    type: PersonDto,
   })
-  directors: Person[];
+  directors: PersonDto[];
 
   /**
    * writers of the title
-   * @type {Person[]}
+   * @type {PersonDto[]}
    */
   @ApiProperty({
     description: 'writers of the title',
     name: 'writers',
     isArray: true,
-    type: Person,
+    type: PersonDto,
   })
-  writers: Person[];
+  writers: PersonDto[];
 }
 
 export class GetTitlesResponse extends PaginationResponseDto<GetTitlesResponseDto> {}

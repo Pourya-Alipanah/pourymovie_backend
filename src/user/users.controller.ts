@@ -19,7 +19,6 @@ import { UsersService } from './providers/users.service';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { ApiPaginatedResponse } from 'src/common/decorators/paginated-response.decorator';
 import { ApiSingleResponse } from 'src/common/decorators/single-response.decorator';
-import { GetSingleUserDto } from './dtos/request/get-single-user.dto';
 import { User } from './user.entity';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
@@ -30,6 +29,7 @@ import { GeneralDoneOperationResponseDto } from 'src/common/dto/response/general
 import { UserRole } from './enums/user-role.enum';
 import { ADMIN_USER_CREATED_MESSAGE } from './constants/user.message.constants';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { GetByIdParamDto } from 'src/common/dto/request/id-params.dto';
 
 /**
  * Controller for managing users
@@ -115,7 +115,7 @@ export class UsersController {
 
   /**
    * Fetches a user by their ID
-   * @param {GetSingleUserDto} getUserDto - DTO containing the user ID
+   * @param {GetByIdParamDto} getUserDto - DTO containing the user ID
    * @returns {Promise<User>} - Returns a promise that resolves to the user object
    */
   @ApiOperation({
@@ -124,7 +124,7 @@ export class UsersController {
   @ApiSingleResponse(GetUsersDto)
   @ApiBearerAuth('access-token')
   @Get(':id')
-  public getUserById(@Param() getUserDto: GetSingleUserDto): Promise<User> {
+  public getUserById(@Param() getUserDto: GetByIdParamDto): Promise<User> {
     return this.userService.findUserById(getUserDto.id);
   }
 

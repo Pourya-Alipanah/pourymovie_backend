@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -17,8 +18,11 @@ import { ApiSingleResponse } from 'src/common/decorators/single-response.decorat
 import { GetTitleDetailsResponseDto } from './dtos/response/get-title-details.dto';
 import { ApiPaginatedResponse } from 'src/common/decorators/paginated-response.decorator';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
-import { TitleIdParamDto } from './dtos/request/title-id-param.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
+import { Role } from 'src/auth/decorators/role.decorator';
+import { UserRole } from 'src/user/enums/user-role.enum';
+import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
+import { GetByIdParamDto } from 'src/common/dto/request/id-params.dto';
 
 /**
  * Controller for handling title-related endpoints.
@@ -46,7 +50,7 @@ export class TitlesController {
   @Get('/:id')
   @ApiBearerAuth('access-token')
   @ApiSingleResponse(GetTitleDetailsResponseDto)
-  getTitleById(@Param() { id }: TitleIdParamDto) {
+  getTitleById(@Param() { id }: GetByIdParamDto) {
     return this.titlesServise.findById(id);
   }
 
@@ -69,7 +73,7 @@ export class TitlesController {
 
   /**
    * Deletes a title by its ID.
-   * @param {TitleIdParamDto} id - DTO containing the title ID
+   * @param {GetByIdParamDto} id - DTO containing the title ID
    * @returns {Promise<void>} Confirmation of deletion
    */
   @ApiOperation({
@@ -80,10 +84,17 @@ export class TitlesController {
   @Delete('/:id')
   @ApiBearerAuth('access-token')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTitle(@Param() { id }: TitleIdParamDto) {
+  @Role(UserRole.ADMIN)
+  deleteTitle(@Param() { id }: GetByIdParamDto) {
     return this.titlesServise.deleteTitleById(id);
   }
 
+  /**
+   * Creates a new title.
+   * @param {CreateTitleDto} dto - DTO containing the details of the title to be created
+   * @return {Promise<GetTitleDetailsResponseDto>} Details of the created title
+   * @description This endpoint allows you to create a new title by providing the necessary details.
+   */
   @Post()
   @ApiBearerAuth('access-token')
   @ApiOperation({
@@ -92,8 +103,24 @@ export class TitlesController {
       'This endpoint allows you to create a new title by providing the necessary details.',
   })
   @ApiSingleResponse(GetTitleDetailsResponseDto)
-  @Auth(AuthType.None)
+  @Role(UserRole.ADMIN)
   createTitle(@Body() dto: CreateTitleDto) {
     return this.titlesServise.createTitle(dto);
+  }
+
+  @Patch(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Updates an existing title',
+    description:
+      'This endpoint allows you to update an existing title by providing the necessary details.',
+  })
+  @ApiSingleResponse(GetTitleDetailsResponseDto)
+  @Role(UserRole.ADMIN)
+  updateTitle(
+    @Param() { id }: GetByIdParamDto,
+    @Body() dto: UpdateTitleRequestDto,
+  ) {
+    return this.titlesServise.updateTitle(id, dto);
   }
 }
