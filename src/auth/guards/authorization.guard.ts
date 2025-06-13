@@ -10,6 +10,11 @@ import { Reflector } from '@nestjs/core';
 import { REQUEST_USER_KEY, ROLE_TYPE_KEY } from '../constants/auth.constants';
 import { CheckRoleGuard } from './check-role.guard';
 
+/**
+ * AuthorizationGuard
+ * @description This guard is responsible for handling authorization based on the auth type specified in the route metadata.
+ * It uses different guards for different authorization types.
+ */
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
   /**
@@ -22,11 +27,9 @@ export class AuthorizationGuard implements CanActivate {
   >;
 
   /**
-   * AuthorizationGuard
-   * @description This guard is responsible for handling authorization based on the auth type specified in the route metadata.
-   * It uses different guards for different authorization types.
-   * @param {Reflector} reflector - Reflector service to access route metadata
-   * @returns {AuthorizationGuard} - Returns an instance of AuthorizationGuard
+   * Initializes the AuthorizationGuard with the necessary dependencies.
+   * @param reflector - The Reflector service to access route metadata.
+   * @param checkRoleGuard - The CheckRoleGuard to handle role-based access control.
    */
   constructor(
     private readonly reflector: Reflector,

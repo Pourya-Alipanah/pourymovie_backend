@@ -23,6 +23,7 @@ import { Role } from 'src/auth/decorators/role.decorator';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import { GetByIdParamDto } from 'src/common/dto/request/id-params.dto';
+import { GetBySlugParamDto } from 'src/common/dto/request/slug-param.dto';
 
 /**
  * Controller for handling title-related endpoints.
@@ -38,20 +39,20 @@ export class TitlesController {
   constructor(private readonly titlesServise: TitlesService) {}
 
   /**
-   * Fetches details of a title by its ID.
+   * Fetches details of a title by its Slug.
    * @param {GetTitleDetailsRequestDto} getTitleDetailsRequestDto - DTO containing the title ID
    * @returns {Promise<GetTitleDetailsResponseDto>} Details of the requested title
    */
   @ApiOperation({
-    summary: 'Fetches details of a title by its ID',
+    summary: 'Fetches details of a title by its Slug',
     description:
-      'This endpoint retrieves the details of a title using its unique identifier.',
+      'This endpoint retrieves the details of a title using its unique Slug.',
   })
-  @Get('/:id')
+  @Get('/:slug')
   @ApiBearerAuth('access-token')
   @ApiSingleResponse(GetTitleDetailsResponseDto)
-  getTitleById(@Param() { id }: GetByIdParamDto) {
-    return this.titlesServise.findById(id);
+  getTitleBySlug(@Param() { slug }: GetBySlugParamDto) {
+    return this.titlesServise.findBySlug(slug);
   }
 
   /**
@@ -108,6 +109,13 @@ export class TitlesController {
     return this.titlesServise.createTitle(dto);
   }
 
+  /**
+   * Updates an existing title.
+   * @param {GetByIdParamDto} id - DTO containing the title ID
+   * @param {UpdateTitleRequestDto} dto - DTO containing the updated details of the title
+   * @return {Promise<GetTitleDetailsResponseDto>} Details of the updated title
+   * @description This endpoint allows you to update an existing title by providing the necessary details.
+   */
   @Patch(':id')
   @ApiBearerAuth('access-token')
   @ApiOperation({

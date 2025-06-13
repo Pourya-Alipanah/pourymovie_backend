@@ -86,8 +86,6 @@ export class AuthController {
    * @description This endpoint allows users to refresh their access tokens using a valid refresh token.
    */
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Auth(AuthType.Bearer)
-  @ApiBearerAuth('access-token')
   @Get('refresh-tokens')
   public async refreshTokens(
     @Req() req: Request,

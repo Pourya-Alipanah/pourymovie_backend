@@ -251,4 +251,7 @@ export class GetTitlesResponseDto {
   writers: PersonDto[];
 }
 
+/**
+ * Response DTO for paginated list of titles.
+ */
 export class GetTitlesResponse extends PaginationResponseDto<GetTitlesResponseDto> {}

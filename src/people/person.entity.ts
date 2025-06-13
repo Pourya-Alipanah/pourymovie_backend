@@ -35,5 +35,5 @@ export class Person {
   imageUrl: string | null;
 
   @OneToMany(() => TitlePerson, (titlePerson) => titlePerson.person)
-  titlePersons: TitlePerson[];
+  titlePersons: TitlePerson[] | null;
 }

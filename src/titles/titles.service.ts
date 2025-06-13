@@ -17,6 +17,7 @@ import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
 import { Season } from './entities/season.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
+import slugify from 'slugify';
 
 /**
  * Service for handling operations related to titles.
@@ -55,7 +56,7 @@ export class TitlesService {
    * @description This method retrieves a title by its ID, including related entities such as genres, country,
    */
   public async findById(id: number): Promise<Title> {
-    const result = this.titleRepository.findOne({
+    const result = await this.titleRepository.findOne({
       where: { id },
       relations: [
         'genres',
@@ -76,7 +77,40 @@ export class TitlesService {
       throw new NotFoundException(TITLE_NOT_FOUND_ERROR);
     }
 
-    return result as Promise<Title>;
+    return result;
+  }
+
+  /**
+   * Finds a title by its slug, including all related entities.
+   *
+   * @param {string} slug - The unique slug of the title
+   * @returns {Promise<Title>} The title entity with all relations, or null if not found
+   * @throws {NotFoundException} If the title with the given slug does not exist
+   * @description This method retrieves a title by its slug, including related entities such as genres, country,
+   */
+  public async findBySlug(slug: string): Promise<Title> {
+    const result = await this.titleRepository.findOne({
+      where: { slug },
+      relations: [
+        'genres',
+        'country',
+        'seasons',
+        'videoLinks',
+        'people',
+        'people.person',
+        'comments',
+        'comments.user',
+        'language',
+        'seasons.episodes',
+        'seasons.episodes.videoLinks',
+      ],
+    });
+
+    if (!result) {
+      throw new NotFoundException(TITLE_NOT_FOUND_ERROR);
+    }
+
+    return result;
   }
 
   /**
@@ -167,6 +201,7 @@ export class TitlesService {
 
     const title = this.titleRepository.create({
       ...dto,
+      slug: slugify(dto.slug),
       genres,
       country,
       language,
@@ -187,7 +222,10 @@ export class TitlesService {
    */
   public async updateTitle(id: number, dto: UpdateTitleRequestDto) {
     const title = await this.findById(id);
-    const updatedTitle = Object.assign(title, dto);
+    const updatedTitle = Object.assign(title, {
+      ...dto,
+      slug: slugify(dto.slug || title.slug),
+    });
 
     return await this.titleRepository.save(updatedTitle);
   }
