@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfigs from '../config/jwt.config';
 import { User } from 'src/user/user.entity';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 
 /**
  * TokenGeneratorProvider is a service that generates JWT tokens for users.
@@ -64,6 +65,7 @@ export class TokenGeneratorProvider {
       this.jwtConfig.accessTokenTtl,
       {
         email: user.email,
+        role: user.role,
       },
     );
   }

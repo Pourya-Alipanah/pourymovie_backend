@@ -1,15 +1,16 @@
 import { Exclude } from 'class-transformer';
+import { Comment } from 'src/comment/comment.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserRole } from './enums/user-role.enum';
 
 /**
  * User entity representing a user in the system.
@@ -39,16 +40,16 @@ export class User {
   @Column({
     type: 'varchar',
     length: 96,
-    nullable: false,
+    nullable: true,
   })
-  firstName: string;
+  firstName: string | null;
 
   @Column({
     type: 'varchar',
     length: 96,
-    nullable: false,
+    nullable: true,
   })
-  lastName: string;
+  lastName: string | null;
 
   @Column({
     type: 'varchar',
@@ -60,11 +61,26 @@ export class User {
 
   @Column({
     type: 'varchar',
+    length: 500,
+    nullable: true,
+  })
+  avatarUrl: string | null;
+
+  @Column({
+    type: 'varchar',
     length: 96,
     nullable: false,
   })
   @Exclude()
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    nullable: false,
+  })
+  @Exclude()
+  role: UserRole;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -89,6 +105,9 @@ export class User {
     default: false,
   })
   hasSubscription: boolean;
+
+  @OneToMany(()=> Comment , comment => comment.user)
+  comments: Comment[];
 
   /* @OneToOne(() => Subscription, { eager: true, nullable: true })
     @JoinColumn()

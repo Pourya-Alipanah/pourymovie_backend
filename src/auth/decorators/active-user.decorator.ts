@@ -1,5 +1,6 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import { REQUEST_USER_KEY } from '../constants/auth.constants';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 
 /**
  * ActiveUserData interface representing the structure of the active user data

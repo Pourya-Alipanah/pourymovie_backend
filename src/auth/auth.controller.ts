@@ -8,16 +8,13 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './providers/auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { UsersService } from 'src/user/providers/users.service';
 import { CreateUserDto } from 'src/user/dtos/request/create-user.dto';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
-import { ApiSingleResponse } from 'src/common/decorators/single-response.decorator';
-import { AuthResponseDto } from './dtos/auth-response.dto';
 import { Request, Response } from 'express';
 import { SetCookieProvider } from './providers/set-cookie.provider';
 import { REFRESH_TOKEN_COOKIE_NAME } from './constants/auth.constants';
@@ -30,6 +27,7 @@ import { REFRESH_TOKEN_COOKIE_NAME } from './constants/auth.constants';
  */
 @ApiTags('auth')
 @Controller({ path: 'auth', version: '1' })
+@Auth(AuthType.None)
 export class AuthController {
   /**
    * @constructor
@@ -50,9 +48,7 @@ export class AuthController {
    * @param {SignInDto} signInDto - Data transfer object containing user email and password
    * @returns {Promise<object>} - Returns a promise that resolves to an object containing access and refresh tokens
    */
-  @ApiSingleResponse(AuthResponseDto)
-  @Auth(AuthType.None)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('sign-in')
   public async signIn(
     @Res({ passthrough: true }) res: Response,
@@ -62,7 +58,7 @@ export class AuthController {
       await this.authService.signIn(signInDto);
 
     this.setCookieProvider.setRefreshToken(refreshToken, res);
-    return { accessToken };
+    this.setCookieProvider.setAccessToken(accessToken, res);
   }
 
   /**
@@ -71,8 +67,7 @@ export class AuthController {
    * @returns {Promise<object>} - Returns a promise that resolves to the created user object
    * @description This endpoint allows users to register by providing their details.
    */
-  @ApiSingleResponse(AuthResponseDto)
-  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.CREATED)
   @Post('sign-up')
   public async signUp(
     @Res({ passthrough: true }) res: Response,
@@ -82,7 +77,7 @@ export class AuthController {
       await this.usersService.createUser(createUserDto);
 
     this.setCookieProvider.setRefreshToken(refreshToken, res);
-    return { accessToken };
+    this.setCookieProvider.setAccessToken(accessToken, res);
   }
 
   /**
@@ -90,21 +85,18 @@ export class AuthController {
    * @returns {Promise<object>} - Returns a promise that resolves to an object containing new access and refresh tokens
    * @description This endpoint allows users to refresh their access tokens using a valid refresh token.
    */
-  @ApiSingleResponse(AuthResponseDto)
-  @HttpCode(HttpStatus.OK)
-  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Get('refresh-tokens')
   public async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
-    
-    const { accessToken, refreshToken:refreshTokenResponse } =
-      await this.authService.refreshTokens({refreshToken});
+
+    const { accessToken, refreshToken: refreshTokenResponse } =
+      await this.authService.refreshTokens({ refreshToken });
 
     this.setCookieProvider.setRefreshToken(refreshTokenResponse, res);
-
-    return { accessToken };
+    this.setCookieProvider.setAccessToken(accessToken, res);
   }
 }
