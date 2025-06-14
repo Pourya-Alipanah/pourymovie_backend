@@ -105,7 +105,7 @@ export class Title {
   get actors() {
     return (
       this.people
-        ?.filter((tp) => tp.role === PersonRole.Actor)
+        ?.filter((tp) => tp.role === PersonRole.ACTOR)
         .map((tp) => tp.person) || []
     );
   }
@@ -118,7 +118,7 @@ export class Title {
   get directors() {
     return (
       this.people
-        ?.filter((tp) => tp.role === PersonRole.Director)
+        ?.filter((tp) => tp.role === PersonRole.DIRECTOR)
         .map((tp) => tp.person) || []
     );
   }
@@ -131,7 +131,7 @@ export class Title {
   get writers() {
     return (
       this.people
-        ?.filter((tp) => tp.role === PersonRole.Writer)
+        ?.filter((tp) => tp.role === PersonRole.WRITER)
         .map((tp) => tp.person) || []
     );
   }

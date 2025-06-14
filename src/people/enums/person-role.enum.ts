@@ -1,5 +1,5 @@
 export enum PersonRole {
-  Actor = 'actor',
-  Director = 'director',
-  Writer = 'writer',
+  ACTOR = 'actor',
+  DIRECTOR = 'director',
+  WRITER = 'writer',
 }

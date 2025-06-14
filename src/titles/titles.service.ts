@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Title } from './entities/title.entity';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { TITLE_NOT_FOUND_ERROR } from './constants/titles.errors.constants';
 import {
@@ -18,6 +18,8 @@ import { VideoLink } from './entities/video-link.entity';
 import { Season } from './entities/season.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
+import { Person } from 'src/people/person.entity';
+import { CreateTitlePersonRequestDto } from './dtos/request/create-title-person.dto';
 
 /**
  * Service for handling operations related to titles.
@@ -39,11 +41,13 @@ export class TitlesService {
     private readonly genreRepository: Repository<Genre>,
     @InjectRepository(TitlePerson)
     private readonly titlePersonRepository: Repository<TitlePerson>,
+    @InjectRepository(Person)
+    private readonly personRepository: Repository<Person>,
     @InjectRepository(VideoLink)
     private readonly videoLinkRepository: Repository<VideoLink>,
     @InjectRepository(Season)
     private readonly seasSeasonRepository: Repository<Season>,
-
+    private readonly dataSource: DataSource,
     private readonly paginationService: PaginationService,
   ) {}
 
@@ -156,60 +160,38 @@ export class TitlesService {
    * @description This method saves a new title to the database.
    */
   public async createTitle(dto: CreateTitleDto): Promise<Title> {
-    let genres: Genre[] = [];
-    let country: Country | null = null;
-    let language: Language | null = null;
-    let people: TitlePerson[] = [];
-    let videoLinks: VideoLink[] = [];
-    let seasons: Season[] = [];
+    return this.dataSource.transaction(async (manager) => {
+      const [genres, country, language, people, videoLinks, seasons] =
+        await Promise.all([
+          this.findGenres(dto.genreIds ?? undefined),
+          this.findCountry(dto.countryId),
+          this.findLanguage(dto.languageId),
+          this.findPeople(dto.titlePeople),
+          this.findVideoLinks(dto.videoLinkIds),
+          this.findSeasons(dto.seasonIds),
+        ]);
 
-    if (dto.genreIds && dto.genreIds.length > 0) {
-      genres = await this.genreRepository.findBy({
-        id: In(dto.genreIds),
+      const titlePeople: TitlePerson[] = this.titlePersonRepository.create(
+        dto.titlePeople.map((tp) => ({
+          person: people.find((p) => p.id === tp.id),
+          role: tp.role,
+        })),
+      );
+
+      const resultTitlePeople = await manager.save(titlePeople);
+
+      const title = manager.create(Title, {
+        ...dto,
+        slug: slugify(dto.slug),
+        genres,
+        country,
+        language,
+        people: resultTitlePeople,
+        seasons,
+        videoLinks,
       });
-    }
-
-    if (dto.countryId) {
-      country = await this.countryRepository.findOneBy({
-        id: dto.countryId,
-      });
-    }
-
-    if (dto.languageId) {
-      language = await this.languageRepository.findOneBy({
-        id: dto.languageId,
-      });
-    }
-
-    if (dto.titlePersonIds && dto.titlePersonIds.length > 0) {
-      people = await this.titlePersonRepository.findBy({
-        id: In(dto.titlePersonIds),
-      });
-    }
-
-    if (dto.videoLinkIds && dto.videoLinkIds.length > 0) {
-      videoLinks = await this.videoLinkRepository.findBy({
-        id: In(dto.videoLinkIds),
-      });
-    }
-
-    if (dto.seasonIds && dto.seasonIds.length > 0) {
-      seasons = await this.seasSeasonRepository.findBy({
-        id: In(dto.seasonIds),
-      });
-    }
-
-    const title = this.titleRepository.create({
-      ...dto,
-      slug: slugify(dto.slug),
-      genres,
-      country,
-      language,
-      people,
-      seasons,
-      videoLinks,
+      return manager.save(title);
     });
-    return this.titleRepository.save(title);
   }
 
   /**
@@ -228,5 +210,32 @@ export class TitlesService {
     });
 
     return await this.titleRepository.save(updatedTitle);
+  }
+
+  private async findGenres(ids?: number[]) {
+    return ids?.length ? this.genreRepository.findBy({ id: In(ids) }) : [];
+  }
+
+  private async findCountry(id?: number) {
+    return id ? this.countryRepository.findOneBy({ id }) : null;
+  }
+
+  private async findLanguage(id?: number) {
+    return id ? this.languageRepository.findOneBy({ id }) : null;
+  }
+
+  private async findPeople(
+    titlePeople?: CreateTitlePersonRequestDto[],
+  ): Promise<Person[]> {
+    const ids = titlePeople?.map((tp) => tp.id);
+    return ids?.length ? this.personRepository.findBy({ id: In(ids) }) : [];
+  }
+
+  private async findVideoLinks(ids?: number[]) {
+    return ids?.length ? this.videoLinkRepository.findBy({ id: In(ids) }) : [];
+  }
+
+  private async findSeasons(ids?: number[]) {
+    return ids?.length ? this.seasSeasonRepository.findBy({ id: In(ids) }) : [];
   }
 }

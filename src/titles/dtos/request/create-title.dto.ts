@@ -6,8 +6,11 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { TitleType } from 'src/titles/enums/title-type.enum';
+import { CreateTitlePersonRequestDto } from './create-title-person.dto';
+import { Type } from 'class-transformer';
 
 /**
  * Data Transfer Object for creating a new title (movie or series).
@@ -97,14 +100,11 @@ export class CreateTitleDto {
   thumbnailUrl: string | null;
 
   /** IDs of people involved (e.g., actors, directors, writers) */
-  @ApiProperty({
-    example: [1, 2],
-    description:
-      'person that involve in the movie that can be actor director or writer',
-  })
+
   @IsArray()
-  @IsNumber({}, { each: true })
-  titlePersonIds: number[] | null;
+  @ValidateNested({ each: true })
+  @Type(() => CreateTitlePersonRequestDto)
+  titlePeople: CreateTitlePersonRequestDto[];
 
   /** Duration of the title in minutes */
   @ApiProperty({

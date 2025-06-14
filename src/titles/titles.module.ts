@@ -10,6 +10,7 @@ import { Language } from './entities/language.entity';
 import { Season } from './entities/season.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
+import { Person } from 'src/people/person.entity';
 
 @Module({
   controllers: [TitlesController],
@@ -24,6 +25,7 @@ import { VideoLink } from './entities/video-link.entity';
       Season,
       TitlePerson,
       VideoLink,
+      Person
     ]),
   ],
 })

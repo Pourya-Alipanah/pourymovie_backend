@@ -18,6 +18,12 @@ import { CheckRoleGuard } from './auth/guards/check-role.guard';
 import { TitlesModule } from './titles/titles.module';
 import { PeopleModule } from './people/people.module';
 import { CommentModule } from './comment/comment.module';
+import { SeasonModule } from './season/season.module';
+import { EpisodeModule } from './episode/episode.module';
+import { CountryModule } from './country/country.module';
+import { GenreModule } from './genre/genre.module';
+import { LanguageModule } from './language/language.module';
+import { VideoLinkModule } from './video-link/video-link.module';
 
 /**
  * Get the current NODE_ENV
@@ -54,6 +60,12 @@ const ENV = process.env.NODE_ENV;
     TitlesModule,
     PeopleModule,
     CommentModule,
+    SeasonModule,
+    EpisodeModule,
+    CountryModule,
+    GenreModule,
+    LanguageModule,
+    VideoLinkModule,
   ],
   providers: [
     {
