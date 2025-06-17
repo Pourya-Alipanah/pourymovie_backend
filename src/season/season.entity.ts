@@ -5,8 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Episode } from './episode.entity';
-import { Title } from './title.entity';
+import { Episode } from '../titles/entities/episode.entity';
+import { Title } from '../titles/entities/title.entity';
 
 /**
  * @Entity

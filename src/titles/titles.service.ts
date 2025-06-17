@@ -15,7 +15,7 @@ import { Language } from './entities/language.entity';
 import { Genre } from './entities/genre.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
-import { Season } from './entities/season.entity';
+import { Season } from '../season/season.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
 import { Person } from 'src/people/person.entity';
@@ -29,6 +29,15 @@ export class TitlesService {
   /**
    * Injects the repository for Title entity.
    * @param {Repository<Title>} titleRepository - Repository for Title entity
+   * @param {Repository<Country>} countryRepository - Repository for Country entity
+   * @param {Repository<Language>} languageRepository - Repository for Language entity
+   * @param {Repository<Genre>} genreRepository - Repository for Genre entity
+   * @param {Repository<TitlePerson>} titlePersonRepository - Repository for TitlePerson entity
+   * @param {Repository<Person>} personRepository - Repository for Person entity
+   * @param {Repository<VideoLink>} videoLinkRepository - Repository for VideoLink entity
+   * @param {Repository<Season>} seasSeasonRepository - Repository for Season entity
+   * @param {DataSource} dataSource - Data source for database transactions
+   * @param {PaginationService} paginationService - Service for handling pagination
    */
   constructor(
     @InjectRepository(Title)
@@ -212,18 +221,42 @@ export class TitlesService {
     return await this.titleRepository.save(updatedTitle);
   }
 
+  /**
+   * Finds genres by their IDs.
+   * @param {number[]} [ids] - Optional array of genre IDs
+   * @returns {Promise<Genre[]>} Array of Genre entities
+   * @description This method retrieves genres from the database based on the provided IDs.
+   */
   private async findGenres(ids?: number[]) {
     return ids?.length ? this.genreRepository.findBy({ id: In(ids) }) : [];
   }
 
+  /**
+   * Finds a country by its ID.
+   * @param {number} [id] - Optional country ID
+   * @returns {Promise<Country>} Country entity or null if not found
+   * @description This method retrieves a country from the database based on the provided ID.
+   */
   private async findCountry(id?: number) {
     return id ? this.countryRepository.findOneBy({ id }) : null;
   }
 
+  /**
+   * Finds a language by its ID.
+   * @param {number} [id] - Optional language ID
+   * @returns {Promise<Language>} Language entity or null if not found
+   * @description This method retrieves a language from the database based on the provided ID.
+   */
   private async findLanguage(id?: number) {
     return id ? this.languageRepository.findOneBy({ id }) : null;
   }
 
+  /**
+   * Finds people by their IDs.
+   * @param {CreateTitlePersonRequestDto[]} [titlePeople] - Optional array of title person DTOs
+   * @returns {Promise<Person[]>} Array of Person entities
+   * @description This method retrieves people from the database based on the provided title person DTOs.
+   */
   private async findPeople(
     titlePeople?: CreateTitlePersonRequestDto[],
   ): Promise<Person[]> {
@@ -231,10 +264,22 @@ export class TitlesService {
     return ids?.length ? this.personRepository.findBy({ id: In(ids) }) : [];
   }
 
+  /**
+   * Finds video links by their IDs.
+   * @param {number[]} [ids] - Optional array of video link IDs
+   * @returns {Promise<VideoLink[]>} Array of VideoLink entities
+   * @description This method retrieves video links from the database based on the provided IDs.
+   */
   private async findVideoLinks(ids?: number[]) {
     return ids?.length ? this.videoLinkRepository.findBy({ id: In(ids) }) : [];
   }
 
+  /**
+   * Finds seasons by their IDs.
+   * @param {number[]} [ids] - Optional array of season IDs
+   * @returns {Promise<Season[]>} Array of Season entities
+   * @description This method retrieves seasons from the database based on the provided IDs.
+   */
   private async findSeasons(ids?: number[]) {
     return ids?.length ? this.seasSeasonRepository.findBy({ id: In(ids) }) : [];
   }
