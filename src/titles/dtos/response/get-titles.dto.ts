@@ -2,7 +2,6 @@ import { Genre } from 'src/titles/dtos/helper/genre.dto';
 import { Language } from 'src/titles/dtos/helper/language.dto';
 import { PersonDto } from 'src/people/dtos/helper/person.dto';
 import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
-import { Season } from 'src/titles/dtos/helper/season.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { TitleType } from 'src/titles/enums/title-type.enum';
 import { Country } from '../helper/country.dto';
