@@ -71,7 +71,7 @@ export class TitlesService {
   public async findById(id: number): Promise<Title> {
     const result = await this.titleRepository.findOne({
       where: { id },
-      relations: [
+      /* relations: [
         'genres',
         'country',
         'seasons',
@@ -83,7 +83,7 @@ export class TitlesService {
         'language',
         'seasons.episodes',
         'seasons.episodes.videoLinks',
-      ],
+      ], */
     });
 
     if (!result) {

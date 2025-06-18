@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { EpisodeController } from './episode.controller';
 import { EpisodeService } from './providers/episode.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Episode } from './episode.entity';
+import { SeasonModule } from 'src/season/season.module';
 
 @Module({
   controllers: [EpisodeController],
-  providers: [EpisodeService]
+  providers: [EpisodeService],
+  imports: [TypeOrmModule.forFeature([Episode]), SeasonModule],
 })
 export class EpisodeModule {}

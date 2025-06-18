@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Episode } from './episode.entity';
 import { Title } from './title.entity';
 import { VideoQuality } from '../enums/video-quality.enum';
+import { Episode } from 'src/episode/episode.entity';
 
 /**
  * Entity representing a video link associated with a title or episode.
