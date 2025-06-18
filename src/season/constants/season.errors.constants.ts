@@ -2,4 +2,4 @@
 /**
  * Not Found Error
  */
-export const SEASON_NOT_FOUND_ERROR = 'SEASON_NOT_FOUND';
+export const SEASON_NOT_FOUND_ERROR = 'Season not found';

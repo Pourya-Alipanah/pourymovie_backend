@@ -1,3 +1,5 @@
+import { Season } from 'src/season/season.entity';
+import { VideoLink } from 'src/titles/entities/video-link.entity';
 import {
   Column,
   Entity,
@@ -5,8 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { VideoLink } from './video-link.entity';
-import { Season } from '../../season/season.entity';
 
 /**
  * @Entity
