@@ -13,6 +13,7 @@ import { Person } from 'src/people/person.entity';
 import { Episode } from 'src/episode/episode.entity';
 import { SeasonModule } from 'src/season/season.module';
 import { EpisodeModule } from 'src/episode/episode.module';
+import { PeopleModule } from 'src/people/people.module';
 
 @Module({
   controllers: [TitlesController],
@@ -31,6 +32,7 @@ import { EpisodeModule } from 'src/episode/episode.module';
     ]),
     forwardRef(() => SeasonModule),
     forwardRef(() => EpisodeModule),
+    PeopleModule,
   ],
   exports: [TitlesService],
 })

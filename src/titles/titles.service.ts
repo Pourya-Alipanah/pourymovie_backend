@@ -15,11 +15,11 @@ import { Language } from './entities/language.entity';
 import { Genre } from './entities/genre.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
-import { Season } from '../season/season.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
 import { Person } from 'src/people/person.entity';
 import { CreateTitlePersonRequestDto } from './dtos/request/create-title-person.dto';
+import { PeopleService } from 'src/people/people.service';
 
 /**
  * Service for handling operations related to titles.
@@ -54,10 +54,9 @@ export class TitlesService {
     private readonly personRepository: Repository<Person>,
     @InjectRepository(VideoLink)
     private readonly videoLinkRepository: Repository<VideoLink>,
-    @InjectRepository(Season)
-    private readonly seasonRepository: Repository<Season>,
     private readonly dataSource: DataSource,
     private readonly paginationService: PaginationService,
+    private readonly peopleService: PeopleService,
   ) {}
 
   /**
@@ -169,22 +168,28 @@ export class TitlesService {
    * @description This method saves a new title to the database.
    */
   public async createTitle(dto: CreateTitleDto): Promise<Title> {
+
     return this.dataSource.transaction(async (manager) => {
-      const [genres, country, language, people, videoLinks] =
-        await Promise.all([
+
+      const [genres, country, language, people, videoLinks] = await Promise.all(
+        [
           this.findGenres(dto.genreIds ?? undefined),
           this.findCountry(dto.countryId),
           this.findLanguage(dto.languageId),
-          this.findPeople(dto.titlePeople),
+          this.peopleService.findMultipleById(
+            dto.titlePeople.map((tp) => tp.id),
+          ),
           this.findVideoLinks(dto.videoLinkIds),
-        ]);
-
-      const titlePeople: TitlePerson[] = this.titlePersonRepository.create(
-        dto.titlePeople.map((tp) => ({
-          person: people.find((p) => p.id === tp.id),
-          role: tp.role,
-        })),
+        ],
       );
+
+      const titlePeopleArray = dto.titlePeople.map((tp) => ({
+        person: people.find((p) => p.id === tp.id),
+        role: tp.role,
+      }));
+
+      const titlePeople: TitlePerson[] =
+        this.titlePersonRepository.create(titlePeopleArray);
 
       const resultTitlePeople = await manager.save(titlePeople);
 
@@ -198,6 +203,7 @@ export class TitlesService {
         videoLinks,
       });
       return manager.save(title);
+
     });
   }
 
@@ -247,19 +253,6 @@ export class TitlesService {
    */
   private async findLanguage(id?: number) {
     return id ? this.languageRepository.findOneBy({ id }) : null;
-  }
-
-  /**
-   * Finds people by their IDs.
-   * @param {CreateTitlePersonRequestDto[]} [titlePeople] - Optional array of title person DTOs
-   * @returns {Promise<Person[]>} Array of Person entities
-   * @description This method retrieves people from the database based on the provided title person DTOs.
-   */
-  private async findPeople(
-    titlePeople?: CreateTitlePersonRequestDto[],
-  ): Promise<Person[]> {
-    const ids = titlePeople?.map((tp) => tp.id);
-    return ids?.length ? this.personRepository.findBy({ id: In(ids) }) : [];
   }
 
   /**
