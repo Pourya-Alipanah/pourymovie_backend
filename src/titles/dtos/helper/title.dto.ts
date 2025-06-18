@@ -2,11 +2,11 @@ import { Genre } from 'src/titles/dtos/helper/genre.dto';
 import { Language } from 'src/titles/dtos/helper/language.dto';
 import { PersonDto } from 'src/people/dtos/helper/person.dto';
 import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
-import { Season } from 'src/titles/dtos/helper/season.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { TitleType } from 'src/titles/enums/title-type.enum';
 import { Country } from '../helper/country.dto';
 import { Comment } from 'src/comment/dtos/helper/comment.dto';
+import { GetSeasonsResponseDto } from 'src/season/dtos/response/get-seasons.dto';
 
 /**
  * DTO for returning detailed information about a title.
@@ -245,9 +245,9 @@ export class TitleDto {
     description: 'Seasons of the title, if applicable',
     name: 'seasons',
     isArray: true,
-    type: Season,
+    type: GetSeasonsResponseDto,
   })
-  seasons: Season[];
+  seasons: GetSeasonsResponseDto[];
   /**
    * Video links for the title
    * @type {VideoLink[]}
@@ -294,5 +294,4 @@ export class TitleDto {
     type: PersonDto,
   })
   writers: PersonDto[];
-  
 }

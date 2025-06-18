@@ -2,6 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, Min } from 'class-validator';
 import { PersonRole } from 'src/people/enums/person-role.enum';
 
+/**
+ * This file is part of the "Title Management" project.
+ * It defines the CreateTitlePersonRequestDto used to create a new person associated with a title.
+ */
 export class CreateTitlePersonRequestDto {
   /** ID of the person */
   @ApiProperty({

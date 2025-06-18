@@ -65,7 +65,6 @@ export class AuthorizationGuard implements CanActivate {
     let error = new UnauthorizedException();
 
     for (const instance of guards) {
-      console.log(instance);
       // Decalre a new constant
       const canActivate = await Promise.resolve(
         // Here the AccessToken Guard Will be fired and check if user has permissions to acces

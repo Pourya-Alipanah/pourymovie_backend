@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Episode } from './episode.dto';
+import { Episode } from 'src/titles/dtos/helper/episode.dto';
 
 /**
  * This file is part of the "Title Management" project.

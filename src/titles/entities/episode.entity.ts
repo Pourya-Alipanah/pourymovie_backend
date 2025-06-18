@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VideoLink } from './video-link.entity';
-import { Season } from './season.entity';
+import { Season } from '../../season/season.entity';
 
 /**
  * @Entity
@@ -20,7 +20,7 @@ export class Episode {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int'})
+  @Column({ type: 'int' })
   episodeNumber: number;
 
   @OneToMany(() => VideoLink, (videoLink) => videoLink.episode, {
