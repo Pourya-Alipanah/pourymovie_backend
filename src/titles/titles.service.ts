@@ -55,7 +55,7 @@ export class TitlesService {
     @InjectRepository(VideoLink)
     private readonly videoLinkRepository: Repository<VideoLink>,
     @InjectRepository(Season)
-    private readonly seasSeasonRepository: Repository<Season>,
+    private readonly seasonRepository: Repository<Season>,
     private readonly dataSource: DataSource,
     private readonly paginationService: PaginationService,
   ) {}
@@ -170,14 +170,13 @@ export class TitlesService {
    */
   public async createTitle(dto: CreateTitleDto): Promise<Title> {
     return this.dataSource.transaction(async (manager) => {
-      const [genres, country, language, people, videoLinks, seasons] =
+      const [genres, country, language, people, videoLinks] =
         await Promise.all([
           this.findGenres(dto.genreIds ?? undefined),
           this.findCountry(dto.countryId),
           this.findLanguage(dto.languageId),
           this.findPeople(dto.titlePeople),
           this.findVideoLinks(dto.videoLinkIds),
-          this.findSeasons(dto.seasonIds),
         ]);
 
       const titlePeople: TitlePerson[] = this.titlePersonRepository.create(
@@ -196,7 +195,6 @@ export class TitlesService {
         country,
         language,
         people: resultTitlePeople,
-        seasons,
         videoLinks,
       });
       return manager.save(title);
@@ -272,15 +270,5 @@ export class TitlesService {
    */
   private async findVideoLinks(ids?: number[]) {
     return ids?.length ? this.videoLinkRepository.findBy({ id: In(ids) }) : [];
-  }
-
-  /**
-   * Finds seasons by their IDs.
-   * @param {number[]} [ids] - Optional array of season IDs
-   * @returns {Promise<Season[]>} Array of Season entities
-   * @description This method retrieves seasons from the database based on the provided IDs.
-   */
-  private async findSeasons(ids?: number[]) {
-    return ids?.length ? this.seasSeasonRepository.findBy({ id: In(ids) }) : [];
   }
 }

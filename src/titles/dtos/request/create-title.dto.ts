@@ -203,16 +203,6 @@ export class CreateTitleDto {
   @IsEnum(TitleType)
   type: TitleType;
 
-  /** List of season IDs (used only for series) */
-  @ApiProperty({
-    example: [1, 2],
-    description: 'IDs of seasons for series titles',
-    type: [Number],
-  })
-  @IsArray()
-  @IsNumber({}, { each: true })
-  seasonIds?: number[];
-
   /** List of video link IDs associated with the title */
   @ApiProperty({
     example: [1, 2],
