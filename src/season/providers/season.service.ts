@@ -4,6 +4,7 @@ import { Season } from 'src/season/season.entity';
 import { Repository } from 'typeorm';
 import { SEASON_NOT_FOUND_ERROR } from '../constants/season.errors.constants';
 import { CreateSeasonRequestDto } from '../dtos/request/create-season.dto';
+import { TitlesService } from 'src/titles/titles.service';
 
 /**
  * This file is part of the "Season Management" project.
@@ -20,6 +21,7 @@ export class SeasonService {
   constructor(
     @InjectRepository(Season)
     private readonly seasonRepository: Repository<Season>,
+    private readonly titlesService: TitlesService,
   ) {}
 
   /**
@@ -36,12 +38,31 @@ export class SeasonService {
   }
 
   /**
+   * Retrieves season by ID.
+   * @param {number} id - The ID of the season.
+   * @returns {Promise<Season>} A promise that resolves to an Season Object.
+   */
+  public async getSeasonById(id: number) {
+    const season = await this.seasonRepository.findOne({
+      where: { id },
+    });
+    if (!season) {
+      throw new NotFoundException(SEASON_NOT_FOUND_ERROR);
+    }
+    return season;
+  }
+
+  /**
    * Retrieves a specific season by its ID.
    * @param {number} id - The ID of the season to retrieve.
    * @returns {Promise<Season>} A promise that resolves to the season with the specified ID.
    */
   public async createSeason(dto: CreateSeasonRequestDto) {
-    const season = this.seasonRepository.create(dto);
+    const title = await this.titlesService.findById(dto.titleId);
+    const season = this.seasonRepository.create({
+      ...dto,
+      title: { id: title.id },
+    });
     const savedSeason = this.seasonRepository.save(season);
     return savedSeason;
   }

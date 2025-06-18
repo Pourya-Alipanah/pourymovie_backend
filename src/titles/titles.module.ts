@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TitlesController } from './titles.controller';
 import { TitlesService } from './titles.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +11,8 @@ import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
 import { Person } from 'src/people/person.entity';
 import { Episode } from 'src/episode/episode.entity';
+import { SeasonModule } from 'src/season/season.module';
+import { EpisodeModule } from 'src/episode/episode.module';
 
 @Module({
   controllers: [TitlesController],
@@ -27,6 +29,9 @@ import { Episode } from 'src/episode/episode.entity';
       VideoLink,
       Person,
     ]),
+    forwardRef(() => SeasonModule),
+    forwardRef(() => EpisodeModule),
   ],
+  exports: [TitlesService],
 })
 export class TitlesModule {}
