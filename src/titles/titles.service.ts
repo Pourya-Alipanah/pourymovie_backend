@@ -12,7 +12,6 @@ import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
 import { Country } from './entities/country.entity';
 import { Language } from '../language/language.entity';
-import { Genre } from './entities/genre.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
@@ -21,6 +20,8 @@ import { Person } from 'src/people/person.entity';
 import { CreateTitlePersonRequestDto } from './dtos/request/create-title-person.dto';
 import { PeopleService } from 'src/people/people.service';
 import { LanguageService } from '../language/providers/language.service';
+import { Genre } from 'src/genre/genre.entity';
+import { GenreService } from 'src/genre/providers/genre.service';
 
 /**
  * Service for handling operations related to titles.
@@ -31,21 +32,19 @@ export class TitlesService {
    * Injects the repository for Title entity.
    * @param {Repository<Title>} titleRepository - Repository for Title entity
    * @param {Repository<Country>} countryRepository - Repository for Country entity
-   * @param {Repository<Genre>} genreRepository - Repository for Genre entity
    * @param {Repository<TitlePerson>} titlePersonRepository - Repository for TitlePerson entity
    * @param {Repository<VideoLink>} videoLinkRepository - Repository for VideoLink entity
    * @param {DataSource} dataSource - Data source for database transactions
    * @param {PaginationService} paginationService - Service for handling pagination
    * @param {PeopleService} peopleService - Service for handling people-related operations
    * @param {LanguageService} languageService - Service for handling language-related operations
+   * @param {GenreService} genreService - Service for handling genre-related operations
    */
   constructor(
     @InjectRepository(Title)
     private readonly titleRepository: Repository<Title>,
     @InjectRepository(Country)
     private readonly countryRepository: Repository<Country>,
-    @InjectRepository(Genre)
-    private readonly genreRepository: Repository<Genre>,
     @InjectRepository(TitlePerson)
     private readonly titlePersonRepository: Repository<TitlePerson>,
     @InjectRepository(VideoLink)
@@ -54,6 +53,7 @@ export class TitlesService {
     private readonly paginationService: PaginationService,
     private readonly peopleService: PeopleService,
     private readonly languageService: LanguageService,
+    private readonly genreService: GenreService,
   ) {}
 
   /**
@@ -155,7 +155,7 @@ export class TitlesService {
     return this.dataSource.transaction(async (manager) => {
       const [genres, country, language, people, videoLinks] = await Promise.all(
         [
-          this.findGenres(dto.genreIds ?? undefined),
+          this.genreService.findMultipleById(dto.genreIds),
           this.findCountry(dto.countryId),
           this.languageService.getById(dto.languageId),
           this.peopleService.findMultipleById(
@@ -210,7 +210,7 @@ export class TitlesService {
       let updatedTitlePeople = existingTitle.people;
 
       if (dto.genreIds) {
-        updatedGenres = await this.findGenres(dto.genreIds);
+        updatedGenres = await this.genreService.findMultipleById(dto.genreIds);
       }
 
       if (dto.countryId) {
@@ -252,16 +252,6 @@ export class TitlesService {
 
       return await manager.save(updatedTitle);
     });
-  }
-
-  /**
-   * Finds genres by their IDs.
-   * @param {number[]} [ids] - Optional array of genre IDs
-   * @returns {Promise<Genre[]>} Array of Genre entities
-   * @description This method retrieves genres from the database based on the provided IDs.
-   */
-  private async findGenres(ids?: number[]) {
-    return ids?.length ? this.genreRepository.findBy({ id: In(ids) }) : [];
   }
 
   /**

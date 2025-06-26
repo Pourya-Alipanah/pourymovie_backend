@@ -1,5 +1,5 @@
+import { Title } from 'src/titles/entities/title.entity';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Title } from './title.entity';
 
 /**
  * @Entity
