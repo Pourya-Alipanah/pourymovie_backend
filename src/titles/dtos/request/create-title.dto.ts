@@ -101,6 +101,11 @@ export class CreateTitleDto {
 
   /** IDs of people involved (e.g., actors, directors, writers) */
 
+  @ApiProperty({
+    description: 'people that involve in title',
+    type: [CreateTitlePersonRequestDto],
+    required: true,
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateTitlePersonRequestDto)

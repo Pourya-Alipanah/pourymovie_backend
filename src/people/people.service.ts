@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Person } from './person.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { GetPeopleRequestDto } from './dtos/response/get-people.dto';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { PersonDto } from './dtos/helper/person.dto';
-import { PERSON_NOT_FOUND_ERROR } from './constants/people.errors.constants';
+import { PERSON_NOT_FOUND_ERROR, SOME_PEOPLE_NOT_FOUND_ERROR } from './constants/people.errors.constants';
 import { CreatePersonRequestDto } from './dtos/request/create-person.dto';
 import { UpdatePersonRequestDto } from './dtos/request/update-person.dto';
 import { GetPersonResponseDto } from './dtos/response/get-person.dto';
@@ -61,6 +61,22 @@ export class PeopleService {
     });
     if (!person) {
       throw new NotFoundException(PERSON_NOT_FOUND_ERROR);
+    }
+    return person;
+  }
+
+  /**
+   * Retrieves multiple people by their unique IDs.
+   * @param ids - An array of unique identifiers for the people.
+   * @returns An array of people with the specified IDs.
+   */
+  public async findMultipleById(ids: number[]): Promise<Person[]> {
+    const uniqueIds = Array.from(new Set(ids));
+    const person = await this.personRepository.find({
+      where: { id: In(uniqueIds) },
+    });
+    if (person.length < uniqueIds.length) {
+      throw new NotFoundException(SOME_PEOPLE_NOT_FOUND_ERROR);
     }
     return person;
   }
