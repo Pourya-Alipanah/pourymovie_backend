@@ -72,6 +72,10 @@ export class SeasonController {
    * @param {CreateSeasonRequestDto} createSeasonRequestDto - The request DTO containing the details of the season to create.
    * @returns {Promise<GetSeasonsResponseDto>} A promise that resolves to the created season.
    */
+  @ApiOperation({
+    summary: 'Create a season',
+    description: 'This endpoint creates a new season with the provided details.',
+  })
   @Post()
   @ApiBearerAuth('access-token')
   @Role(UserRole.ADMIN)
@@ -86,6 +90,10 @@ export class SeasonController {
    * @param {UpdateSeasonRequestDto} updateSeasonRequestDto - The request DTO containing the updated details of the season.
    * @returns {Promise<GetSeasonsResponseDto>} A promise that resolves to the updated season.
    */
+  @ApiOperation({
+    summary: 'Update a season by ID',
+    description: 'This endpoint updates a season using its unique ID.',
+  })
   @Patch(':id')
   @ApiBearerAuth('access-token')
   @Role(UserRole.ADMIN)

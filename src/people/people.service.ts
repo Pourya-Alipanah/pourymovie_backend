@@ -65,11 +65,17 @@ export class PeopleService {
     return person;
   }
 
+  /**
+   * Retrieves multiple people by their unique IDs.
+   * @param ids - An array of unique identifiers for the people.
+   * @returns An array of people with the specified IDs.
+   */
   public async findMultipleById(ids: number[]): Promise<Person[]> {
+    const uniqueIds = Array.from(new Set(ids));
     const person = await this.personRepository.find({
-      where: { id: In(ids) },
+      where: { id: In(uniqueIds) },
     });
-    if (person.length < ids.length) {
+    if (person.length < uniqueIds.length) {
       throw new NotFoundException(SOME_PEOPLE_NOT_FOUND_ERROR);
     }
     return person;

@@ -168,9 +168,7 @@ export class TitlesService {
    * @description This method saves a new title to the database.
    */
   public async createTitle(dto: CreateTitleDto): Promise<Title> {
-
     return this.dataSource.transaction(async (manager) => {
-
       const [genres, country, language, people, videoLinks] = await Promise.all(
         [
           this.findGenres(dto.genreIds ?? undefined),
@@ -203,7 +201,6 @@ export class TitlesService {
         videoLinks,
       });
       return manager.save(title);
-
     });
   }
 
@@ -215,14 +212,62 @@ export class TitlesService {
    * @throws {NotFoundException} If the title with the given ID does not exist
    * @description This method updates a title's details in the database.
    */
-  public async updateTitle(id: number, dto: UpdateTitleRequestDto) {
-    const title = await this.findById(id);
-    const updatedTitle = Object.assign(title, {
-      ...dto,
-      slug: slugify(dto.slug || title.slug),
-    });
+  public async updateTitle(
+    id: number,
+    dto: UpdateTitleRequestDto,
+  ): Promise<Title> {
+    const existingTitle = await this.findById(id);
 
-    return await this.titleRepository.save(updatedTitle);
+    return await this.dataSource.transaction(async (manager) => {
+      let updatedGenres = existingTitle.genres;
+      let updatedCountry = existingTitle.country;
+      let updatedLanguage = existingTitle.language;
+      let updatedVideoLinks = existingTitle.videoLinks;
+      let updatedTitlePeople = existingTitle.people;
+
+      if (dto.genreIds) {
+        updatedGenres = await this.findGenres(dto.genreIds);
+      }
+
+      if (dto.countryId) {
+        updatedCountry = await this.findCountry(dto.countryId);
+      }
+
+      if (dto.languageId) {
+        updatedLanguage = await this.findLanguage(dto.languageId);
+      }
+
+      if (dto.videoLinkIds) {
+        updatedVideoLinks = await this.findVideoLinks(dto.videoLinkIds);
+      }
+
+      if (dto.titlePeople) {
+        const people = await this.peopleService.findMultipleById(
+          dto.titlePeople.map((tp) => tp.id),
+        );
+
+        const titlePeopleArray = dto.titlePeople.map((tp) => ({
+          person: people.find((p) => p.id === tp.id),
+          role: tp.role,
+          title: existingTitle,
+        }));
+
+        updatedTitlePeople =
+          this.titlePersonRepository.create(titlePeopleArray);
+      }
+
+      const updatedTitle = manager.merge(Title, existingTitle, {
+        ...dto,
+        slug: slugify(dto.slug || existingTitle.slug),
+        genres: updatedGenres,
+        country: updatedCountry,
+        language: updatedLanguage,
+        videoLinks: updatedVideoLinks,
+        people: updatedTitlePeople,
+      });
+
+      return await manager.save(updatedTitle);
+    });
   }
 
   /**
