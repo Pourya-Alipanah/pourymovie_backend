@@ -1,5 +1,5 @@
 import { Genre } from 'src/titles/dtos/helper/genre.dto';
-import { Language } from 'src/titles/dtos/helper/language.dto';
+import { Language } from 'src/language/dtos/helper/language.dto';
 import { PersonDto } from 'src/people/dtos/helper/person.dto';
 import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
 import { ApiProperty } from '@nestjs/swagger';

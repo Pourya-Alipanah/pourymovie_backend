@@ -15,7 +15,7 @@ import { VideoLink } from './video-link.entity';
 import { TitleType } from '../enums/title-type.enum';
 import { TitlePerson } from './title-person.entity';
 import { PersonRole } from 'src/people/enums/person-role.enum';
-import { Language } from 'src/titles/entities/language.entity';
+import { Language } from 'src/language/language.entity';
 import { Comment } from 'src/comment/comment.entity';
 import { Exclude, Expose } from 'class-transformer';
 

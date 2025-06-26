@@ -11,7 +11,7 @@ import {
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
 import { Country } from './entities/country.entity';
-import { Language } from './entities/language.entity';
+import { Language } from '../language/language.entity';
 import { Genre } from './entities/genre.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
@@ -20,6 +20,7 @@ import slugify from 'slugify';
 import { Person } from 'src/people/person.entity';
 import { CreateTitlePersonRequestDto } from './dtos/request/create-title-person.dto';
 import { PeopleService } from 'src/people/people.service';
+import { LanguageService } from '../language/providers/language.service';
 
 /**
  * Service for handling operations related to titles.
@@ -30,33 +31,29 @@ export class TitlesService {
    * Injects the repository for Title entity.
    * @param {Repository<Title>} titleRepository - Repository for Title entity
    * @param {Repository<Country>} countryRepository - Repository for Country entity
-   * @param {Repository<Language>} languageRepository - Repository for Language entity
    * @param {Repository<Genre>} genreRepository - Repository for Genre entity
    * @param {Repository<TitlePerson>} titlePersonRepository - Repository for TitlePerson entity
-   * @param {Repository<Person>} personRepository - Repository for Person entity
    * @param {Repository<VideoLink>} videoLinkRepository - Repository for VideoLink entity
-   * @param {Repository<Season>} seasSeasonRepository - Repository for Season entity
    * @param {DataSource} dataSource - Data source for database transactions
    * @param {PaginationService} paginationService - Service for handling pagination
+   * @param {PeopleService} peopleService - Service for handling people-related operations
+   * @param {LanguageService} languageService - Service for handling language-related operations
    */
   constructor(
     @InjectRepository(Title)
     private readonly titleRepository: Repository<Title>,
     @InjectRepository(Country)
     private readonly countryRepository: Repository<Country>,
-    @InjectRepository(Language)
-    private readonly languageRepository: Repository<Language>,
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
     @InjectRepository(TitlePerson)
     private readonly titlePersonRepository: Repository<TitlePerson>,
-    @InjectRepository(Person)
-    private readonly personRepository: Repository<Person>,
     @InjectRepository(VideoLink)
     private readonly videoLinkRepository: Repository<VideoLink>,
     private readonly dataSource: DataSource,
     private readonly paginationService: PaginationService,
     private readonly peopleService: PeopleService,
+    private readonly languageService: LanguageService,
   ) {}
 
   /**
@@ -70,19 +67,6 @@ export class TitlesService {
   public async findById(id: number): Promise<Title> {
     const result = await this.titleRepository.findOne({
       where: { id },
-      /* relations: [
-        'genres',
-        'country',
-        'seasons',
-        'videoLinks',
-        'people',
-        'people.person',
-        'comments',
-        'comments.user',
-        'language',
-        'seasons.episodes',
-        'seasons.episodes.videoLinks',
-      ], */
     });
 
     if (!result) {
@@ -173,7 +157,7 @@ export class TitlesService {
         [
           this.findGenres(dto.genreIds ?? undefined),
           this.findCountry(dto.countryId),
-          this.findLanguage(dto.languageId),
+          this.languageService.getById(dto.languageId),
           this.peopleService.findMultipleById(
             dto.titlePeople.map((tp) => tp.id),
           ),
@@ -234,7 +218,7 @@ export class TitlesService {
       }
 
       if (dto.languageId) {
-        updatedLanguage = await this.findLanguage(dto.languageId);
+        updatedLanguage = await this.languageService.getById(dto.languageId);
       }
 
       if (dto.videoLinkIds) {
@@ -288,16 +272,6 @@ export class TitlesService {
    */
   private async findCountry(id?: number) {
     return id ? this.countryRepository.findOneBy({ id }) : null;
-  }
-
-  /**
-   * Finds a language by its ID.
-   * @param {number} [id] - Optional language ID
-   * @returns {Promise<Language>} Language entity or null if not found
-   * @description This method retrieves a language from the database based on the provided ID.
-   */
-  private async findLanguage(id?: number) {
-    return id ? this.languageRepository.findOneBy({ id }) : null;
   }
 
   /**
