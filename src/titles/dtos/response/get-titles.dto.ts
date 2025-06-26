@@ -1,4 +1,4 @@
-import { Genre } from 'src/titles/dtos/helper/genre.dto';
+import { Genre } from 'src/genre/dtos/helper/genre.dto';
 import { Language } from 'src/language/dtos/helper/language.dto';
 import { PersonDto } from 'src/people/dtos/helper/person.dto';
 import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';

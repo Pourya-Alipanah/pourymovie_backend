@@ -8,7 +8,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Genre } from './genre.entity';
 import { Country } from 'src/titles/entities/country.entity';
 import { Season } from '../../season/season.entity';
 import { VideoLink } from './video-link.entity';
@@ -18,6 +17,7 @@ import { PersonRole } from 'src/people/enums/person-role.enum';
 import { Language } from 'src/language/language.entity';
 import { Comment } from 'src/comment/comment.entity';
 import { Exclude, Expose } from 'class-transformer';
+import { Genre } from 'src/genre/genre.entity';
 
 /**
  * @Entity

@@ -4,7 +4,6 @@ import { TitlesService } from './titles.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Country } from './entities/country.entity';
 import { Title } from './entities/title.entity';
-import { Genre } from './entities/genre.entity';
 import { Language } from '../language/language.entity';
 import { Season } from '../season/season.entity';
 import { TitlePerson } from './entities/title-person.entity';
@@ -15,6 +14,8 @@ import { SeasonModule } from 'src/season/season.module';
 import { EpisodeModule } from 'src/episode/episode.module';
 import { PeopleModule } from 'src/people/people.module';
 import { LanguageModule } from 'src/language/language.module';
+import { Genre } from 'src/genre/genre.entity';
+import { GenreModule } from 'src/genre/genre.module';
 
 @Module({
   controllers: [TitlesController],
@@ -34,7 +35,8 @@ import { LanguageModule } from 'src/language/language.module';
     forwardRef(() => SeasonModule),
     forwardRef(() => EpisodeModule),
     PeopleModule,
-    LanguageModule
+    LanguageModule,
+    GenreModule
   ],
   exports: [TitlesService],
 })
