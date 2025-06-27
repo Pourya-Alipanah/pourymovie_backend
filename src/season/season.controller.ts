@@ -45,7 +45,7 @@ export class SeasonController {
   @Get(':id')
   @ApiBearerAuth('access-token')
   @Role(UserRole.ADMIN)
-  @ApiSingleResponse(GetSeasonsResponseDto)
+  @ApiSingleResponse(GetSeasonsResponseDto, true)
   getAllSeasonsWithTitleId(@Param() { id }: GetByIdParamDto) {
     return this.seasonService.getAllSeasonsWithTitleId(id);
   }
@@ -74,7 +74,8 @@ export class SeasonController {
    */
   @ApiOperation({
     summary: 'Create a season',
-    description: 'This endpoint creates a new season with the provided details.',
+    description:
+      'This endpoint creates a new season with the provided details.',
   })
   @Post()
   @ApiBearerAuth('access-token')

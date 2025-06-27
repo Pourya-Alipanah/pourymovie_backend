@@ -26,5 +26,5 @@ export class Country {
   @OneToMany(() => Title, (title) => title.country, {
     onDelete: 'SET NULL',
   })
-  title?: Title[];
+  titles?: Title[];
 }
