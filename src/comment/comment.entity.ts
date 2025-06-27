@@ -1,6 +1,17 @@
+import { Exclude } from 'class-transformer';
 import { Title } from 'src/titles/entities/title.entity';
 import { User } from 'src/user/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  VirtualColumn,
+} from 'typeorm';
+import { DeletedBy } from './enums/deleted-by.enum';
 
 /**
  * @Entity
@@ -20,10 +31,25 @@ export class Comment {
   @Column({ type: 'varchar', length: 250 })
   content: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Exclude()
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  @Exclude()
+  @UpdateDateColumn()
+  updateAt: Date | null;
+
+  @Exclude()
+  @Column({ type: 'enum', enum: DeletedBy, nullable: true })
+  deletedBy: DeletedBy | null;
+
+  @VirtualColumn({
+    type: 'boolean',
+    query: (alias) => `${alias}."createdAt" <> ${alias}."updateAt"`,
+  })
   isUpdated: boolean;
 
   @ManyToOne(() => User)

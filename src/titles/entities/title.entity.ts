@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  VirtualColumn,
 } from 'typeorm';
 import { Country } from 'src/country/country.entity';
 import { Season } from '../../season/season.entity';
@@ -18,6 +19,8 @@ import { Language } from 'src/language/language.entity';
 import { Comment } from 'src/comment/comment.entity';
 import { Exclude, Expose } from 'class-transformer';
 import { Genre } from 'src/genre/genre.entity';
+import { Person } from 'src/people/person.entity';
+import { buildRoleQuery } from '../sql/title-role.query';
 
 /**
  * @Entity
@@ -101,40 +104,31 @@ export class Title {
    * Returns an array of actors associated with the title.
    * @returns {Person[]}
    */
-  @Expose()
-  get actors() {
-    return (
-      this.people
-        ?.filter((tp) => tp.role === PersonRole.ACTOR)
-        .map((tp) => tp.person) || []
-    );
-  }
+  @VirtualColumn({
+    query: (alias) => buildRoleQuery(alias, PersonRole.ACTOR),
+    type: 'json',
+  })
+  actors: Person[];
 
   /**
    * Returns an array of directors associated with the title.
    * @return {Person[]}
    */
-  @Expose()
-  get directors() {
-    return (
-      this.people
-        ?.filter((tp) => tp.role === PersonRole.DIRECTOR)
-        .map((tp) => tp.person) || []
-    );
-  }
+  @VirtualColumn({
+    query: (alias) => buildRoleQuery(alias, PersonRole.DIRECTOR),
+    type: 'json',
+  })
+  directors: Person[];
 
   /**
    * Returns an array of writers associated with the title.
    * @return {Person[]}
    */
-  @Expose()
-  get writers() {
-    return (
-      this.people
-        ?.filter((tp) => tp.role === PersonRole.WRITER)
-        .map((tp) => tp.person) || []
-    );
-  }
+  @VirtualColumn({
+    query: (alias) => buildRoleQuery(alias, PersonRole.WRITER),
+    type: 'json',
+  })
+  writers: Person[];
 
   @ManyToOne(() => Country, { eager: true })
   country: Country | null;

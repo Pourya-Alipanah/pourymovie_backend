@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 import { GetUsersDto } from 'src/user/dtos/response/get-users.dto';
 
 /**
@@ -73,8 +73,8 @@ export class Comment {
   @ApiProperty({
     description: 'User who created the comment',
     name: 'user',
-    type: GetUsersDto,
+    type: PickType(GetUsersDto, ['id', 'firstName', 'lastName', 'avatarUrl']),
     required: true,
   })
-  user: GetUsersDto;
+  user: Pick<GetUsersDto, 'id' | 'firstName' | 'lastName' | 'avatarUrl'>;
 }
