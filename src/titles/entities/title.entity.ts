@@ -8,7 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Country } from 'src/titles/entities/country.entity';
+import { Country } from 'src/country/country.entity';
 import { Season } from '../../season/season.entity';
 import { VideoLink } from './video-link.entity';
 import { TitleType } from '../enums/title-type.enum';

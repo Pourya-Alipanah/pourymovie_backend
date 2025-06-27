@@ -44,7 +44,7 @@ export class EpisodeController {
   @Get(':id')
   @ApiBearerAuth('access-token')
   @Role(UserRole.ADMIN)
-  @ApiSingleResponse(GetEpisodesResponseDto)
+  @ApiSingleResponse(GetEpisodesResponseDto, true)
   getAllEpisodesWithSeasonId(@Param() { id }: GetByIdParamDto) {
     return this.episodeService.getAllEpisodesWithSeasonId(id);
   }

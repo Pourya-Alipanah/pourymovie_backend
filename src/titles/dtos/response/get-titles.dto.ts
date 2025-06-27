@@ -4,7 +4,7 @@ import { PersonDto } from 'src/people/dtos/helper/person.dto';
 import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { TitleType } from 'src/titles/enums/title-type.enum';
-import { Country } from '../helper/country.dto';
+import { Country } from '../../../country/dtos/helper/country.dto';
 import { Comment } from 'src/comment/dtos/helper/comment.dto';
 import { PaginationResponseDto } from 'src/common/pagination/dtos/pagination.dto';
 

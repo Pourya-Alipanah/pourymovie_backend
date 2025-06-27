@@ -10,18 +10,14 @@ import {
 } from './dtos/response/get-titles.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
-import { Country } from './entities/country.entity';
-import { Language } from '../language/language.entity';
 import { TitlePerson } from './entities/title-person.entity';
 import { VideoLink } from './entities/video-link.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
-import { Person } from 'src/people/person.entity';
-import { CreateTitlePersonRequestDto } from './dtos/request/create-title-person.dto';
 import { PeopleService } from 'src/people/people.service';
 import { LanguageService } from '../language/providers/language.service';
-import { Genre } from 'src/genre/genre.entity';
 import { GenreService } from 'src/genre/providers/genre.service';
+import { CountryService } from 'src/country/providers/country.service';
 
 /**
  * Service for handling operations related to titles.
@@ -31,7 +27,6 @@ export class TitlesService {
   /**
    * Injects the repository for Title entity.
    * @param {Repository<Title>} titleRepository - Repository for Title entity
-   * @param {Repository<Country>} countryRepository - Repository for Country entity
    * @param {Repository<TitlePerson>} titlePersonRepository - Repository for TitlePerson entity
    * @param {Repository<VideoLink>} videoLinkRepository - Repository for VideoLink entity
    * @param {DataSource} dataSource - Data source for database transactions
@@ -43,8 +38,6 @@ export class TitlesService {
   constructor(
     @InjectRepository(Title)
     private readonly titleRepository: Repository<Title>,
-    @InjectRepository(Country)
-    private readonly countryRepository: Repository<Country>,
     @InjectRepository(TitlePerson)
     private readonly titlePersonRepository: Repository<TitlePerson>,
     @InjectRepository(VideoLink)
@@ -54,6 +47,7 @@ export class TitlesService {
     private readonly peopleService: PeopleService,
     private readonly languageService: LanguageService,
     private readonly genreService: GenreService,
+    private readonly countryService: CountryService,
   ) {}
 
   /**
@@ -156,7 +150,7 @@ export class TitlesService {
       const [genres, country, language, people, videoLinks] = await Promise.all(
         [
           this.genreService.findMultipleById(dto.genreIds),
-          this.findCountry(dto.countryId),
+          this.countryService.getById(dto.countryId),
           this.languageService.getById(dto.languageId),
           this.peopleService.findMultipleById(
             dto.titlePeople.map((tp) => tp.id),
@@ -214,7 +208,7 @@ export class TitlesService {
       }
 
       if (dto.countryId) {
-        updatedCountry = await this.findCountry(dto.countryId);
+        updatedCountry = await this.countryService.getById(dto.countryId);
       }
 
       if (dto.languageId) {
@@ -252,16 +246,6 @@ export class TitlesService {
 
       return await manager.save(updatedTitle);
     });
-  }
-
-  /**
-   * Finds a country by its ID.
-   * @param {number} [id] - Optional country ID
-   * @returns {Promise<Country>} Country entity or null if not found
-   * @description This method retrieves a country from the database based on the provided ID.
-   */
-  private async findCountry(id?: number) {
-    return id ? this.countryRepository.findOneBy({ id }) : null;
   }
 
   /**
