@@ -26,14 +26,22 @@ export class GetUsersDto {
    * First name of the user
    * @type {string}
    */
-  @ApiProperty({ description: 'First name of the user' })
+  @ApiProperty({
+    description: 'First name of the user',
+    type: 'string',
+    nullable: true,
+  })
   firstName: string | null;
 
   /**
    * Last name of the user
    * @type {string}
    */
-  @ApiProperty({ description: 'Last name of the user' })
+  @ApiProperty({
+    description: 'Last name of the user',
+    type: 'string',
+    nullable: true,
+  })
   lastName: string | null;
 
   /**
@@ -74,17 +82,6 @@ export class GetUsersDto {
     nullable: true,
   })
   updateAt: Date | null;
-
-  /**
-   * Timestamp when the user was deleted
-   * @type {Date | null}
-   */
-  @ApiProperty({
-    description: 'Timestamp when the user was deleted',
-    type: Date,
-    nullable: true,
-  })
-  deletedAt: Date | null;
 
   /**
    * Indicates if the user has an active subscription
