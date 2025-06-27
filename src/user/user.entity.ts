@@ -106,8 +106,8 @@ export class User {
   })
   hasSubscription: boolean;
 
-  @OneToMany(()=> Comment , comment => comment.user)
-  comments: Comment[];
+  /* @OneToMany(()=> Comment , comment => comment.user)
+  comments: Comment[]; */
 
   /* @OneToOne(() => Subscription, { eager: true, nullable: true })
     @JoinColumn()

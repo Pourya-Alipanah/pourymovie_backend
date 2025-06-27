@@ -55,6 +55,18 @@ export class Comment {
   createdAt: string;
 
   /**
+   * Indicates whether the comment has been updated
+   * @type {boolean}
+   */
+  @ApiProperty({
+    description: 'Indicates whether the comment has been updated',
+    name: 'isUpdated',
+    type: 'boolean',
+    required: true,
+  })
+  isUpdated: boolean;
+
+  /**
    * user who created the comment
    * @type {GetUsersDto}
    */

@@ -23,7 +23,10 @@ export class Comment {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @Column({ type: 'boolean', default: false })
+  isUpdated: boolean;
+
+  @ManyToOne(() => User)
   user: User;
 
   @ManyToOne(() => Title, (title) => title.comments)
