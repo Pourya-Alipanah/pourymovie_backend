@@ -15,6 +15,9 @@ import {
 } from 'fs';
 import minioConfig from '../config/minio.config';
 import { ConfigType } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UploadCenter } from '../upload-center.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UploadCenterService implements OnModuleInit {
@@ -22,6 +25,8 @@ export class UploadCenterService implements OnModuleInit {
     @Inject(minioConfig.KEY)
     private readonly minioConfiguration: ConfigType<typeof minioConfig>,
     private readonly minioProvider: MinioProvider,
+    @InjectRepository(UploadCenter)
+    private readonly uploadRepository: Repository<UploadCenter>,
   ) {}
 
   onModuleInit() {
@@ -57,6 +62,12 @@ export class UploadCenterService implements OnModuleInit {
       objectName,
       60 * this.minioConfiguration.urlExpirationMinutes,
     );
+    const uploadTransaction = this.uploadRepository.create({
+      fileKey: objectName,
+      bucket,
+    });
+
+    await this.uploadRepository.save(uploadTransaction);
     return {
       key: objectName,
       url,
@@ -82,7 +93,7 @@ export class UploadCenterService implements OnModuleInit {
       const stream = createReadStream(file.path);
       const size = statSync(file.path).size;
 
-      const result = await this.minioProvider.uploadStream(
+      await this.minioProvider.uploadStream(
         bucket,
         objectName,
         stream,
@@ -97,6 +108,13 @@ export class UploadCenterService implements OnModuleInit {
         objectName,
         60 * this.minioConfiguration.urlExpirationMinutes,
       );
+
+      const uploadTransaction = this.uploadRepository.create({
+        fileKey: objectName,
+        bucket,
+      });
+
+      await this.uploadRepository.save(uploadTransaction);
 
       return {
         key: objectName,

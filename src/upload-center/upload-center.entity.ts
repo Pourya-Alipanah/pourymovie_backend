@@ -8,6 +8,10 @@ import {
 import { UploadType } from './enums/upload-type.enum';
 import { UploadStatus } from './enums/upload-status.enum';
 import { UploadFromEntity } from './enums/upload-from-entity.enum';
+import {
+  BufferBucketNames,
+  StreamBucketNames,
+} from './enums/bucket-names.enum';
 
 @Entity('uploads')
 export class UploadCenter {
@@ -18,10 +22,13 @@ export class UploadCenter {
   @Index()
   fileKey: string;
 
-  @Column()
-  bucket: string;
+  @Column({
+    type: 'enum',
+    enum: { ...BufferBucketNames, ...StreamBucketNames },
+  })
+  bucket: BufferBucketNames | StreamBucketNames;
 
-  @Column({ type: 'enum', enum: UploadType })
+  @Column({ type: 'enum', enum: UploadType, nullable: true })
   type: UploadType;
 
   @Column({ type: 'enum', enum: UploadStatus, default: UploadStatus.PENDING })
@@ -29,9 +36,6 @@ export class UploadCenter {
 
   @Column({ type: 'enum', enum: UploadFromEntity, nullable: true })
   fromEntity: UploadFromEntity;
-
-  @Column({ nullable: true })
-  relatedEntityId: number;
 
   @CreateDateColumn()
   createdAt: Date;
