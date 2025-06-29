@@ -4,5 +4,4 @@
 export enum UploadStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
-  REJECTED = 'rejected',
 }

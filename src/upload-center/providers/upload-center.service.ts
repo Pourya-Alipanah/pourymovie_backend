@@ -1,4 +1,9 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { MinioProvider } from './minio.provider';
 import {
   BufferBucketNames,
@@ -18,9 +23,26 @@ import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadCenter } from '../upload-center.entity';
 import { Repository } from 'typeorm';
+import { UploadFromEntity } from '../enums/upload-from-entity.enum';
+import { UploadType } from '../enums/upload-type.enum';
+import { UPLOAD_RECORD_NOT_FOUND } from '../constants/upload-center.errors.contant';
+import { UploadStatus } from '../enums/upload-status.enum';
 
+/**
+ * Service for managing file uploads in the upload center.
+ * Handles both buffer and stream uploads to MinIO,
+ * and provides methods for confirming and removing uploads.
+ */
 @Injectable()
 export class UploadCenterService implements OnModuleInit {
+  /**
+   * Initializes the upload center service.
+   * Ensures the temporary upload directory exists.
+   *
+   * @param minioConfiguration - Configuration for MinIO.
+   * @param minioProvider - Provider for MinIO operations.
+   * @param uploadRepository - Repository for managing upload records.
+   */
   constructor(
     @Inject(minioConfig.KEY)
     private readonly minioConfiguration: ConfigType<typeof minioConfig>,
@@ -29,6 +51,10 @@ export class UploadCenterService implements OnModuleInit {
     private readonly uploadRepository: Repository<UploadCenter>,
   ) {}
 
+  /**
+   * Ensures the temporary upload directory exists on module initialization.
+   * Creates the directory if it does not exist.
+   */
   onModuleInit() {
     const dir = this.minioConfiguration.tempUploadDir;
     if (dir && !existsSync(dir)) {
@@ -36,6 +62,14 @@ export class UploadCenterService implements OnModuleInit {
     }
   }
 
+  /**
+   * Uploads a file as a buffer to the specified MinIO bucket.
+   * Generates a unique object name based on the original file name and current timestamp.
+   *
+   * @param file - The file to upload, provided by Multer.
+   * @param bucket - The bucket to upload the file to.
+   * @returns An object containing the file key and URL of the uploaded file.
+   */
   public async withBuffer(
     file: Express.Multer.File,
     bucket: BufferBucketNames,
@@ -60,6 +94,7 @@ export class UploadCenterService implements OnModuleInit {
     const url = await this.minioProvider.getObjectUrl(
       bucket,
       objectName,
+      false,
       60 * this.minioConfiguration.urlExpirationMinutes,
     );
     const uploadTransaction = this.uploadRepository.create({
@@ -74,6 +109,14 @@ export class UploadCenterService implements OnModuleInit {
     };
   }
 
+  /**
+   * Uploads a file as a stream to the specified MinIO bucket.
+   * Generates a unique object name based on the original file name and current timestamp.
+   *
+   * @param file - The file to upload, provided by Multer.
+   * @param bucket - The bucket to upload the file to.
+   * @returns An object containing the file key and URL of the uploaded file.
+   */
   public async withStream(
     file: Express.Multer.File,
     bucket: StreamBucketNames,
@@ -106,6 +149,7 @@ export class UploadCenterService implements OnModuleInit {
       const url = await this.minioProvider.getObjectUrl(
         bucket,
         objectName,
+        false,
         60 * this.minioConfiguration.urlExpirationMinutes,
       );
 
@@ -125,6 +169,62 @@ export class UploadCenterService implements OnModuleInit {
         unlinkSync(file.path);
       }
       throw error;
+    }
+  }
+
+  /**
+   * Retrieves all pending uploads from the repository.
+   *
+   * @returns A list of pending upload records.
+   */
+  public async pendingUploads() {
+    return await this.uploadRepository.find({
+      where: { status: UploadStatus.PENDING },
+    });
+  }
+
+  /**
+   * Confirms an upload by updating its status and associating it with an entity.
+   *
+   * @param fileKey - The unique key of the uploaded file.
+   * @param entity - The entity from which the upload originated.
+   * @param type - The type of upload.
+   * @returns The URL of the confirmed upload.
+   */
+  public async confirmUpload(
+    fileKey: string,
+    entity: UploadFromEntity,
+    type: UploadType,
+  ) {
+    const uploaded = await this.uploadRepository.findOneBy({ fileKey });
+
+    if (!uploaded) {
+      throw new NotFoundException(UPLOAD_RECORD_NOT_FOUND);
+    }
+
+    Object.assign(uploaded, { fromEntity: entity, type, status: 'COMPLETED' });
+    this.uploadRepository.save(uploaded);
+    return this.minioProvider.getObjectUrl(uploaded.bucket, uploaded.fileKey , true);
+  }
+
+  /**
+   * Removes an upload record and deletes the corresponding file from MinIO.
+   *
+   * @param fileKey - The unique key of the uploaded file.
+   */
+  public async removeUpload(fileKey: string) {
+    const uploaded = await this.uploadRepository.findOneBy({ fileKey });
+
+    if (!uploaded) {
+      return console.error(UPLOAD_RECORD_NOT_FOUND);
+    }
+
+    await this.uploadRepository.delete(uploaded.id);
+
+    try {
+      await this.minioProvider.removeObject(uploaded.bucket, uploaded.fileKey);
+    } catch (error) {
+      console.error('Error removing object from MinIO:', error);
     }
   }
 }

@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+/**
+ * DTO for the response of an upload operation in the upload center.
+ */
 export class UploadResponseDto {
   /**
    * The URL of the uploaded file.
