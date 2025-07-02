@@ -24,6 +24,8 @@ import { CountryModule } from './country/country.module';
 import { GenreModule } from './genre/genre.module';
 import { LanguageModule } from './language/language.module';
 import { VideoLinkModule } from './video-link/video-link.module';
+import { UploadCenterModule } from './upload-center/upload-center.module';
+import minioConfig from './upload-center/config/minio.config';
 
 /**
  * Get the current NODE_ENV
@@ -66,6 +68,7 @@ const ENV = process.env.NODE_ENV;
     GenreModule,
     LanguageModule,
     VideoLinkModule,
+    UploadCenterModule,
   ],
   providers: [
     {
