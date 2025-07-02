@@ -3,6 +3,7 @@ import minioConfig from '../config/minio.config';
 import { ConfigType } from '@nestjs/config';
 import { Client } from 'minio';
 import { Readable } from 'stream';
+import { PublicBucketNames } from '../enums/bucket-names.enum';
 
 /**
  * Provider for interacting with MinIO storage.
@@ -24,6 +25,7 @@ export class MinioProvider {
     @Inject(minioConfig.KEY)
     private readonly minioConfiguration: ConfigType<typeof minioConfig>,
   ) {
+    this.makeAllPublicBucketsPublic();
     this.client = new Client({
       endPoint: this.minioConfiguration.endPoint,
       port: this.minioConfiguration.port,
@@ -33,6 +35,13 @@ export class MinioProvider {
     });
   }
 
+  async makeAllPublicBucketsPublic() {
+    for (const bucket of Object.values(PublicBucketNames)) {
+      await this.ensureBucket(bucket);
+      await this.makeBucketPublic(bucket);
+    }
+  }
+
   /**
    * Returns the MinIO client instance.
    *
@@ -40,6 +49,22 @@ export class MinioProvider {
    */
   getClient(): Client {
     return this.client;
+  }
+
+  async makeBucketPublic(bucket: PublicBucketNames) {
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetObject'],
+          Resource: [`arn:aws:s3:::${bucket}/*`],
+        },
+      ],
+    };
+
+    await this.client.setBucketPolicy(bucket, JSON.stringify(policy));
   }
 
   /**
@@ -53,6 +78,11 @@ export class MinioProvider {
     if (!exists) {
       await this.client.makeBucket(bucket, 'us-east-1');
     }
+  }
+
+  public getPublicUrl(bucket: string, objectName: string): string {
+    const protocol = this.minioConfiguration.useSSL ? 'https' : 'http';
+    return `${protocol}://${this.minioConfiguration.endPoint}:${this.minioConfiguration.port}/${bucket}/${objectName}`;
   }
 
   /**
@@ -69,6 +99,11 @@ export class MinioProvider {
     expires = 300,
   ) {
     await this.ensureBucket(bucket);
+    if (
+      Object.values(PublicBucketNames).includes(bucket as PublicBucketNames)
+    ) {
+      return this.getPublicUrl(bucket, objectName);
+    }
     return this.client.presignedPutObject(bucket, objectName, expires);
   }
 
@@ -108,7 +143,7 @@ export class MinioProvider {
     permanet: boolean,
     expires = 3600,
   ) {
-    const expireTime = permanet ? 60 * 60 * 24 * 7000 : expires; // 7000 days for permanent, otherwise use the provided expiration
+    const expireTime = permanet ? 60 * 60 * 24 * 7 : expires; // 7 days for one week, otherwise use the provided expiration
     return this.client.presignedGetObject(bucket, objectName, expireTime);
   }
 
