@@ -91,7 +91,7 @@ export class UploadCenterService implements OnModuleInit {
       file.buffer,
       file.mimetype,
     );
-    const url = await this.minioProvider.getObjectUrl(bucket, objectName, true);
+    const url = await this.minioProvider.getObjectUrl(bucket, objectName);
     const uploadTransaction = this.uploadRepository.create({
       fileKey: objectName,
       bucket,
@@ -142,11 +142,7 @@ export class UploadCenterService implements OnModuleInit {
 
       unlinkSync(file.path);
 
-      const url = await this.minioProvider.getObjectUrl(
-        bucket,
-        objectName,
-        true,
-      );
+      const url = await this.minioProvider.getObjectUrl(bucket, objectName);
 
       const uploadTransaction = this.uploadRepository.create({
         fileKey: objectName,
@@ -204,6 +200,7 @@ export class UploadCenterService implements OnModuleInit {
       status: UploadStatus.CONFIRMED,
     });
     this.uploadRepository.save(uploaded);
+    return this.minioProvider.getObjectUrl(uploaded.bucket, uploaded.fileKey);
   }
 
   /**
@@ -239,7 +236,6 @@ export class UploadCenterService implements OnModuleInit {
     return this.minioProvider.getObjectUrl(
       bucketName as StreamBucketNames,
       fileKey,
-      true,
     );
   }
 }

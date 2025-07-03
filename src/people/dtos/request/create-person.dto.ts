@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ConfirmUploadRequestDto } from 'src/upload-center/dtos/request/confirm-upload.dto';
+import { BufferBucketNames } from 'src/upload-center/enums/bucket-names.enum';
 
 /**
  * Data Transfer Object for creating a new person.
@@ -97,12 +100,16 @@ export class CreatePersonRequestDto {
    * @example 'https://example.com/image.jpg'
    */
   @ApiProperty({
-    description: "The URL of the person's image",
-    example: 'https://example.com/image.jpg',
-    type: String,
+    description: 'profile photo URL for the person',
+    example: {
+      bucket: BufferBucketNames.PROFILE,
+      key: 'profile-file-key',
+    },
+    required: false,
     nullable: true,
+    type: ConfirmUploadRequestDto,
   })
-  @IsString()
-  @IsOptional()
-  imageUrl: string | null;
+  @ValidateNested()
+  @Type(() => ConfirmUploadRequestDto)
+  imageUrl: ConfirmUploadRequestDto | null;
 }

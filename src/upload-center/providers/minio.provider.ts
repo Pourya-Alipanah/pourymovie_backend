@@ -1,20 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import minioConfig from '../config/minio.config';
 import { ConfigType } from '@nestjs/config';
 import { Client } from 'minio';
 import { Readable } from 'stream';
-import { PublicBucketNames } from '../enums/bucket-names.enum';
+import {
+  BufferBucketNames,
+  PublicBucketNames,
+  StreamBucketNames,
+} from '../enums/bucket-names.enum';
 
 /**
  * Provider for interacting with MinIO storage.
  * Provides methods for uploading, downloading, and managing files in MinIO buckets.
  */
 @Injectable()
-export class MinioProvider {
+export class MinioProvider implements OnModuleInit {
   /**
    * MinIO client instance for interacting with the MinIO server.
    */
   private readonly client: Client;
+
+  /**
+   * Initializes the MinIO provider and makes all public buckets public.
+   * This method is called when the module is initialized.
+   */
+  onModuleInit() {
+    this.makeAllPublicBucketsPublic();
+  }
 
   /**
    * Initializes the MinIO client with configuration parameters.
@@ -25,7 +37,6 @@ export class MinioProvider {
     @Inject(minioConfig.KEY)
     private readonly minioConfiguration: ConfigType<typeof minioConfig>,
   ) {
-    this.makeAllPublicBucketsPublic();
     this.client = new Client({
       endPoint: this.minioConfiguration.endPoint,
       port: this.minioConfiguration.port,
@@ -99,11 +110,6 @@ export class MinioProvider {
     expires = 300,
   ) {
     await this.ensureBucket(bucket);
-    if (
-      Object.values(PublicBucketNames).includes(bucket as PublicBucketNames)
-    ) {
-      return this.getPublicUrl(bucket, objectName);
-    }
     return this.client.presignedPutObject(bucket, objectName, expires);
   }
 
@@ -138,12 +144,16 @@ export class MinioProvider {
    * @returns A presigned URL for downloading the object.
    */
   async getObjectUrl(
-    bucket: string,
+    bucket: BufferBucketNames | StreamBucketNames | PublicBucketNames,
     objectName: string,
-    permanet: boolean,
-    expires = 3600,
+    expires?: number,
   ) {
-    const expireTime = permanet ? 60 * 60 * 24 * 7 : expires; // 7 days for one week, otherwise use the provided expiration
+    const expireTime = expires ?? 60 * 60 * 24 * 1; // 1 days
+    if (
+      Object.values(PublicBucketNames).includes(bucket as PublicBucketNames)
+    ) {
+      return this.getPublicUrl(bucket, objectName);
+    }
     return this.client.presignedGetObject(bucket, objectName, expireTime);
   }
 
