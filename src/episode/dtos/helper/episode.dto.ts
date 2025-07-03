@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
+import { VideoLink } from 'src/video-link/dtos/helper/video-link.dto';
 
 /**
  * This file is part of the "Title Management" project.

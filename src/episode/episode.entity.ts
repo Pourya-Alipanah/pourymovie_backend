@@ -1,5 +1,5 @@
 import { Season } from 'src/season/season.entity';
-import { VideoLink } from 'src/titles/entities/video-link.entity';
+import { VideoLink } from 'src/video-link/video-link.entity';
 import {
   Column,
   Entity,
