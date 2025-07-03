@@ -1,19 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import minioConfig from '../config/minio.config';
 import { ConfigType } from '@nestjs/config';
 import { Client } from 'minio';
 import { Readable } from 'stream';
+import {
+  BufferBucketNames,
+  PublicBucketNames,
+  StreamBucketNames,
+} from '../enums/bucket-names.enum';
 
 /**
  * Provider for interacting with MinIO storage.
  * Provides methods for uploading, downloading, and managing files in MinIO buckets.
  */
 @Injectable()
-export class MinioProvider {
+export class MinioProvider implements OnModuleInit {
   /**
    * MinIO client instance for interacting with the MinIO server.
    */
   private readonly client: Client;
+
+  /**
+   * Initializes the MinIO provider and makes all public buckets public.
+   * This method is called when the module is initialized.
+   */
+  onModuleInit() {
+    this.makeAllPublicBucketsPublic();
+  }
 
   /**
    * Initializes the MinIO client with configuration parameters.
@@ -33,6 +46,13 @@ export class MinioProvider {
     });
   }
 
+  async makeAllPublicBucketsPublic() {
+    for (const bucket of Object.values(PublicBucketNames)) {
+      await this.ensureBucket(bucket);
+      await this.makeBucketPublic(bucket);
+    }
+  }
+
   /**
    * Returns the MinIO client instance.
    *
@@ -40,6 +60,22 @@ export class MinioProvider {
    */
   getClient(): Client {
     return this.client;
+  }
+
+  async makeBucketPublic(bucket: PublicBucketNames) {
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetObject'],
+          Resource: [`arn:aws:s3:::${bucket}/*`],
+        },
+      ],
+    };
+
+    await this.client.setBucketPolicy(bucket, JSON.stringify(policy));
   }
 
   /**
@@ -53,6 +89,11 @@ export class MinioProvider {
     if (!exists) {
       await this.client.makeBucket(bucket, 'us-east-1');
     }
+  }
+
+  public getPublicUrl(bucket: string, objectName: string): string {
+    const protocol = this.minioConfiguration.useSSL ? 'https' : 'http';
+    return `${protocol}://${this.minioConfiguration.endPoint}:${this.minioConfiguration.port}/${bucket}/${objectName}`;
   }
 
   /**
@@ -103,12 +144,16 @@ export class MinioProvider {
    * @returns A presigned URL for downloading the object.
    */
   async getObjectUrl(
-    bucket: string,
+    bucket: BufferBucketNames | StreamBucketNames | PublicBucketNames,
     objectName: string,
-    permanet: boolean,
-    expires = 3600,
+    expires?: number,
   ) {
-    const expireTime = permanet ? 60 * 60 * 24 * 7000 : expires; // 7000 days for permanent, otherwise use the provided expiration
+    const expireTime = expires ?? 60 * 60 * 24 * 1; // 1 days
+    if (
+      Object.values(PublicBucketNames).includes(bucket as PublicBucketNames)
+    ) {
+      return this.getPublicUrl(bucket, objectName);
+    }
     return this.client.presignedGetObject(bucket, objectName, expireTime);
   }
 

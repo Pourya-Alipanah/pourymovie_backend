@@ -91,12 +91,7 @@ export class UploadCenterService implements OnModuleInit {
       file.buffer,
       file.mimetype,
     );
-    const url = await this.minioProvider.getObjectUrl(
-      bucket,
-      objectName,
-      false,
-      60 * this.minioConfiguration.urlExpirationMinutes,
-    );
+    const url = await this.minioProvider.getObjectUrl(bucket, objectName);
     const uploadTransaction = this.uploadRepository.create({
       fileKey: objectName,
       bucket,
@@ -104,6 +99,7 @@ export class UploadCenterService implements OnModuleInit {
 
     await this.uploadRepository.save(uploadTransaction);
     return {
+      bucket,
       key: objectName,
       url,
     };
@@ -146,12 +142,7 @@ export class UploadCenterService implements OnModuleInit {
 
       unlinkSync(file.path);
 
-      const url = await this.minioProvider.getObjectUrl(
-        bucket,
-        objectName,
-        false,
-        60 * this.minioConfiguration.urlExpirationMinutes,
-      );
+      const url = await this.minioProvider.getObjectUrl(bucket, objectName);
 
       const uploadTransaction = this.uploadRepository.create({
         fileKey: objectName,
@@ -161,6 +152,7 @@ export class UploadCenterService implements OnModuleInit {
       await this.uploadRepository.save(uploadTransaction);
 
       return {
+        bucket,
         key: objectName,
         url,
       };
@@ -202,9 +194,13 @@ export class UploadCenterService implements OnModuleInit {
       throw new NotFoundException(UPLOAD_RECORD_NOT_FOUND);
     }
 
-    Object.assign(uploaded, { fromEntity: entity, type, status: 'COMPLETED' });
+    Object.assign(uploaded, {
+      fromEntity: entity,
+      type,
+      status: UploadStatus.CONFIRMED,
+    });
     this.uploadRepository.save(uploaded);
-    return this.minioProvider.getObjectUrl(uploaded.bucket, uploaded.fileKey , true);
+    return this.minioProvider.getObjectUrl(uploaded.bucket, uploaded.fileKey);
   }
 
   /**
@@ -226,5 +222,20 @@ export class UploadCenterService implements OnModuleInit {
     } catch (error) {
       console.error('Error removing object from MinIO:', error);
     }
+  }
+
+  /**
+   * Retrieves the URL of a file stored in MinIO.
+   * The URL is generated based on the bucket name and file key.
+   *
+   * @param objectName - The full object name in the format "bucketName/fileKey".
+   * @returns The URL of the file.
+   */
+  public async getFileUrl(objectName: string) {
+    const [bucketName, fileKey] = objectName.split('/');
+    return this.minioProvider.getObjectUrl(
+      bucketName as StreamBucketNames,
+      fileKey,
+    );
   }
 }

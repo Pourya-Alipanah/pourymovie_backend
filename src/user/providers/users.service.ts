@@ -26,6 +26,9 @@ import { TokenGeneratorProvider } from 'src/auth/providers/token-generator.provi
 import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { UserRole } from '../enums/user-role.enum';
 import { IntersectionUserToken } from '../types/intersection-user-token.type';
+import { UploadCenterService } from '../../upload-center/providers/upload-center.service';
+import { UploadFromEntity } from 'src/upload-center/enums/upload-from-entity.enum';
+import { UploadType } from 'src/upload-center/enums/upload-type.enum';
 
 /**
  * UserService
@@ -38,6 +41,8 @@ export class UsersService {
    * @param {PaginationService} paginationService - Service for handling pagination
    * @param {Repository<User>} usersRepository - Repository for user entity
    * @param {HashingProvider} hashingProvider - Provider for hashing passwords
+   * @param {TokenGeneratorProvider} tokenGeneratorProvider - Provider for generating tokens
+   * @param {UploadCenterService} uploadCenterService - Service for handling file uploads
    * @description Initializes the UsersService with necessary dependencies.
    */
   constructor(
@@ -55,6 +60,8 @@ export class UsersService {
     // inject token generator provider
     @Inject(forwardRef(() => TokenGeneratorProvider))
     private readonly tokenGeneratorProvider: TokenGeneratorProvider,
+
+    private readonly uploadCenterService: UploadCenterService,
   ) {}
 
   /**
@@ -84,6 +91,9 @@ export class UsersService {
    */
   public async findUserById(id: number) {
     const user = await this.usersRepository.findOneBy({ id });
+    if (user?.avatarUrl) {
+      user.avatarUrl = await this.uploadCenterService.getFileUrl(user?.avatarUrl);
+    }
     if (!user) {
       throw new NotFoundException({
         message: USER_NOT_FOUND_ERROR,
@@ -127,13 +137,23 @@ export class UsersService {
         message: USER_ALREADY_EXISTS_ERROR,
       });
     } catch (error) {
+      let avatarUrl: string | null = null;
       if (!(error instanceof NotFoundException)) {
         throw error;
+      }
+      if (createUserDto.avatarUrl) {
+        await this.uploadCenterService.confirmUpload(
+          createUserDto.avatarUrl.key,
+          UploadFromEntity.USER,
+          UploadType.AVATAR,
+        );
+        avatarUrl = `${createUserDto.avatarUrl.bucket}/${createUserDto.avatarUrl.key}`;
       }
       const user = this.usersRepository.create({
         ...createUserDto,
         password: await this.hashingProvider.hash(createUserDto.password),
         role: role,
+        avatarUrl,
       });
       const createdUser = await this.usersRepository.save(user);
 
@@ -177,7 +197,19 @@ export class UsersService {
       });
     }
     const user = await this.findUserById(id);
-    const updatedUser = Object.assign(user, updateUserDto);
+    let avatarUrl = user.avatarUrl || null;
+    if (updateUserDto.avatarUrl) {
+      await this.uploadCenterService.confirmUpload(
+        updateUserDto.avatarUrl.key,
+        UploadFromEntity.USER,
+        UploadType.AVATAR,
+      );
+      avatarUrl = `${updateUserDto.avatarUrl.bucket}/${updateUserDto.avatarUrl.key}`;
+    }
+    const updatedUser = Object.assign(user, {
+      ...updateUserDto,
+      avatarUrl,
+    });
 
     return await this.usersRepository.save(updatedUser);
   }

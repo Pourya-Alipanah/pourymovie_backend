@@ -34,5 +34,6 @@ import { ScheduleModule } from '@nestjs/schedule';
       },
     }),
   ],
+  exports:[UploadCenterService]
 })
 export class UploadCenterModule {}

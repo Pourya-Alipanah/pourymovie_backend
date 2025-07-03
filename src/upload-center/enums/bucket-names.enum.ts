@@ -17,3 +17,14 @@ export enum StreamBucketNames {
   TRAILER = 'trailer',
   VIDEO = 'video',
 }
+
+/**
+ * Enum representing the names of public buckets used in the upload center.
+ * This enum is used to define the publicly accessible buckets for various types of uploads.
+ */
+export enum PublicBucketNames {
+  TRAILER = 'trailer',
+  PROFILE = 'profile',
+  COVER = 'cover',
+  THUMBNAIL = 'thumbnail',
+}
