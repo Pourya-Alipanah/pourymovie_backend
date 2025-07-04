@@ -26,6 +26,24 @@ export class EpisodeService {
   ) {}
 
   /**
+   * Retrieves an episode by its unique ID.
+   * @param id - The unique identifier of the episode.
+   * @returns The episode with the specified ID.
+   * @throws NotFoundException if the episode is not found.
+   */
+  public async findById(id: number) {
+    const episode = await this.episodeRepository.findOneBy({
+      id,
+    });
+
+    if (!episode) {
+      throw new NotFoundException(EPISODE_NOT_FOUND_ERROR);
+    }
+
+    return episode;
+  }
+
+  /**
    * Retrieves all episodes associated with a specific season ID.
    * @param id - The unique identifier of the season.
    * @returns A list of episodes for the specified season.

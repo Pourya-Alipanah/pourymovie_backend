@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { VideoQuality } from '../../enums/video-quality.enum';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+import { VideoQuality } from 'src/titles/enums/video-quality.enum';
+import { ConfirmUploadRequestDto } from 'src/upload-center/dtos/request/confirm-upload.dto';
 
 /**
  * Interface representing a video link with its properties.
@@ -21,15 +24,17 @@ export class VideoLink {
 
   /**
    * URL of the video link
-   * @type {string}
+   * @type {ConfirmUploadRequestDto}
    */
   @ApiProperty({
     description: 'URL of the video link',
     name: 'url',
-    type: 'string',
+    type: ConfirmUploadRequestDto,
     required: true,
   })
-  url: string;
+  @ValidateNested()
+  @Type(() => ConfirmUploadRequestDto)
+  url: ConfirmUploadRequestDto;
 
   /**
    * Quality of the video link

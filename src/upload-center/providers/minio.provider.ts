@@ -46,6 +46,10 @@ export class MinioProvider implements OnModuleInit {
     });
   }
 
+  /**
+   * Ensures that all public buckets are created and made public.
+   * This method is called during module initialization.
+   */
   async makeAllPublicBucketsPublic() {
     for (const bucket of Object.values(PublicBucketNames)) {
       await this.ensureBucket(bucket);
@@ -62,6 +66,11 @@ export class MinioProvider implements OnModuleInit {
     return this.client;
   }
 
+  /**
+   * Makes a specified bucket public by setting its policy to allow public read access.
+   *
+   * @param bucket - The name of the bucket to make public.
+   */
   async makeBucketPublic(bucket: PublicBucketNames) {
     const policy = {
       Version: '2012-10-17',
@@ -91,6 +100,13 @@ export class MinioProvider implements OnModuleInit {
     }
   }
 
+  /**
+   * Returns the public URL for an object in a specified bucket.
+   *
+   * @param bucket - The name of the bucket.
+   * @param objectName - The name of the object.
+   * @returns The public URL for the object.
+   */
   public getPublicUrl(bucket: string, objectName: string): string {
     const protocol = this.minioConfiguration.useSSL ? 'https' : 'http';
     return `${protocol}://${this.minioConfiguration.endPoint}:${this.minioConfiguration.port}/${bucket}/${objectName}`;

@@ -11,7 +11,7 @@ import {
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
 import { TitlePerson } from './entities/title-person.entity';
-import { VideoLink } from './entities/video-link.entity';
+import { VideoLink } from '../video-link/video-link.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
 import { PeopleService } from 'src/people/people.service';
