@@ -1,10 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { IsOnlyOneDefined } from 'src/common/validation/is-Only-One-defined.validation';
 import { VideoQuality } from 'src/titles/enums/video-quality.enum';
 import { ConfirmUploadRequestDto } from 'src/upload-center/dtos/request/confirm-upload.dto';
 
+/**
+ * DTO for creating a video link
+ * This DTO is used to create a new video link with the specified URL, quality, and associated episode or title.
+ */
 export class CreateVideoLinkRequestDto {
   /**
    * URL of the video link
@@ -44,6 +48,7 @@ export class CreateVideoLinkRequestDto {
     type: 'number',
     required: true,
   })
+  @IsOptional()
   @IsInt()
   @Type(() => Number)
   episodeId: number;
@@ -57,6 +62,7 @@ export class CreateVideoLinkRequestDto {
     type: 'number',
     required: true,
   })
+  @IsOptional()
   @IsInt()
   @Type(() => Number)
   titleId: number;
