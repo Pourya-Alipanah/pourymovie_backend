@@ -91,7 +91,10 @@ export class EpisodeService {
    * @throws NotFoundException if the episode is not found.
    */
   public async updateEpisode(id: number, dto: UpdateEpisodeRequestDto) {
-    const episode = await this.episodeRepository.findOne({ where: { id } });
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['season'],
+    });
 
     if (!episode) {
       throw new NotFoundException(EPISODE_NOT_FOUND_ERROR);
