@@ -17,23 +17,21 @@ export class Language {
   })
   id: number;
   /**
-   * Name of the language in English
-   * @type {string}
-   */
-  @ApiProperty({
-    description: 'Name of the language in English',
-    name: 'nameEn',
-    type: 'string',
-    required: true,
-  })
-  nameFa: string;
-  /**
    * Name of the language in Persian
    * @type {string}
    */
   @ApiProperty({
     description: 'Name of the language in Persian',
-    name: 'nameFa',
+    type: 'string',
+    required: true,
+  })
+  nameFa: string;
+  /**
+   * slug of the language
+   * @type {string}
+   */
+  @ApiProperty({
+    description:'slug of the language',
     type: 'string',
     required: true,
   })

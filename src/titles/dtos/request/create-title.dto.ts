@@ -11,6 +11,11 @@ import {
 import { TitleType } from 'src/titles/enums/title-type.enum';
 import { CreateTitlePersonRequestDto } from './create-title-person.dto';
 import { Type } from 'class-transformer';
+import { ConfirmUploadRequestDto } from 'src/upload-center/dtos/request/confirm-upload.dto';
+import {
+  BufferBucketNames,
+  StreamBucketNames,
+} from 'src/upload-center/enums/bucket-names.enum';
 
 /**
  * Data Transfer Object for creating a new title (movie or series).
@@ -77,30 +82,56 @@ export class CreateTitleDto {
 
   /** URL of the trailer video */
   @ApiProperty({
-    example: 'https://example.com/trailer.mp4',
-    description: 'trailer video URL',
+    description: 'trailer URL for the title',
+    example: {
+      bucket: StreamBucketNames.TRAILER,
+      key: 'trailer-file-key',
+    },
+    required: false,
+    nullable: true,
+    type: ConfirmUploadRequestDto,
   })
-  @IsString()
-  trailerUrl: string | null;
+  @ValidateNested()
+  @Type(() => ConfirmUploadRequestDto)
+  trailerUrl: ConfirmUploadRequestDto | null;
 
   /** URL of the cover image */
   @ApiProperty({
-    example: 'https://example.com/cover.jpg',
-    description: 'cover image URL',
+    description: 'cover URL for the title',
+    example: {
+      bucket: BufferBucketNames.COVER,
+      key: 'cover-file-key',
+    },
+    required: false,
+    nullable: true,
+    type: ConfirmUploadRequestDto,
   })
-  @IsString()
-  coverUrl: string | null;
+  @ValidateNested()
+  @Type(() => ConfirmUploadRequestDto)
+  coverUrl: ConfirmUploadRequestDto | null;
 
   /** URL of the thumbnail image */
   @ApiProperty({
-    example: 'https://example.com/thumbnail.jpg',
-    description: 'thumbnail image URL',
+    description: 'thmbnail URL for the title',
+    example: {
+      bucket: BufferBucketNames.THUMBNAIL,
+      key: 'thumbnail-file-key',
+    },
+    required: false,
+    nullable: true,
+    type: ConfirmUploadRequestDto,
   })
-  @IsString()
-  thumbnailUrl: string | null;
+  @ValidateNested()
+  @Type(() => ConfirmUploadRequestDto)
+  thumbnailUrl: ConfirmUploadRequestDto | null;
 
   /** IDs of people involved (e.g., actors, directors, writers) */
 
+  @ApiProperty({
+    description: 'people that involve in title',
+    type: [CreateTitlePersonRequestDto],
+    required: true,
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateTitlePersonRequestDto)

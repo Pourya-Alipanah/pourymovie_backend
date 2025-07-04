@@ -17,7 +17,6 @@ describe('UserController', () => {
         email: 'john@example.com',
         createdAt: new Date('2023-01-01T00:00:00Z'),
         updateAt: null,
-        deletedAt: null,
         hasSubscription: false,
         avatarUrl: 'https://example.com/avatar.jpg',
       },

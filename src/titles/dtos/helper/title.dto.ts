@@ -1,12 +1,12 @@
-import { Genre } from 'src/titles/dtos/helper/genre.dto';
-import { Language } from 'src/titles/dtos/helper/language.dto';
+import { Genre } from 'src/genre/dtos/helper/genre.dto';
+import { Language } from 'src/language/dtos/helper/language.dto';
 import { PersonDto } from 'src/people/dtos/helper/person.dto';
-import { VideoLink } from 'src/titles/dtos/helper/video-link.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { TitleType } from 'src/titles/enums/title-type.enum';
-import { Country } from '../helper/country.dto';
+import { Country } from '../../../country/dtos/helper/country.dto';
 import { Comment } from 'src/comment/dtos/helper/comment.dto';
 import { GetSeasonsResponseDto } from 'src/season/dtos/response/get-seasons.dto';
+import { VideoLink } from 'src/video-link/dtos/helper/video-link.dto';
 
 /**
  * DTO for returning detailed information about a title.

@@ -4,3 +4,10 @@
  * @constant {string}
  */
 export const PERSON_NOT_FOUND_ERROR = 'Person not found';
+
+
+/**
+ * not found error message for people array
+ * @constant {string}
+ */
+export const SOME_PEOPLE_NOT_FOUND_ERROR = 'Some People that you sent , not found';

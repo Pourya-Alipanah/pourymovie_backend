@@ -9,5 +9,6 @@ import { SeasonModule } from 'src/season/season.module';
   controllers: [EpisodeController],
   providers: [EpisodeService],
   imports: [TypeOrmModule.forFeature([Episode]), SeasonModule],
+  exports: [EpisodeService],
 })
 export class EpisodeModule {}

@@ -1,8 +1,9 @@
 import { Season } from 'src/season/season.entity';
-import { VideoLink } from 'src/titles/entities/video-link.entity';
+import { VideoLink } from 'src/video-link/video-link.entity';
 import {
   Column,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -16,18 +17,35 @@ import {
  */
 
 @Entity()
+@Index(['episodeNumber', 'season'], { unique: true })
 export class Episode {
+  /**
+   * Unique identifier for the episode.
+   * @type {number}
+   */
   @PrimaryGeneratedColumn()
   id: number;
 
+  /**
+   * The episode number within the season.
+   * @type {number}
+   */
   @Column({ type: 'int' })
   episodeNumber: number;
 
+  /**
+   * The title of the episode.
+   * @type {string}
+   */
   @OneToMany(() => VideoLink, (videoLink) => videoLink.episode, {
     cascade: true,
   })
   videoLinks: VideoLink[];
 
+  /**
+   * The season to which this episode belongs.
+   * @type {Season}
+   */
   @ManyToOne(() => Season, (season) => season.episodes, {
     onDelete: 'CASCADE',
   })

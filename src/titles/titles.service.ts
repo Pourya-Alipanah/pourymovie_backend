@@ -10,16 +10,17 @@ import {
 } from './dtos/response/get-titles.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
-import { Country } from './entities/country.entity';
-import { Language } from './entities/language.entity';
-import { Genre } from './entities/genre.entity';
 import { TitlePerson } from './entities/title-person.entity';
-import { VideoLink } from './entities/video-link.entity';
-import { Season } from '../season/season.entity';
+import { VideoLink } from '../video-link/video-link.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
-import { Person } from 'src/people/person.entity';
-import { CreateTitlePersonRequestDto } from './dtos/request/create-title-person.dto';
+import { PeopleService } from 'src/people/people.service';
+import { LanguageService } from '../language/providers/language.service';
+import { GenreService } from 'src/genre/providers/genre.service';
+import { CountryService } from 'src/country/providers/country.service';
+import { UploadCenterService } from 'src/upload-center/providers/upload-center.service';
+import { UploadFromEntity } from 'src/upload-center/enums/upload-from-entity.enum';
+import { UploadType } from 'src/upload-center/enums/upload-type.enum';
 
 /**
  * Service for handling operations related to titles.
@@ -29,35 +30,30 @@ export class TitlesService {
   /**
    * Injects the repository for Title entity.
    * @param {Repository<Title>} titleRepository - Repository for Title entity
-   * @param {Repository<Country>} countryRepository - Repository for Country entity
-   * @param {Repository<Language>} languageRepository - Repository for Language entity
-   * @param {Repository<Genre>} genreRepository - Repository for Genre entity
    * @param {Repository<TitlePerson>} titlePersonRepository - Repository for TitlePerson entity
-   * @param {Repository<Person>} personRepository - Repository for Person entity
    * @param {Repository<VideoLink>} videoLinkRepository - Repository for VideoLink entity
-   * @param {Repository<Season>} seasSeasonRepository - Repository for Season entity
    * @param {DataSource} dataSource - Data source for database transactions
    * @param {PaginationService} paginationService - Service for handling pagination
+   * @param {PeopleService} peopleService - Service for handling people-related operations
+   * @param {LanguageService} languageService - Service for handling language-related operations
+   * @param {GenreService} genreService - Service for handling genre-related operations
+   * @param {CountryService} countryService - Service for handling country-related operations
+   * @param {UploadCenterService} uploadCenterService - Service for handling file uploads
    */
   constructor(
     @InjectRepository(Title)
     private readonly titleRepository: Repository<Title>,
-    @InjectRepository(Country)
-    private readonly countryRepository: Repository<Country>,
-    @InjectRepository(Language)
-    private readonly languageRepository: Repository<Language>,
-    @InjectRepository(Genre)
-    private readonly genreRepository: Repository<Genre>,
     @InjectRepository(TitlePerson)
     private readonly titlePersonRepository: Repository<TitlePerson>,
-    @InjectRepository(Person)
-    private readonly personRepository: Repository<Person>,
     @InjectRepository(VideoLink)
     private readonly videoLinkRepository: Repository<VideoLink>,
-    @InjectRepository(Season)
-    private readonly seasonRepository: Repository<Season>,
     private readonly dataSource: DataSource,
     private readonly paginationService: PaginationService,
+    private readonly peopleService: PeopleService,
+    private readonly languageService: LanguageService,
+    private readonly genreService: GenreService,
+    private readonly countryService: CountryService,
+    private readonly uploadCenterService: UploadCenterService,
   ) {}
 
   /**
@@ -71,19 +67,6 @@ export class TitlesService {
   public async findById(id: number): Promise<Title> {
     const result = await this.titleRepository.findOne({
       where: { id },
-      /* relations: [
-        'genres',
-        'country',
-        'seasons',
-        'videoLinks',
-        'people',
-        'people.person',
-        'comments',
-        'comments.user',
-        'language',
-        'seasons.episodes',
-        'seasons.episodes.videoLinks',
-      ], */
     });
 
     if (!result) {
@@ -170,21 +153,56 @@ export class TitlesService {
    */
   public async createTitle(dto: CreateTitleDto): Promise<Title> {
     return this.dataSource.transaction(async (manager) => {
-      const [genres, country, language, people, videoLinks] =
-        await Promise.all([
-          this.findGenres(dto.genreIds ?? undefined),
-          this.findCountry(dto.countryId),
-          this.findLanguage(dto.languageId),
-          this.findPeople(dto.titlePeople),
+      let coverUrl: string | null = null;
+      let thumbnailUrl: string | null = null;
+      let trailerUrl: string | null = null;
+      const [genres, country, language, people, videoLinks] = await Promise.all(
+        [
+          this.genreService.findMultipleById(dto.genreIds),
+          this.countryService.getById(dto.countryId),
+          this.languageService.getById(dto.languageId),
+          this.peopleService.findMultipleById(
+            dto.titlePeople.map((tp) => tp.id),
+          ),
           this.findVideoLinks(dto.videoLinkIds),
-        ]);
-
-      const titlePeople: TitlePerson[] = this.titlePersonRepository.create(
-        dto.titlePeople.map((tp) => ({
-          person: people.find((p) => p.id === tp.id),
-          role: tp.role,
-        })),
+        ],
       );
+
+      if (dto.coverUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.coverUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.COVER,
+        );
+
+        coverUrl = url;
+      }
+      if (dto.thumbnailUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.thumbnailUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.THUMBNAIL,
+        );
+
+        thumbnailUrl = url;
+      }
+      if (dto.trailerUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.trailerUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.TRAILER,
+        );
+
+        trailerUrl = url;
+      }
+
+      const titlePeopleArray = dto.titlePeople.map((tp) => ({
+        person: people.find((p) => p.id === tp.id),
+        role: tp.role,
+      }));
+
+      const titlePeople: TitlePerson[] =
+        this.titlePersonRepository.create(titlePeopleArray);
 
       const resultTitlePeople = await manager.save(titlePeople);
 
@@ -196,6 +214,9 @@ export class TitlesService {
         language,
         people: resultTitlePeople,
         videoLinks,
+        coverUrl,
+        trailerUrl,
+        thumbnailUrl,
       });
       return manager.save(title);
     });
@@ -209,57 +230,96 @@ export class TitlesService {
    * @throws {NotFoundException} If the title with the given ID does not exist
    * @description This method updates a title's details in the database.
    */
-  public async updateTitle(id: number, dto: UpdateTitleRequestDto) {
-    const title = await this.findById(id);
-    const updatedTitle = Object.assign(title, {
-      ...dto,
-      slug: slugify(dto.slug || title.slug),
+  public async updateTitle(
+    id: number,
+    dto: UpdateTitleRequestDto,
+  ): Promise<Title> {
+    const existingTitle = await this.findById(id);
+
+    return await this.dataSource.transaction(async (manager) => {
+      let coverUrl: string | null = existingTitle.coverUrl;
+      let thumbnailUrl: string | null = existingTitle.thumbnailUrl;
+      let trailerUrl: string | null = existingTitle.trailerUrl;
+      let updatedGenres = existingTitle.genres;
+      let updatedCountry = existingTitle.country;
+      let updatedLanguage = existingTitle.language;
+      let updatedVideoLinks = existingTitle.videoLinks;
+      let updatedTitlePeople = existingTitle.people;
+
+      if (dto.genreIds) {
+        updatedGenres = await this.genreService.findMultipleById(dto.genreIds);
+      }
+
+      if (dto.countryId) {
+        updatedCountry = await this.countryService.getById(dto.countryId);
+      }
+
+      if (dto.languageId) {
+        updatedLanguage = await this.languageService.getById(dto.languageId);
+      }
+
+      if (dto.videoLinkIds) {
+        updatedVideoLinks = await this.findVideoLinks(dto.videoLinkIds);
+      }
+
+      if (dto.coverUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.coverUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.COVER,
+        );
+
+        coverUrl = url;
+      }
+      if (dto.thumbnailUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.thumbnailUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.THUMBNAIL,
+        );
+
+        thumbnailUrl = url;
+      }
+      if (dto.trailerUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.trailerUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.TRAILER,
+        );
+
+        trailerUrl = url;
+      }
+
+      if (dto.titlePeople) {
+        const people = await this.peopleService.findMultipleById(
+          dto.titlePeople.map((tp) => tp.id),
+        );
+
+        const titlePeopleArray = dto.titlePeople.map((tp) => ({
+          person: people.find((p) => p.id === tp.id),
+          role: tp.role,
+          title: existingTitle,
+        }));
+
+        updatedTitlePeople =
+          this.titlePersonRepository.create(titlePeopleArray);
+      }
+
+      const updatedTitle = manager.merge(Title, existingTitle, {
+        ...dto,
+        slug: slugify(dto.slug || existingTitle.slug),
+        genres: updatedGenres,
+        country: updatedCountry,
+        language: updatedLanguage,
+        videoLinks: updatedVideoLinks,
+        people: updatedTitlePeople,
+        coverUrl,
+        thumbnailUrl,
+        trailerUrl,
+      });
+
+      return await manager.save(updatedTitle);
     });
-
-    return await this.titleRepository.save(updatedTitle);
-  }
-
-  /**
-   * Finds genres by their IDs.
-   * @param {number[]} [ids] - Optional array of genre IDs
-   * @returns {Promise<Genre[]>} Array of Genre entities
-   * @description This method retrieves genres from the database based on the provided IDs.
-   */
-  private async findGenres(ids?: number[]) {
-    return ids?.length ? this.genreRepository.findBy({ id: In(ids) }) : [];
-  }
-
-  /**
-   * Finds a country by its ID.
-   * @param {number} [id] - Optional country ID
-   * @returns {Promise<Country>} Country entity or null if not found
-   * @description This method retrieves a country from the database based on the provided ID.
-   */
-  private async findCountry(id?: number) {
-    return id ? this.countryRepository.findOneBy({ id }) : null;
-  }
-
-  /**
-   * Finds a language by its ID.
-   * @param {number} [id] - Optional language ID
-   * @returns {Promise<Language>} Language entity or null if not found
-   * @description This method retrieves a language from the database based on the provided ID.
-   */
-  private async findLanguage(id?: number) {
-    return id ? this.languageRepository.findOneBy({ id }) : null;
-  }
-
-  /**
-   * Finds people by their IDs.
-   * @param {CreateTitlePersonRequestDto[]} [titlePeople] - Optional array of title person DTOs
-   * @returns {Promise<Person[]>} Array of Person entities
-   * @description This method retrieves people from the database based on the provided title person DTOs.
-   */
-  private async findPeople(
-    titlePeople?: CreateTitlePersonRequestDto[],
-  ): Promise<Person[]> {
-    const ids = titlePeople?.map((tp) => tp.id);
-    return ids?.length ? this.personRepository.findBy({ id: In(ids) }) : [];
   }
 
   /**

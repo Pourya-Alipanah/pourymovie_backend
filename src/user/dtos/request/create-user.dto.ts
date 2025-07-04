@@ -8,10 +8,14 @@ import {
   MaxLength,
   MinLength,
   Validate,
+  ValidateNested,
 } from 'class-validator';
 import { PASSWORD_REGEX } from 'src/user/constants/users.constants';
 import { PASSWORD_REGEX_ERROR_MESSAGE } from 'src/user/constants/users.errors.constants';
 import { MatchPasswordConstraint } from '../helper/password-confirm-validator';
+import { ConfirmUploadRequestDto } from 'src/upload-center/dtos/request/confirm-upload.dto';
+import { BufferBucketNames } from 'src/upload-center/enums/bucket-names.enum';
+import { Type } from 'class-transformer';
 
 /**
  * Data Transfer Object for creating a new user.
@@ -101,11 +105,16 @@ export class CreateUserDto {
    */
   @ApiProperty({
     description: 'Avatar URL for the user',
-    example: 'https://example.com/avatar.jpg',
+    example: {
+      bucket: BufferBucketNames.AVATAR,
+      key: 'avatar-file-key',
+    },
     required: false,
     nullable: true,
+    type: ConfirmUploadRequestDto,
   })
-  @IsString()
   @IsOptional()
-  avatarUrl: string | null;
+  @ValidateNested()
+  @Type(() => ConfirmUploadRequestDto)
+  avatarUrl: ConfirmUploadRequestDto;
 }

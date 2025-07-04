@@ -1,16 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Person } from './person.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { GetPeopleRequestDto } from './dtos/response/get-people.dto';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { PersonDto } from './dtos/helper/person.dto';
-import { PERSON_NOT_FOUND_ERROR } from './constants/people.errors.constants';
+import {
+  PERSON_NOT_FOUND_ERROR,
+  SOME_PEOPLE_NOT_FOUND_ERROR,
+} from './constants/people.errors.constants';
 import { CreatePersonRequestDto } from './dtos/request/create-person.dto';
 import { UpdatePersonRequestDto } from './dtos/request/update-person.dto';
 import { GetPersonResponseDto } from './dtos/response/get-person.dto';
 import slugify from 'slugify';
+import { UploadFromEntity } from 'src/upload-center/enums/upload-from-entity.enum';
+import { UploadType } from 'src/upload-center/enums/upload-type.enum';
+import { UploadCenterService } from 'src/upload-center/providers/upload-center.service';
 
 /**
  * Service for managing people in the system.
@@ -29,6 +35,7 @@ export class PeopleService {
     @InjectRepository(Person)
     private readonly personRepository: Repository<Person>,
     private readonly paginationService: PaginationService,
+    private readonly uploadCenterService: UploadCenterService,
   ) {}
 
   /**
@@ -61,6 +68,22 @@ export class PeopleService {
     });
     if (!person) {
       throw new NotFoundException(PERSON_NOT_FOUND_ERROR);
+    }
+    return person;
+  }
+
+  /**
+   * Retrieves multiple people by their unique IDs.
+   * @param ids - An array of unique identifiers for the people.
+   * @returns An array of people with the specified IDs.
+   */
+  public async findMultipleById(ids: number[]): Promise<Person[]> {
+    const uniqueIds = Array.from(new Set(ids));
+    const person = await this.personRepository.find({
+      where: { id: In(uniqueIds) },
+    });
+    if (person.length < uniqueIds.length) {
+      throw new NotFoundException(SOME_PEOPLE_NOT_FOUND_ERROR);
     }
     return person;
   }
@@ -111,9 +134,20 @@ export class PeopleService {
    * @returns The created person.
    */
   public async create(personDto: CreatePersonRequestDto): Promise<Person> {
+    let imageUrl: string | null = null;
+    if (personDto.imageUrl) {
+      const url = await this.uploadCenterService.confirmUpload(
+        personDto.imageUrl.key,
+        UploadFromEntity.PERSON,
+        UploadType.COVER,
+      );
+
+      imageUrl = url;
+    }
     return await this.personRepository.save({
       ...personDto,
       slug: slugify(personDto.slug),
+      imageUrl,
     });
   }
 
@@ -129,9 +163,20 @@ export class PeopleService {
     personDto: UpdatePersonRequestDto,
   ): Promise<Person> {
     const existingPerson = await this.findById(id);
+    let imageUrl: string | null = existingPerson.imageUrl;
+    if (personDto.imageUrl) {
+      const url = await this.uploadCenterService.confirmUpload(
+        personDto.imageUrl.key,
+        UploadFromEntity.PERSON,
+        UploadType.COVER,
+      );
+
+      imageUrl = url;
+    }
     const updatedPerson = Object.assign(existingPerson, {
       ...personDto,
       slug: slugify(personDto.slug || existingPerson.slug),
+      imageUrl,
     });
     return await this.personRepository.save(updatedPerson);
   }
