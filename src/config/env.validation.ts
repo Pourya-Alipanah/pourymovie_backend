@@ -24,4 +24,9 @@ export default Joi.object({
   MINIO_URL_EXPIRATION_MINUTES: Joi.number().default(15),
   MINIO_MAX_FILE_UPLOAD_IN_GB: Joi.number().default(4),
   MINIO_TEMP_UPLOAD_DIR: Joi.string().required(),
+  GEMINI_API_KEY: Joi.string().required(),
+  GEMINI_MODEL_NAME: Joi.string().required(),
+  FRONTEND_URL: Joi.string().uri().required(),
+  FRONTEND_MOVIE_PATH: Joi.string().required(),
+  FRONTEND_SERIES_PATH: Joi.string().required(),
 });

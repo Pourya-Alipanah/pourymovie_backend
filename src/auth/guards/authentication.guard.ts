@@ -8,8 +8,8 @@ import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { Reflector } from '@nestjs/core';
 import { HttpAccessTokenGuard } from './http-access-token.guard';
 import { AUTH_TYPE_KEY } from '../constants/auth.constants';
-import { JwtAuthGuardBase } from './jwt-auth-base.guard';
 import { WsAccessTokenGuard } from './ws-access-token.guard';
+import { WsException } from '@nestjs/websockets';
 
 /**
  * Guard for handling authentication based on different auth types
@@ -82,6 +82,9 @@ export class AuthenticationGuard implements CanActivate {
       }
     }
 
+    if (context.getType() === 'ws') {
+      throw new WsException('Unauthorized');
+    }
     throw error;
   }
 }
