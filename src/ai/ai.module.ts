@@ -7,6 +7,8 @@ import jwtConfig from 'src/auth/config/jwt.config';
 import aiConfig from './config/ai.config';
 import { TitlesModule } from 'src/titles/titles.module';
 import { CommentModule } from 'src/comment/comment.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Comment } from 'src/comment/comment.entity';
 
 @Module({
   providers: [AiService, AiGateway],
@@ -14,6 +16,7 @@ import { CommentModule } from 'src/comment/comment.module';
     ConfigModule.forFeature(aiConfig),
     ConfigModule.forFeature(jwtConfig),
     AuthModule,
+    TypeOrmModule.forFeature([Comment]),
     TitlesModule,
     CommentModule,
   ],

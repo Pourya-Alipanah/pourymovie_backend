@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import aiConfig from '../config/ai.config';
 import { TitlesService } from '../../titles/titles.service';
@@ -17,7 +17,9 @@ import {
   CodeBlockState,
   removeCodeBlockStreaming,
 } from 'src/utils/clean-json-string';
-import { CommentService } from 'src/comment/providers/comment.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Comment } from 'src/comment/comment.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AiService {
@@ -27,12 +29,32 @@ export class AiService {
   constructor(
     @Inject(aiConfig.KEY)
     private readonly aiConfiguration: ConfigType<typeof aiConfig>,
-    @Inject(forwardRef(() => TitlesService))
     private readonly titlesService: TitlesService,
-    @Inject(forwardRef(() => CommentService))
-    private readonly commentService: CommentService,
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
   ) {
     this.ai = new GoogleGenAI({ apiKey: this.aiConfiguration.apikey! });
+  }
+
+  /**
+   * Retrieves all comments for a specific title without pagination.
+   * This method is useful for scenarios where all comments are needed at once.
+   * @param titleId - The ID of the title for which to retrieve comments.
+   * @returns An array of comments for the specified title.
+   */
+  public async getAllTitleCommentsWithoutPagination(
+    titleId: number,
+  ): Promise<Comment[] | undefined> {
+    try {
+      const comments = await this.commentRepository.find({
+        where: { title: { id: titleId } },
+        select: ['content', 'id'],
+      });
+      return comments;
+    } catch (error) {
+      console.error('Error retrieving comments:', error);
+      throw error;
+    }
   }
 
   async generateResponseStream(
@@ -59,16 +81,18 @@ export class AiService {
     }
   }
   async getCommentsSummary(titleId: number, onChunk: (chunk: string) => void) {
-    
     const comments =
-    await this.commentService.getAllTitleCommentsWithoutPagination(titleId);
+      await this.getAllTitleCommentsWithoutPagination(titleId);
     if (!comments || comments.length === 0) {
       onChunk('No comments found for this title.');
       return;
     }
-    const commentsArrayString = comments.map((comment) => `- ${comment.content}`).join('\n')
+    const commentsArrayString = comments
+      .map((comment) => `- ${comment.content}`)
+      .join('\n');
 
-    const summaryPrompt = new BaseRequestPrompt(commentsArrayString).commentSummaryPrompt;
+    const summaryPrompt = new BaseRequestPrompt(commentsArrayString)
+      .commentSummaryPrompt;
 
     await this.generateResponseStream(summaryPrompt, onChunk);
   }
@@ -136,6 +160,4 @@ export class AiService {
       onChunk(chunk);
     });
   }
-  
-
 }
