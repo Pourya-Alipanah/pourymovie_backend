@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import aiConfig from '../config/ai.config';
 import { TitlesService } from '../../titles/titles.service';
@@ -11,15 +11,17 @@ import {
   BaseRequestPrompt,
 } from '../constants/ai.base-prompt.constant';
 
+import { AI_TITLE_NOT_FOUND } from '../constants/ai.errors.constant';
 import {
-  AI_TITLE_NOT_FOUND,
-  FAILED_JSON_PARSE,
-} from '../constants/ai.errors.constant';
-import { cleanJsonString } from 'src/utils/clean-json-string';
+  cleanJsonString,
+  CodeBlockState,
+  removeCodeBlockStreaming,
+} from 'src/utils/clean-json-string';
 
 @Injectable()
 export class AiService {
   private ai: GoogleGenAI;
+  private codeBlockState: CodeBlockState = { insideCodeBlock: false };
 
   constructor(
     @Inject(aiConfig.KEY)
@@ -29,8 +31,11 @@ export class AiService {
     this.ai = new GoogleGenAI({ apiKey: this.aiConfiguration.apikey! });
   }
 
-  async generateResponse(prompt: string): Promise<string | undefined> {
-    const response = await this.ai.models.generateContent({
+  async generateResponseStream(
+    prompt: string,
+    onChunk: (chunk: string) => void,
+  ): Promise<void> {
+    const response = await this.ai.models.generateContentStream({
       model: this.aiConfiguration.model!,
       contents: prompt,
       config: {
@@ -42,48 +47,68 @@ export class AiService {
         ],
       },
     });
-    
-    return response.text;
-  }
-  
-  async extractMovieTitlesFromUserInput(userInput: string): Promise<string[]> {
-    const extractionPrompt = new BaseRequestPrompt(userInput);
-    
-    const responseText = await this.generateResponse(extractionPrompt.prompt);
-    
-    try {
-      const cleaned = cleanJsonString(responseText ?? '');
-      const json = JSON.parse(cleaned);
-      return json.movies || [];
-    } catch (e) {
-      console.error(FAILED_JSON_PARSE, responseText, e);
-      return [];
+
+    for await (const chunk of response) {
+      if (chunk.text) {
+        onChunk(chunk.text);
+      }
     }
   }
 
-  async getMovieInfoByUserInput(
+  async getMovieInfoByUserInputStream(
     userInput: string,
-  ): Promise<string | undefined> {
-    const movieTitles = await this.extractMovieTitlesFromUserInput(userInput);
+    onChunk: (chunk: string) => void,
+  ): Promise<void> {
+    let responseText = '';
+    let resolvedTitle: string | null = null;
 
-    
-    if (movieTitles.length === 0) {
-      return AI_TITLE_NOT_FOUND;
+    const extractionPrompt = new BaseRequestPrompt(userInput);
+
+    await this.generateResponseStream(extractionPrompt.prompt, (chunk) => {
+      responseText += chunk;
+      const cleanedChunk = removeCodeBlockStreaming(chunk, this.codeBlockState);
+      if (cleanedChunk) {
+        onChunk(cleanedChunk);
+      }
+    });
+
+    try {
+      const cleaned = cleanJsonString(responseText);
+      const parsed = JSON.parse(cleaned);
+
+      if (parsed?.movies?.length > 0) {
+        resolvedTitle = parsed.movies[0];
+      }
+    } catch (e) {
+      return;
     }
-    
-    const title = movieTitles[0];
-    
-    const link = await this.titlesService.findTitleLinkBySlugCandidate(title);
-    console.log(link);
+    if (!resolvedTitle) {
+      onChunk(AI_TITLE_NOT_FOUND);
+      return;
+    }
 
-    let prompt = BASE_RESPONSE_PROMPT;
+    const cleaned = cleanJsonString(responseText);
+    const parsed = JSON.parse(cleaned);
 
+    const link =
+      await this.titlesService.findTitleLinkBySlugCandidate(resolvedTitle);
+
+    let finalPrompt = BASE_RESPONSE_PROMPT;
     if (link) {
-      prompt += new AiLinkPrompt(true, title, link).prompt;
+      finalPrompt += new AiLinkPrompt(
+        true,
+        resolvedTitle,
+        parsed?.userLanguage,
+        link,
+      ).prompt;
     } else {
-      prompt += new AiLinkPrompt(false, title).prompt;
+      finalPrompt += new AiLinkPrompt(
+        false,
+        resolvedTitle,
+        parsed?.userLanguage,
+      ).prompt;
     }
 
-    return this.generateResponse(prompt);
+    await this.generateResponseStream(finalPrompt, onChunk);
   }
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from 'src/auth/config/jwt.config';
@@ -18,12 +18,13 @@ export class WsAuthService {
 
   async validateClient(client: any) {
     const cookies = client.handshake.headers.cookie;
+    
     if (!cookies) return null;
-
+    
     const parsed = cookie.parse(cookies);
     const token = parsed[ACCESS_TOKEN_COOKIE_NAME];
     if (!token) return null;
-
+    
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
@@ -31,7 +32,8 @@ export class WsAuthService {
       );
       client[REQUEST_USER_KEY] = payload;
       return payload;
-    } catch {
+    } catch(err) {
+      console.error(err);
       return null;
     }
   }

@@ -46,16 +46,20 @@ export class AiGateway implements OnGatewayConnection {
     try {
       const userMessage = payload;
 
-      const response =
-        await this.aiService.getMovieInfoByUserInput(userMessage);
+      await this.aiService.getMovieInfoByUserInputStream(
+        userMessage,
+        (chunk: string) => {
+          client.emit(EventKeys.SUBSCRIBE_AI_RESPONSE_EVENT_KEY, {
+            chunk: chunk,
+          });
+        },
+      );
 
-      client.emit(EventKeys.SUBSCRIBE_AI_RESPONSE_EVENT_KEY, {
-        text: response,
-      });
+      client.emit(EventKeys.SUBSCRIBE_AI_END_RESPONSE_EVENT_KEY);
     } catch (error) {
       client.emit(EventKeys.GENERAL_ERROR_EVENT_KEY, {
         message: GENERAL_ERROR_MESSAGE,
-        error
+        error,
       });
     }
   }

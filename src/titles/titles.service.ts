@@ -96,10 +96,9 @@ export class TitlesService {
 
     try {
       const title = await this.titleRepository.findOne({
-        where: { slug },
-        select: ['slug', 'type'],
+        where: { slug: ILike(slug) },
+        select: ['slug', 'type' , 'id'],
       });
-      console.log(title);
       if (title && title?.type === TitleType.Movie) {
         return `${this.appConfiguration.frontendUrl}/${this.appConfiguration.frontendMoviePath}/${title.slug}`;
       }
