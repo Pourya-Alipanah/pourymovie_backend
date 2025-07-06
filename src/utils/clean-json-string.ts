@@ -18,7 +18,7 @@ export function removeCodeBlockStreaming(
 
   while (i < chunk.length) {
     if (!state.insideCodeBlock) {
-      if (chunk.startsWith('```', i)) {
+      if (chunk.startsWith('```', i) || chunk.startsWith('{', i)) {
         state.insideCodeBlock = true;
         i += 3;
         continue;
@@ -26,7 +26,7 @@ export function removeCodeBlockStreaming(
       result += chunk[i];
       i++;
     } else {
-      if (chunk.startsWith('```', i)) {
+      if (chunk.startsWith('```', i) || chunk.startsWith('}``', i)) {
         state.insideCodeBlock = false;
         i += 3;
         continue;

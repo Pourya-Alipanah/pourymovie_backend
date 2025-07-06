@@ -25,10 +25,7 @@ import { GenreModule } from './genre/genre.module';
 import { LanguageModule } from './language/language.module';
 import { VideoLinkModule } from './video-link/video-link.module';
 import { UploadCenterModule } from './upload-center/upload-center.module';
-import { AiGateway } from './ai/ai.gateway';
 import { AiModule } from './ai/ai.module';
-import minioConfig from './upload-center/config/minio.config';
-import { JwtAuthGuardBase } from './auth/guards/jwt-auth-base.guard';
 import { WsAccessTokenGuard } from './auth/guards/ws-access-token.guard';
 
 /**

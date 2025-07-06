@@ -19,3 +19,9 @@ export const AI_TITLE_NOT_FOUND ="Sorry, I couldn't find any movie in your reque
  * failed to parse AI response for movie extraction
  */
 export const FAILED_JSON_PARSE='Failed to parse AI response for movie extraction:'
+
+/**
+ * Error message for invalid payload in AI service
+ * This message is used when the payload provided to the AI service is not a valid number.
+ */
+export const INVALID_PAYLOAD_TITLE_ID = 'Invalid payload. Expected a number.';

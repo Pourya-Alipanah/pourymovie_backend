@@ -17,6 +17,7 @@ import {
   CodeBlockState,
   removeCodeBlockStreaming,
 } from 'src/utils/clean-json-string';
+import { CommentService } from 'src/comment/providers/comment.service';
 
 @Injectable()
 export class AiService {
@@ -26,7 +27,10 @@ export class AiService {
   constructor(
     @Inject(aiConfig.KEY)
     private readonly aiConfiguration: ConfigType<typeof aiConfig>,
+    @Inject(forwardRef(() => TitlesService))
     private readonly titlesService: TitlesService,
+    @Inject(forwardRef(() => CommentService))
+    private readonly commentService: CommentService,
   ) {
     this.ai = new GoogleGenAI({ apiKey: this.aiConfiguration.apikey! });
   }
@@ -54,6 +58,20 @@ export class AiService {
       }
     }
   }
+  async getCommentsSummary(titleId: number, onChunk: (chunk: string) => void) {
+    
+    const comments =
+    await this.commentService.getAllTitleCommentsWithoutPagination(titleId);
+    if (!comments || comments.length === 0) {
+      onChunk('No comments found for this title.');
+      return;
+    }
+    const commentsArrayString = comments.map((comment) => `- ${comment.content}`).join('\n')
+
+    const summaryPrompt = new BaseRequestPrompt(commentsArrayString).commentSummaryPrompt;
+
+    await this.generateResponseStream(summaryPrompt, onChunk);
+  }
 
   async getMovieInfoByUserInputStream(
     userInput: string,
@@ -64,7 +82,7 @@ export class AiService {
 
     const extractionPrompt = new BaseRequestPrompt(userInput);
 
-    await this.generateResponseStream(extractionPrompt.prompt, (chunk) => {
+    await this.generateResponseStream(extractionPrompt.chatPrompt, (chunk) => {
       responseText += chunk;
       const cleanedChunk = removeCodeBlockStreaming(chunk, this.codeBlockState);
       if (cleanedChunk) {
@@ -111,4 +129,13 @@ export class AiService {
 
     await this.generateResponseStream(finalPrompt, onChunk);
   }
+
+  async getMovieSummary(userInput: string, onChunk: (chunk: string) => void) {
+    const extractionPrompt = new BaseRequestPrompt(userInput).summaryPrompt;
+    await this.generateResponseStream(extractionPrompt, (chunk) => {
+      onChunk(chunk);
+    });
+  }
+  
+
 }
