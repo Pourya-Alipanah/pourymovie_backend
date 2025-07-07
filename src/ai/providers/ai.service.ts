@@ -84,26 +84,29 @@ export class AiService {
     prompt: string,
     onChunk: (chunk: string) => void,
   ): Promise<void> {
-    const response = await this.ai.models.generateContentStream({
-      model: this.aiConfiguration.model!,
-      contents: prompt,
-      config: {
-        safetySettings: [
-          {
-            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-            threshold: HarmBlockThreshold.BLOCK_NONE,
-          },
-        ],
-      },
-    });
+    try {
+      const response = await this.ai.models.generateContentStream({
+        model: this.aiConfiguration.model!,
+        contents: prompt,
+        config: {
+          safetySettings: [
+            {
+              category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+              threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+          ],
+        },
+      });
 
-    for await (const chunk of response) {
-      if (chunk.text) {
-        onChunk(chunk.text);
+      for await (const chunk of response) {
+        if (chunk.text) {
+          onChunk(chunk.text);
+        }
       }
+    } catch (error) {
+      onChunk(error.message || 'An error occurred while generating response.');
     }
   }
-
 
   /**
    * Retrieves a summary of comments for a specific title.
@@ -112,8 +115,7 @@ export class AiService {
    * @param onChunk - Callback function to handle each chunk of generated summary text.
    */
   async getCommentsSummary(titleId: number, onChunk: (chunk: string) => void) {
-    const comments =
-      await this.getAllTitleCommentsWithoutPagination(titleId);
+    const comments = await this.getAllTitleCommentsWithoutPagination(titleId);
     if (!comments || comments.length === 0) {
       onChunk('No comments found for this title.');
       return;

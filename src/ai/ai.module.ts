@@ -9,6 +9,7 @@ import { TitlesModule } from 'src/titles/titles.module';
 import { CommentModule } from 'src/comment/comment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from 'src/comment/comment.entity';
+import { AiController } from './ai.controller';
 
 @Module({
   providers: [AiService, AiGateway],
@@ -20,5 +21,6 @@ import { Comment } from 'src/comment/comment.entity';
     TitlesModule,
     CommentModule,
   ],
+  controllers: [AiController],
 })
 export class AiModule {}
