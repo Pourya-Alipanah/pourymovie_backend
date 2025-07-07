@@ -15,6 +15,11 @@ import { WsAuthService } from '../auth/providers/ws-auth.service';
 import { AiService } from './providers/ai.service';
 import { EventKeys } from './enums/event-keys.enum';
 
+/**
+ * AiGateway is a WebSocket gateway that handles real-time communication
+ * for AI-related functionalities, such as movie information retrieval and summaries.
+ * It uses guards and filters to manage authentication and error handling.
+ */
 @WebSocketGateway({
   namespace: '/ai',
   cors: {
@@ -26,11 +31,22 @@ import { EventKeys } from './enums/event-keys.enum';
 @UseFilters(WsAuthExceptionFilter)
 @UseGuards(AuthenticationGuard)
 export class AiGateway implements OnGatewayConnection {
+  /**
+   * Constructs the AiGateway with the necessary dependencies.
+   * @param aiService - Service to interact with AI functionalities.
+   * @param wsAuthService - Service to handle WebSocket authentication.
+   */
   constructor(
     private readonly aiService: AiService,
     private readonly wsAuthService: WsAuthService,
   ) {}
 
+  /**
+   * Handles new WebSocket connections.
+   * Validates the client using the wsAuthService.
+   * If validation fails, emits an error event and disconnects the client.
+   * @param client - The WebSocket client connection.
+   */
   async handleConnection(client: any) {
     const valid = await this.wsAuthService.validateClient(client);
 
@@ -42,6 +58,14 @@ export class AiGateway implements OnGatewayConnection {
       return;
     }
   }
+
+  /**
+   * Handles incoming messages from the client.
+   * Processes user input to retrieve movie information and emits responses.
+   * If an error occurs, emits a general error event.
+   * @param client - The WebSocket client connection.
+   * @param payload - The message payload containing user input.
+   */
   @SubscribeMessage(EventKeys.SUBSCRIBE_AI_EVENT_KEY)
   async handleMessage(client: any, payload: any): Promise<void> {
     try {
@@ -65,6 +89,13 @@ export class AiGateway implements OnGatewayConnection {
     }
   }
 
+  /**
+   * Handles requests for movie summaries.
+   * Uses the AI service to generate a summary based on user input.
+   * Emits the summary in chunks and handles errors appropriately.
+   * @param client - The WebSocket client connection.
+   * @param payload - The message payload containing user input for the summary.
+   */
   @SubscribeMessage(EventKeys.SUBSCRIBE_AI_SUMMARY_EVENT_KEY)
   async handleSummary(client: any, payload: any): Promise<void> {
     try {
@@ -85,6 +116,13 @@ export class AiGateway implements OnGatewayConnection {
     }
   }
 
+  /**
+   * Handles requests for comments summary.
+   * Uses the AI service to generate a summary of comments based on a title ID.
+   * Emits the summary in chunks and handles errors appropriately.
+   * @param client - The WebSocket client connection.
+   * @param payload - The message payload containing the title ID for comments summary.
+   */
   @SubscribeMessage(EventKeys.SUBSCRIBE_AI_COMMENTS_SUMMARY_EVENT_KEY)
   async handleCommentsSummary(client: any, payload: any): Promise<void> {
     try {

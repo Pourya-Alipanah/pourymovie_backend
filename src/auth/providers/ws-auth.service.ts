@@ -8,14 +8,31 @@ import {
   REQUEST_USER_KEY,
 } from 'src/auth/constants/auth.constants';
 
+/**
+ * WsAuthService is responsible for validating WebSocket clients
+ * by checking their authentication tokens in cookies.
+ * It uses the JwtService to verify the token and extracts user information.
+ */
 @Injectable()
 export class WsAuthService {
+
+  /**
+   * Constructs the WsAuthService with the necessary dependencies.
+   * @param jwtService - The JwtService to handle JWT operations.
+   * @param jwtConfiguration - Configuration for JWT, including secret and options.
+   */
   constructor(
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
+  /**
+   * Validates the WebSocket client by checking the authentication token in cookies.
+   * If the token is valid, it extracts the user information and attaches it to the client.
+   * @param client - The WebSocket client connection.
+   * @returns The user payload if validation is successful, otherwise null.
+   */
   async validateClient(client: any) {
     const cookies = client.handshake.headers.cookie;
     

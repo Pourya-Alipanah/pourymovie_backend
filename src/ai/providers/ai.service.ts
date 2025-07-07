@@ -21,11 +21,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from 'src/comment/comment.entity';
 import { Repository } from 'typeorm';
 
+/**
+ * AiService is responsible for interacting with the Google GenAI API to generate
+ * movie-related responses based on user input and comments.
+ * It provides methods to retrieve comments, generate summaries, and respond to user queries.
+ */
 @Injectable()
 export class AiService {
+  /**
+   * Instance of GoogleGenAI to interact with the AI model.
+   */
   private ai: GoogleGenAI;
+  /**
+   * State to manage code block detection during streaming responses.
+   */
   private codeBlockState: CodeBlockState = { insideCodeBlock: false };
 
+  /**
+   * Constructs the AiService with the necessary dependencies.
+   * @param aiConfiguration - Configuration for the AI service, including API key and model.
+   * @param titlesService - Service to interact with movie titles.
+   * @param commentRepository - Repository to manage comments in the database.
+   */
   constructor(
     @Inject(aiConfig.KEY)
     private readonly aiConfiguration: ConfigType<typeof aiConfig>,
@@ -57,6 +74,12 @@ export class AiService {
     }
   }
 
+  /**
+   * Generates a response stream based on the provided prompt.
+   * This method uses the Google GenAI API to generate content in a streaming manner.
+   * @param prompt - The prompt to send to the AI model.
+   * @param onChunk - Callback function to handle each chunk of generated text.
+   */
   async generateResponseStream(
     prompt: string,
     onChunk: (chunk: string) => void,
@@ -80,6 +103,14 @@ export class AiService {
       }
     }
   }
+
+
+  /**
+   * Retrieves a summary of comments for a specific title.
+   * This method aggregates all comments and generates a summary using the AI model.
+   * @param titleId - The ID of the title for which to summarize comments.
+   * @param onChunk - Callback function to handle each chunk of generated summary text.
+   */
   async getCommentsSummary(titleId: number, onChunk: (chunk: string) => void) {
     const comments =
       await this.getAllTitleCommentsWithoutPagination(titleId);
@@ -97,6 +128,13 @@ export class AiService {
     await this.generateResponseStream(summaryPrompt, onChunk);
   }
 
+  /**
+   * Retrieves movie information based on user input.
+   * This method processes the user input to extract movie titles and generates a response stream
+   * with detailed information about the movie, including a link if available.
+   * @param userInput - The user's input containing hints or descriptions of movies.
+   * @param onChunk - Callback function to handle each chunk of generated response text.
+   */
   async getMovieInfoByUserInputStream(
     userInput: string,
     onChunk: (chunk: string) => void,
@@ -154,6 +192,13 @@ export class AiService {
     await this.generateResponseStream(finalPrompt, onChunk);
   }
 
+  /**
+   * Generates a movie summary based on user input.
+   * This method uses the AI model to create a detailed summary of the movie,
+   * including genre, key details, and a direct link if available.
+   * @param userInput - The user's input containing hints or descriptions of movies.
+   * @param onChunk - Callback function to handle each chunk of generated summary text.
+   */
   async getMovieSummary(userInput: string, onChunk: (chunk: string) => void) {
     const extractionPrompt = new BaseRequestPrompt(userInput).summaryPrompt;
     await this.generateResponseStream(extractionPrompt, (chunk) => {

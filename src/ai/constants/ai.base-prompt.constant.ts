@@ -2,10 +2,23 @@
  * Base prompt for extracting movie titles from user input.
  */
 export class BaseRequestPrompt {
+  /**
+   * The prompt for the AI to extract movie titles based on user input.
+   */
   chatPrompt: string;
+  /**
+   * The prompt for the AI to summarize a movie based on its title.
+   */
   summaryPrompt: string;
+  /**
+   * The prompt for the AI to summarize user comments about a movie.
+   */
   commentSummaryPrompt: string;
 
+  /**
+   * Constructs the base request prompt with user input.
+   * @param userInput - The user's input containing hints or descriptions of movies.
+   */
   constructor(userInput: string) {
     this.chatPrompt = `
 You are a professional movie expert and smart assistant who understands both Persian and English.
@@ -111,8 +124,18 @@ Always keep the tone informative, clear, and fluent in the appropriate language.
  * @param link - The link to the movie (optional).
  */
 export class AiLinkPrompt {
+  /**
+   * The prompt for the AI to generate a response based on the movie title and link.
+   */
   prompt: string;
 
+  /**
+   * Constructs the AI link prompt based on whether a link was found and the movie title.
+   * @param foundLink - Indicates if the movie link was found.
+   * @param title - The title of the movie.
+   * @param userLanguage - The language in which the user prefers to receive the response.
+   * @param link - The link to the movie (optional).
+   */
   constructor(
     foundLink: boolean,
     title: string,
