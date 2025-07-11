@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Title } from './entities/title.entity';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, ILike, In, Repository } from 'typeorm';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { TITLE_NOT_FOUND_ERROR } from './constants/titles.errors.constants';
 import {
@@ -21,6 +21,9 @@ import { CountryService } from 'src/country/providers/country.service';
 import { UploadCenterService } from 'src/upload-center/providers/upload-center.service';
 import { UploadFromEntity } from 'src/upload-center/enums/upload-from-entity.enum';
 import { UploadType } from 'src/upload-center/enums/upload-type.enum';
+import { TitleType } from './enums/title-type.enum';
+import appConfig from 'src/config/app.config';
+import { ConfigType } from '@nestjs/config';
 
 /**
  * Service for handling operations related to titles.
@@ -54,6 +57,8 @@ export class TitlesService {
     private readonly genreService: GenreService,
     private readonly countryService: CountryService,
     private readonly uploadCenterService: UploadCenterService,
+    @Inject(appConfig.KEY)
+    private readonly appConfiguration: ConfigType<typeof appConfig>,
   ) {}
 
   /**
@@ -74,6 +79,38 @@ export class TitlesService {
     }
 
     return result;
+  }
+
+  /**
+   * Finds a title link by its slug candidate, which is generated from the title.
+   *
+   * @param {string} titleFromGemini - The title string from Gemini
+   * @returns {Promise<string | null>} The URL of the title if found, otherwise null
+   * @description This method generates a slug from the title and checks if a title with that slug exists.
+   * If it exists, it returns the URL for the movie or series based on its type.
+   */
+  public async findTitleLinkBySlugCandidate(
+    titleFromGemini: string,
+  ): Promise<string | null> {
+    const slug = slugify(titleFromGemini, { lower: true, strict: true });
+
+    try {
+      const title = await this.titleRepository.findOne({
+        where: { slug: ILike(slug) },
+        select: ['slug', 'type' , 'id'],
+      });
+      if (title && title?.type === TitleType.Movie) {
+        return `${this.appConfiguration.frontendUrl}/${this.appConfiguration.frontendMoviePath}/${title.slug}`;
+      }
+      if (title && title?.type === TitleType.Series) {
+        return `${this.appConfiguration.frontendUrl}/${this.appConfiguration.frontendSeriesPath}/${title.slug}`;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error finding title link by slug candidate:', error);
+      return null;
+    }
   }
 
   /**

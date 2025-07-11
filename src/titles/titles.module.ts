@@ -17,14 +17,17 @@ import { LanguageModule } from 'src/language/language.module';
 import { Genre } from 'src/genre/genre.entity';
 import { GenreModule } from 'src/genre/genre.module';
 import { CountryModule } from 'src/country/country.module';
+import appConfig from 'src/config/app.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   controllers: [TitlesController],
   providers: [TitlesService],
   imports: [
+    ConfigModule.forFeature(appConfig),
     TypeOrmModule.forFeature([
-      Country,
       Title,
+      Country,
       Episode,
       Genre,
       Language,

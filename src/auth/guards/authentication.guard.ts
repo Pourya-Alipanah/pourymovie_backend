@@ -6,8 +6,10 @@ import {
 } from '@nestjs/common';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenGuard } from './access-token.guard';
+import { HttpAccessTokenGuard } from './http-access-token.guard';
 import { AUTH_TYPE_KEY } from '../constants/auth.constants';
+import { WsAccessTokenGuard } from './ws-access-token.guard';
+import { WsException } from '@nestjs/websockets';
 
 /**
  * Guard for handling authentication based on different auth types
@@ -19,51 +21,47 @@ import { AUTH_TYPE_KEY } from '../constants/auth.constants';
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
   /**
-   * Map of authentication types to their corresponding guards
-   * @type {Record<AuthType, CanActivate | CanActivate[]>}
-   */
-  private readonly authTypeGuardMap: Record<
-    AuthType,
-    CanActivate | CanActivate[]
-  >;
-
-  /**
    * AuthenticationGuard
    * @description This guard is responsible for handling authentication based on the auth type specified in the route metadata.
    * It uses different guards for different authentication types.
    * @param {Reflector} reflector - Reflector service to access route metadata
-   * @param {AccessTokenGuard} accessTokenGuard - Guard for handling Bearer token authentication
-   * @returns {AuthenticationGuard} - Returns an instance of AuthenticationGuard
+   * @param {HttpAccessTokenGuard} httpAccessTokenGuard - Guard for handling HTTP access tokens
+   * @param {WsAccessTokenGuard} wsAccessTokenGuard - Guard for handling WebSocket access tokens
    */
   constructor(
     private readonly reflector: Reflector,
-    private readonly accessTokenGuard: AccessTokenGuard,
-  ) {
-    // Create authTypeGuardMap
-    this.authTypeGuardMap = {
-      [AuthType.Bearer]: this.accessTokenGuard,
-      [AuthType.None]: { canActivate: () => true },
-    };
-  }
+    private readonly httpAccessTokenGuard: HttpAccessTokenGuard,
+    private readonly wsAccessTokenGuard: WsAccessTokenGuard,
+  ) {}
 
   /**
    * Default authentication type to use if none is specified
    * @type {AuthType}
    */
-  private static readonly defaultAuthType = AuthType.Bearer;
+  private static readonly defaultAuthType: AuthType = AuthType.Bearer;
 
   /**
    * CanActivate method to check if the request can be activated based on the auth type
    * @param {ExecutionContext} context - The execution context of the request
    * @returns {Promise<boolean>} - Returns a promise that resolves to true if the request can be activated, otherwise throws an UnauthorizedException
+   * @throws {UnauthorizedException} - If the user is not authenticated or does not have the required permissions
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const contextType = context.getType();
+
+    const authTypeGuardMap: Record<AuthType, CanActivate | CanActivate[]> = {
+      [AuthType.Bearer]:
+        contextType === 'http'
+          ? this.httpAccessTokenGuard
+          : this.wsAccessTokenGuard,
+      [AuthType.None]: { canActivate: () => true },
+    };
     const authTypes = this.reflector.getAllAndOverride<AuthType[]>(
       AUTH_TYPE_KEY,
       [context.getHandler(), context.getClass()],
     ) ?? [AuthenticationGuard.defaultAuthType];
 
-    const guards = authTypes.map((type) => this.authTypeGuardMap[type]).flat();
+    const guards = authTypes.map((type) => authTypeGuardMap[type]).flat();
 
     // Declare the default error
     let error = new UnauthorizedException();
@@ -84,6 +82,9 @@ export class AuthenticationGuard implements CanActivate {
       }
     }
 
+    if (context.getType() === 'ws') {
+      throw new WsException('Unauthorized');
+    }
     throw error;
   }
 }
