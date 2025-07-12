@@ -1,0 +1,34 @@
+name: backend CI
+description: CI workflow for the backend service
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: /opt/pourymovie/backend
+          fetch-depth: 0
+      - name: Docker Compose Down
+        run: |
+          cd /opt/pourymovie/infra/backend
+          docker compose down
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Docker Compose Up
+        run: |
+          cd /opt/pourymovie/infra/backend
+          docker compose up -d --build --force-recreate --force-recreate
