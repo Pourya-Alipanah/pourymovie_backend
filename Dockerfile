@@ -1,33 +1,25 @@
-# build stage
-FROM node:22.15.0-alpine as builder
-
-RUN npm install -g pnpm@latest-10
-
-WORKDIR /app
-
-COPY package*.json ./
-COPY pnpm*.* ./
-RUN pnpm install
-
-COPY . .
-
-RUN pnpm build
-
-# production stage
+# Use the official Node.js image as the base image
 FROM node:22.15.0-alpine
 
+# Install pnpm globally
 RUN npm install -g pnpm@latest-10
 
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/pnpm*.* ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
+# Install the application dependencies
+RUN pnpm install
+
+# Copy the rest of the application files
+COPY . .
+
+# Build the NestJS application
+RUN pnpm run build
+
+# Expose the application port
 EXPOSE 1406
-
-COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
