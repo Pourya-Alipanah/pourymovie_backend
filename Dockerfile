@@ -19,7 +19,11 @@ COPY . .
 # Build the NestJS application
 RUN pnpm run build
 
+
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
 # Expose the application port
 EXPOSE 1406
 
-ENTRYPOINT ["./entrypoint.sh"]
+CMD ["node", "dist/main"]
