@@ -49,7 +49,7 @@ async function bootstrap() {
 
   // Instantiate Document
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/v1/apiDocs', app, document);
+  SwaggerModule.setup('apiDocs/v1', app, document);
 
   /**
    * Enable CORS for all routes
