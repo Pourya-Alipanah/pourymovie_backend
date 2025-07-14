@@ -52,8 +52,12 @@ export class MinioProvider implements OnModuleInit {
    */
   async makeAllPublicBucketsPublic() {
     for (const bucket of Object.values(PublicBucketNames)) {
-      await this.ensureBucket(bucket);
-      await this.makeBucketPublic(bucket);
+      try {
+        await this.ensureBucket(bucket);
+        await this.makeBucketPublic(bucket);
+      } catch (err) {
+        console.warn(`Cannot make bucket ${bucket} public:`, err.message);
+      }
     }
   }
 

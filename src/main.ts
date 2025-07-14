@@ -34,8 +34,9 @@ async function bootstrap() {
    */
   const swaggerConfig = new DocumentBuilder()
     .setTitle('PouryMovie Api')
-    .setDescription('Use the base API URL as http://localhost:1406/api/v1')
+    .setDescription('Use the base API URL as http://localhost:1406/api/v1 just for local development')
     .setVersion('1.0')
+    .addServer('https://api.pourymovie.ir/api/v1')
     .addServer('http://localhost:1406/api/v1')
     .addBearerAuth(
     {
