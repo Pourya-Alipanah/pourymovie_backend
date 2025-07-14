@@ -3,10 +3,10 @@
  * This enum is used to define the different types of uploads and their corresponding bucket names.
  */
 export enum BufferBucketNames {
-  AVATAR = 'avatar',
-  PROFILE = 'profile',
-  COVER = 'cover',
-  THUMBNAIL = 'thumbnail',
+  AVATAR = 'pourymovie-avatar',
+  PROFILE = 'pourymovie-profile',
+  COVER = 'pourymovie-cover',
+  THUMBNAIL = 'pourymovie-thumbnail',
 }
 
 /**
@@ -14,8 +14,8 @@ export enum BufferBucketNames {
  * This enum is used to define the buckets specifically for video and trailer streams.
  */
 export enum StreamBucketNames {
-  TRAILER = 'trailer',
-  VIDEO = 'video',
+  TRAILER = 'pourymovie-trailer',
+  VIDEO = 'pourymovie-video',
 }
 
 /**
@@ -23,8 +23,8 @@ export enum StreamBucketNames {
  * This enum is used to define the publicly accessible buckets for various types of uploads.
  */
 export enum PublicBucketNames {
-  TRAILER = 'trailer',
-  PROFILE = 'profile',
-  COVER = 'cover',
-  THUMBNAIL = 'thumbnail',
+  TRAILER = 'pourymovie-trailer',
+  PROFILE = 'pourymovie-profile',
+  COVER = 'pourymovie-cover',
+  THUMBNAIL = 'pourymovie-thumbnail',
 }
