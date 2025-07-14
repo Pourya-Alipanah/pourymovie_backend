@@ -98,9 +98,14 @@ export class MinioProvider implements OnModuleInit {
    * @param bucket - The name of the bucket to ensure.
    */
   async ensureBucket(bucket: string) {
-    const exists = await this.client.bucketExists(bucket);
-    if (!exists) {
-      await this.client.makeBucket(bucket, 'us-east-1');
+    try {
+      const exists = await this.client.bucketExists(bucket);
+      if (!exists) {
+        await this.client.makeBucket(bucket, 'us-east-1');
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
