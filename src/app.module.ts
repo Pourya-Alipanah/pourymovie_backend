@@ -10,7 +10,7 @@ import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { DataResponseInterceptor } from './common/interceptors/data-response/data-response.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
-import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import { HttpAccessTokenGuard } from './auth/guards/http-access-token.guard';
 import jwtConfig from './auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthorizationGuard } from './auth/guards/authorization.guard';
@@ -25,7 +25,8 @@ import { GenreModule } from './genre/genre.module';
 import { LanguageModule } from './language/language.module';
 import { VideoLinkModule } from './video-link/video-link.module';
 import { UploadCenterModule } from './upload-center/upload-center.module';
-import minioConfig from './upload-center/config/minio.config';
+import { AiModule } from './ai/ai.module';
+import { WsAccessTokenGuard } from './auth/guards/ws-access-token.guard';
 
 /**
  * Get the current NODE_ENV
@@ -69,6 +70,7 @@ const ENV = process.env.NODE_ENV;
     LanguageModule,
     VideoLinkModule,
     UploadCenterModule,
+    AiModule,
   ],
   providers: [
     {
@@ -90,7 +92,8 @@ const ENV = process.env.NODE_ENV;
       },
       inject: [Reflector],
     },
-    AccessTokenGuard,
+    HttpAccessTokenGuard,
+    WsAccessTokenGuard,
     CheckRoleGuard,
   ],
 })

@@ -1,13 +1,12 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UserRole } from 'src/user/enums/user-role.enum';
-import { AccessTokenGuard } from './access-token.guard';
 import { Reflector } from '@nestjs/core';
-import { REQUEST_USER_KEY, ROLE_TYPE_KEY } from '../constants/auth.constants';
+import { ROLE_TYPE_KEY } from '../constants/auth.constants';
 import { CheckRoleGuard } from './check-role.guard';
 
 /**
@@ -62,7 +61,7 @@ export class AuthorizationGuard implements CanActivate {
     const guards = roleTypes.map((type) => this.roleTypeGuardMap[type]).flat();
 
     // Declare the default error
-    let error = new UnauthorizedException();
+    let error = new ForbiddenException();
 
     for (const instance of guards) {
       // Decalre a new constant

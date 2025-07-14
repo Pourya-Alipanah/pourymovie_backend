@@ -7,7 +7,7 @@ import { Title } from './entities/title.entity';
 import { Language } from '../language/language.entity';
 import { Season } from '../season/season.entity';
 import { TitlePerson } from './entities/title-person.entity';
-import { VideoLink } from './entities/video-link.entity';
+import { VideoLink } from '../video-link/video-link.entity';
 import { Person } from 'src/people/person.entity';
 import { Episode } from 'src/episode/episode.entity';
 import { SeasonModule } from 'src/season/season.module';
@@ -17,14 +17,17 @@ import { LanguageModule } from 'src/language/language.module';
 import { Genre } from 'src/genre/genre.entity';
 import { GenreModule } from 'src/genre/genre.module';
 import { CountryModule } from 'src/country/country.module';
+import appConfig from 'src/config/app.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   controllers: [TitlesController],
   providers: [TitlesService],
   imports: [
+    ConfigModule.forFeature(appConfig),
     TypeOrmModule.forFeature([
-      Country,
       Title,
+      Country,
       Episode,
       Genre,
       Language,
@@ -38,7 +41,7 @@ import { CountryModule } from 'src/country/country.module';
     PeopleModule,
     LanguageModule,
     GenreModule,
-    CountryModule
+    CountryModule,
   ],
   exports: [TitlesService],
 })

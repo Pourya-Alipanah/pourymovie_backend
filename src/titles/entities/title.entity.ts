@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Country } from 'src/country/country.entity';
 import { Season } from '../../season/season.entity';
-import { VideoLink } from './video-link.entity';
+import { VideoLink } from '../../video-link/video-link.entity';
 import { TitleType } from '../enums/title-type.enum';
 import { TitlePerson } from './title-person.entity';
 import { PersonRole } from 'src/people/enums/person-role.enum';

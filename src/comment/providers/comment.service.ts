@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { Comment } from '../comment.entity';
 import { Repository } from 'typeorm';
@@ -65,6 +66,27 @@ export class CommentService {
       queryBuilder,
       params,
     );
+  }
+
+  /**
+   * Retrieves all comments for a specific title without pagination.
+   * This method is useful for scenarios where all comments are needed at once.
+   * @param titleId - The ID of the title for which to retrieve comments.
+   * @returns An array of comments for the specified title.
+   */
+  public async getAllTitleCommentsWithoutPagination(
+    titleId: number,
+  ): Promise<Comment[] | undefined> {
+    try {
+      const comments = await this.commentRepository.find({
+        where: { title: { id: titleId } },
+        select: ['content', 'id'],
+      });
+      return comments;
+    } catch (error) {
+      console.error('Error retrieving comments:', error);
+      throw error;
+    }
   }
 
   /**

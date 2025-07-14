@@ -35,28 +35,62 @@ import {
 @Index(['fileKey', 'bucket'], { unique: true })
 @Entity('uploads')
 export class UploadCenter {
+  /**
+   * Unique identifier for the upload record.
+   * @type {number}
+   */
   @PrimaryGeneratedColumn()
   id: number;
 
+  /**
+   * Unique key of the uploaded file.
+   * This key is used to identify the file in the storage bucket.
+   * @type {string}
+   */
   @Column()
   @Index()
   fileKey: string;
 
+  /**
+   * The bucket where the file is stored.
+   * This can be either a buffer bucket or a stream bucket.
+   * @type {BufferBucketNames | StreamBucketNames}
+   */
   @Column({
     type: 'enum',
     enum: { ...BufferBucketNames, ...StreamBucketNames },
   })
   bucket: BufferBucketNames | StreamBucketNames;
 
+  /**
+   * The type of upload.
+   * This indicates whether the upload is a buffer or a stream.
+   * @type {UploadType}
+   */
   @Column({ type: 'enum', enum: UploadType, nullable: true })
   type: UploadType;
 
+  /**
+   * The current status of the upload.
+   * This indicates whether the upload is pending, completed, or failed.
+   * @type {UploadStatus}
+   */
   @Column({ type: 'enum', enum: UploadStatus, default: UploadStatus.PENDING })
   status: UploadStatus;
 
+  /**
+   * The entity from which the upload originated.
+   * This can be a title, user, or other entities defined in the UploadFromEntity enum.
+   * @type {UploadFromEntity}
+   */
   @Column({ type: 'enum', enum: UploadFromEntity, nullable: true })
   fromEntity: UploadFromEntity;
 
+  /**
+   * Timestamp when the upload record was created.
+   * This is automatically set to the current date and time when the record is created.
+   * @type {Date}
+   */
   @CreateDateColumn()
   createdAt: Date;
 }

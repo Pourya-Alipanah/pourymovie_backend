@@ -7,4 +7,5 @@ export enum UploadType {
   COVER = 'cover',
   THUMBNAIL = 'thumbnail',
   TRAILER = 'trailer',
+  VIDEO = 'video',
 }

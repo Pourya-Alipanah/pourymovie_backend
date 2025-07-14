@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Title } from './entities/title.entity';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, ILike, In, Repository } from 'typeorm';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { TITLE_NOT_FOUND_ERROR } from './constants/titles.errors.constants';
 import {
@@ -11,13 +11,19 @@ import {
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination.dto';
 import { CreateTitleDto } from './dtos/request/create-title.dto';
 import { TitlePerson } from './entities/title-person.entity';
-import { VideoLink } from './entities/video-link.entity';
+import { VideoLink } from '../video-link/video-link.entity';
 import { UpdateTitleRequestDto } from './dtos/request/update-title.dto';
 import slugify from 'slugify';
 import { PeopleService } from 'src/people/people.service';
 import { LanguageService } from '../language/providers/language.service';
 import { GenreService } from 'src/genre/providers/genre.service';
 import { CountryService } from 'src/country/providers/country.service';
+import { UploadCenterService } from 'src/upload-center/providers/upload-center.service';
+import { UploadFromEntity } from 'src/upload-center/enums/upload-from-entity.enum';
+import { UploadType } from 'src/upload-center/enums/upload-type.enum';
+import { TitleType } from './enums/title-type.enum';
+import appConfig from 'src/config/app.config';
+import { ConfigType } from '@nestjs/config';
 
 /**
  * Service for handling operations related to titles.
@@ -34,6 +40,8 @@ export class TitlesService {
    * @param {PeopleService} peopleService - Service for handling people-related operations
    * @param {LanguageService} languageService - Service for handling language-related operations
    * @param {GenreService} genreService - Service for handling genre-related operations
+   * @param {CountryService} countryService - Service for handling country-related operations
+   * @param {UploadCenterService} uploadCenterService - Service for handling file uploads
    */
   constructor(
     @InjectRepository(Title)
@@ -48,6 +56,9 @@ export class TitlesService {
     private readonly languageService: LanguageService,
     private readonly genreService: GenreService,
     private readonly countryService: CountryService,
+    private readonly uploadCenterService: UploadCenterService,
+    @Inject(appConfig.KEY)
+    private readonly appConfiguration: ConfigType<typeof appConfig>,
   ) {}
 
   /**
@@ -68,6 +79,38 @@ export class TitlesService {
     }
 
     return result;
+  }
+
+  /**
+   * Finds a title link by its slug candidate, which is generated from the title.
+   *
+   * @param {string} titleFromGemini - The title string from Gemini
+   * @returns {Promise<string | null>} The URL of the title if found, otherwise null
+   * @description This method generates a slug from the title and checks if a title with that slug exists.
+   * If it exists, it returns the URL for the movie or series based on its type.
+   */
+  public async findTitleLinkBySlugCandidate(
+    titleFromGemini: string,
+  ): Promise<string | null> {
+    const slug = slugify(titleFromGemini, { lower: true, strict: true });
+
+    try {
+      const title = await this.titleRepository.findOne({
+        where: { slug: ILike(slug) },
+        select: ['slug', 'type' , 'id'],
+      });
+      if (title && title?.type === TitleType.Movie) {
+        return `${this.appConfiguration.frontendUrl}/${this.appConfiguration.frontendMoviePath}/${title.slug}`;
+      }
+      if (title && title?.type === TitleType.Series) {
+        return `${this.appConfiguration.frontendUrl}/${this.appConfiguration.frontendSeriesPath}/${title.slug}`;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error finding title link by slug candidate:', error);
+      return null;
+    }
   }
 
   /**
@@ -147,6 +190,9 @@ export class TitlesService {
    */
   public async createTitle(dto: CreateTitleDto): Promise<Title> {
     return this.dataSource.transaction(async (manager) => {
+      let coverUrl: string | null = null;
+      let thumbnailUrl: string | null = null;
+      let trailerUrl: string | null = null;
       const [genres, country, language, people, videoLinks] = await Promise.all(
         [
           this.genreService.findMultipleById(dto.genreIds),
@@ -158,6 +204,34 @@ export class TitlesService {
           this.findVideoLinks(dto.videoLinkIds),
         ],
       );
+
+      if (dto.coverUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.coverUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.COVER,
+        );
+
+        coverUrl = url;
+      }
+      if (dto.thumbnailUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.thumbnailUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.THUMBNAIL,
+        );
+
+        thumbnailUrl = url;
+      }
+      if (dto.trailerUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.trailerUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.TRAILER,
+        );
+
+        trailerUrl = url;
+      }
 
       const titlePeopleArray = dto.titlePeople.map((tp) => ({
         person: people.find((p) => p.id === tp.id),
@@ -177,6 +251,9 @@ export class TitlesService {
         language,
         people: resultTitlePeople,
         videoLinks,
+        coverUrl,
+        trailerUrl,
+        thumbnailUrl,
       });
       return manager.save(title);
     });
@@ -197,6 +274,9 @@ export class TitlesService {
     const existingTitle = await this.findById(id);
 
     return await this.dataSource.transaction(async (manager) => {
+      let coverUrl: string | null = existingTitle.coverUrl;
+      let thumbnailUrl: string | null = existingTitle.thumbnailUrl;
+      let trailerUrl: string | null = existingTitle.trailerUrl;
       let updatedGenres = existingTitle.genres;
       let updatedCountry = existingTitle.country;
       let updatedLanguage = existingTitle.language;
@@ -217,6 +297,34 @@ export class TitlesService {
 
       if (dto.videoLinkIds) {
         updatedVideoLinks = await this.findVideoLinks(dto.videoLinkIds);
+      }
+
+      if (dto.coverUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.coverUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.COVER,
+        );
+
+        coverUrl = url;
+      }
+      if (dto.thumbnailUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.thumbnailUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.THUMBNAIL,
+        );
+
+        thumbnailUrl = url;
+      }
+      if (dto.trailerUrl) {
+        const url = await this.uploadCenterService.confirmUpload(
+          dto.trailerUrl.key,
+          UploadFromEntity.TITLE,
+          UploadType.TRAILER,
+        );
+
+        trailerUrl = url;
       }
 
       if (dto.titlePeople) {
@@ -242,6 +350,9 @@ export class TitlesService {
         language: updatedLanguage,
         videoLinks: updatedVideoLinks,
         people: updatedTitlePeople,
+        coverUrl,
+        thumbnailUrl,
+        trailerUrl,
       });
 
       return await manager.save(updatedTitle);
