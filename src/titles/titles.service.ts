@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Title } from './entities/title.entity';
 import { DataSource, ILike, In, Repository } from 'typeorm';
@@ -28,7 +28,7 @@ import { ConfigType } from '@nestjs/config';
 /**
  * Service for handling operations related to titles.
  */
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TitlesService {
   /**
    * Injects the repository for Title entity.
