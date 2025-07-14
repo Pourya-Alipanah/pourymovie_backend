@@ -17,12 +17,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          path: /opt/pourymovie/backend
           fetch-depth: 0
+
+      - name: Copy code to /opt/pourymovie/backend
+        run: |
+          sudo rm -rf /opt/pourymovie/backend/*
+          sudo cp -r . /opt/pourymovie/backend
+
       - name: Docker Compose Down
         run: |
-          cd /opt/pourymovie/infra/backend
-          docker compose down
+          cd /opt/pourymovie/infra
+          docker compose down backend
 
   deploy:
     runs-on: self-hosted
@@ -30,5 +35,5 @@ jobs:
     steps:
       - name: Docker Compose Up
         run: |
-          cd /opt/pourymovie/infra/backend
-          docker compose up -d --build --force-recreate --force-recreate
+          cd /opt/pourymovie/infra
+          docker compose up -d --build --force-recreate --force-recreate backend

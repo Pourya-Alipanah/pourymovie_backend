@@ -21,9 +21,11 @@ RUN pnpm run build
 
 
 COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
+RUN apk add --no-cache dos2unix \
+ && dos2unix ./entrypoint.sh \
+ && chmod +x ./entrypoint.sh
 
 # Expose the application port
 EXPOSE 1406
 
-CMD ["node", "dist/main"]
+ENTRYPOINT ["sh", "./entrypoint.sh"]

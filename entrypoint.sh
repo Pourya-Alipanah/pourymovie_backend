@@ -1,8 +1,9 @@
 #!/bin/sh
+set -e
 
 echo "✅ Database is healthy, running seed script once..."
 
-pnpm seed:country
+pnpm run seed:country
 
 echo "🚀 Starting backend app..."
 
