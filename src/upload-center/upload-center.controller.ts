@@ -48,7 +48,6 @@ export class UploadCenterController {
   @UseInterceptors(FileInterceptor('file'))
   @ApiSingleResponse(UploadResponseDto)
   @ApiBearerAuth('access-token')
-  @Role(UserRole.ADMIN)
   public async uploadBuffer(
     @UploadedFile() file: Express.Multer.File,
     @Body() { bucket }: UploadBufferRequestDto,
