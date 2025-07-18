@@ -7,4 +7,4 @@ pnpm run seed:country
 
 echo "🚀 Starting backend app..."
 
-pnpm start && pnpm doc
+pnpm start:all
