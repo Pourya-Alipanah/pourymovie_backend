@@ -11,10 +11,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install the application dependencies
-RUN pnpm install
-
-# Approve build scripts if needed
-RUN pnpm approve-builds --all
+RUN pnpm install --dangerously-allow-all-builds
 
 # Copy the rest of the application files
 COPY . .
