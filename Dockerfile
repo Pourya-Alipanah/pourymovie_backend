@@ -26,6 +26,6 @@ RUN apk add --no-cache dos2unix \
  && chmod +x ./entrypoint.sh
 
 # Expose the application port
-EXPOSE 1406
+EXPOSE 1406 1407
 
 ENTRYPOINT ["sh", "./entrypoint.sh"]

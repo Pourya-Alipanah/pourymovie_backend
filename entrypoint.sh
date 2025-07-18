@@ -7,4 +7,4 @@ pnpm run seed:country
 
 echo "🚀 Starting backend app..."
 
-node dist/main
+pnpm start && pnpm doc
