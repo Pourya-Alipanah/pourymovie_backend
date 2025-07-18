@@ -13,6 +13,9 @@ COPY package*.json ./
 # Install the application dependencies
 RUN pnpm install
 
+# Approve build scripts if needed
+RUN pnpm approve-builds --all
+
 # Copy the rest of the application files
 COPY . .
 
