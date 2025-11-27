@@ -32,7 +32,7 @@ import { UserRole } from './enums/user-role.enum';
  * @property {string} resetPasswordToken - Token for resetting the password, excluded from serialization.
  * @property {Date | null} resetPasswordTokenExpires - Expiration date for the reset password token, excluded from serialization.
  */
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
